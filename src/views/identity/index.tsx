@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo, type ReactNode, useRef } from 'react'
 import { MainLayout } from '@/layouts/main'
-import { XFooter } from '@/components/footer'
-import { BaseInfo } from './components/BaseInfo'
+import { BaseInfoWrap } from './components/BaseInfoWrap'
 import { IdentityLayout } from './components/IdentityLayout'
 import { kycApi } from '@/service/kyc/api'
 import {
@@ -192,10 +191,10 @@ function Identity({ account }: { account: string }) {
       {
         match: () => overallStatus === KYC_OVERALL_STATUS.NOTVERIFIED,
         render: () => (
-          <BaseInfo
+          <BaseInfoWrap
             refresh={refresh}
             userInfo={kycDetail.userInfo}
-            rejectReason={kycDetail.rejectReason}
+            rejectReason={kycDetail.rejectReason || 'kycDetail.rejectReason'}
           />
         ),
       },
@@ -242,9 +241,9 @@ function Identity({ account }: { account: string }) {
           verifyType === KYC_VERIFY_TYPE.OCR &&
           status === KYC_STATUS.REJECTED &&
           isRetry,
-        // 因为 isRetry 为 true 进入的 BaseInfo 组件，需要 BaseInfo 组件卸载的时候，执行 resetRetry, 把 isRetry 设置为 false
+        // 因为 isRetry 为 true 进入的 BaseInfoWrap 组件，需要 BaseInfoWrap 组件卸载的时候，执行 resetRetry, 把 isRetry 设置为 false
         render: () => (
-          <BaseInfo
+          <BaseInfoWrap
             onResetRetry={resetRetry}
             refresh={refresh}
             userInfo={kycDetail.userInfo}
@@ -268,7 +267,7 @@ function Identity({ account }: { account: string }) {
       },
       // TODO: 暂时不做
       // 认证中 - Liveness Verifying and retry OCR
-      // 认证中 - 活体认证达最大次数之后，如果要重试的话，重新进入 BaseInfo 组件
+      // 认证中 - 活体认证达最大次数之后，如果要重试的话，重新进入 BaseInfoWrap 组件
       // {
       //   match: () =>
       //     overallStatus === KYC_OVERALL_STATUS.VERIFYING &&
@@ -276,7 +275,7 @@ function Identity({ account }: { account: string }) {
       //     status === KYC_STATUS.VERIFYING &&
       //     isRetry,
       //   render: () => (
-      //     <BaseInfo
+      //     <BaseInfoWrap
       //       refresh={refresh}
       //       userInfo={kycDetail.userInfo}
       //       rejectReason={kycDetail.rejectReason}
