@@ -263,7 +263,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
       {(!account || !isSameChain) ? (
         <div
           className={cn(
-            'h-[36px] flex items-center px-6 bg-[#9CFF3A] text-sm font-medium rounded-[8px] cursor-pointer',
+            'h-[36px] flex items-center px-6 bg-brand text-sm font-medium rounded-[8px] cursor-pointer',
             props.connectBtnClassName
           )}
           onClick={() => {

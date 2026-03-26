@@ -4,7 +4,7 @@ import { TradeBox } from "../../components/markets/TradeBox";
 import { useRequestSignature, useSignatureValidStatus } from "@/hooks/useSignature";
 import { useBaseStore } from "@/stores/baseStore";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
-import IconOrder from "@/components/icons/order";
+import IconOrder from "@/components/icons/order.tsx";
 import { LiteTradeInfo } from "@/components/markets/LiteTradeInfo";
 import { PositionRwa } from "./components/PositionRwa";
 import { openUrl } from "@/utils/scan";
@@ -20,23 +20,23 @@ function LiteTrade() {
   return (
     <>
       <div className="bg-[#1A1B1E] min-h-[calc(100vh-60px)] text-white relative">
-        <PositionRwa 
+        <PositionRwa
           src="/images/tokens/GOOGL.png"
           className=" top-[1px] right-[50%] w-[70px] h-[70px]"
         />
-        <PositionRwa 
+        <PositionRwa
           src="/images/tokens/NFLX.png"
           className=" top-[200px] right-[28px] w-[92px] h-[92px] -rotate-45"
         />
-        <PositionRwa 
+        <PositionRwa
           src="/images/tokens/AAPL.png"
           className=" bottom-[44px] right-[164px] w-[95px] h-[95px]"
         />
-        <PositionRwa 
+        <PositionRwa
           src="/images/tokens/NVDA.png"
           className=" bottom-[70px] left-[40%] w-[64px] h-[64px] -rotate-12"
         />
-        <PositionRwa 
+        <PositionRwa
           src="/images/tokens/AMZN.png"
           className=" top-[278px] left-[43px] w-[62px] h-[62px]"
         />

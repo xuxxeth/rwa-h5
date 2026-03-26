@@ -19,6 +19,8 @@ import { useRouter } from './hooks/useRouter'
 import { HomeMenus } from './components/menu/HomeMenus'
 import GoogleAnalytics from '@/components/google-analytics/GoogleAnalytics'
 import { createPortal } from 'react-dom'
+import { Header } from '@/components/Header.tsx'
+import { Footer } from '@/components/Footer.tsx'
 
 BigNumber.config({
   DECIMAL_PLACES: 80, // 足够精度，避免 DeFi 里丢失小数
@@ -90,9 +92,7 @@ function App() {
       {/* {
         !isNoMenus && (isHomeMenus ? <HomeMenus /> : <Menus />)
       } */}
-      {
-        !isNoMenus && !isHomeMenus && <Menus />
-      }
+      <Header />
       <RoutesWrapper />
       {createPortal(
         <Toaster position='top-right' />,
@@ -100,7 +100,6 @@ function App() {
       )}
       
       <Updater />
-
     </>
   )
 }
