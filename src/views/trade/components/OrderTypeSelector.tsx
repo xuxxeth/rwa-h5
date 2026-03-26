@@ -1,4 +1,6 @@
 import History from '@/components/icons/set/History'
+import { Badge } from '@/components/Badge'
+import { useRouter } from '@/hooks/useRouter'
 
 interface OrderTypeSelectorProps {
   activeType: 'market' | 'limit'
@@ -6,6 +8,7 @@ interface OrderTypeSelectorProps {
 }
 
 export const OrderTypeSelector = ({ activeType, onChange }: OrderTypeSelectorProps) => {
+  const router = useRouter()
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-1">
@@ -30,8 +33,12 @@ export const OrderTypeSelector = ({ activeType, onChange }: OrderTypeSelectorPro
           限价
         </button>
       </div>
-      <button className="flex items-center justify-center">
+      <button
+        className="relative flex items-center justify-center text-gray-400"
+        onClick={() => router.push('/orders')}
+      >
         <History size={20} />
+        <Badge />
       </button>
     </div>
   )
