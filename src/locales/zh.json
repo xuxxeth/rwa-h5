@@ -7,6 +7,8 @@
   "pageError": "頁面載入失敗，請重試",
   "Loading": "載入中...",
   "Connect Wallet": "連接錢包",
+  "wallet": "錢包",
+  "addr": "錢包地址",
   "Detected": "已檢測",
   "Total USDT Balance": "USDT 總餘額",
   "My Assets": "我的資產",

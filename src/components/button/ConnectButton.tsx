@@ -22,39 +22,7 @@ import QRCode from '@/components/qrcode'
 import { useKycStatus } from '@/hooks/useKycStatus'
 import { KYC_OVERALL_STATUS } from '@/service/kyc/types'
 import { usePendingStep } from '@/hooks/usePendingStep'
-
-export function WalletItem({
-  wallet,
-  selected,
-  onClick,
-}: {
-  wallet: any
-  selected?: boolean
-  onClick?: () => void
-}) {
-  const { t } = useTranslation()
-  return (
-    <div
-      onClick={() => onClick && onClick()}
-      className={cn(
-        'flex items-center justify-between py-4 cursor-pointer font-semibold text-[#FFFFFF] hover:bg-[#10141C] rounded-[8px] p-4'
-      )}
-    >
-      <div className='flex items-center'>
-        {wallet.info.icon && (
-          <img src={wallet.info.icon} className='w-[40px] h-[40px] mr-4' alt='' />
-        )}
-        <span className='text-[16px] font-semibold'>{wallet.info.name}</span>{' '}
-      </div>
-      {wallet.detected && (
-        <div className=' flex items-center gap-x-2'>
-          <span className=' font-normal text-[#6C86AD] text-[14px]'>{t('Detected')}</span>{' '}
-          <LazyImage src='/images/icons/arrow-right.png' className='w-[7px]' />{' '}
-        </div>
-      )}
-    </div>
-  )
-}
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 
 const WalletStatus = {
   IDLE: 'IDLE',
@@ -77,13 +45,11 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     handleDisConnect,
     handleSwitchChain,
     initialized,
-    isSameChain
+    isSameChain,
   } = useActiveWeb3()
 
   const chains = useBaseStore(s => s.chainList)
-  const showConnect = useBaseStore(s => s.showConnect)
   const setShowConnect = useBaseStore(s => s.setShowConnect)
-  const currentWallet = useBaseStore(s => s.currentWallet)
   const setCurrentWallet = useBaseStore(s => s.setCurrentWallet)
 
   const setIsWalletConnecting = useAppStore(s => s.setIsWalletConnecting)
@@ -101,20 +67,17 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
 
   const { verifyTip } = useVerifyTip()
   const [isSignatureValid] = useSignatureValidStatus()
-  const [isQrCodeInvalid, setIsQrCodeInvalid] = useState(false)
 
   const { kycStatus } = useKycStatus()
   const pendingStep = usePendingStep()
 
+  const [walletSheetOpen, setWalletSheetOpen] = useState(false)
+
   const handleConnect = useCallback(
     async (connectorType: ConnectorType, wallet: WalletConfig) => {
       try {
-        setIsQrCodeInvalid(false)
         await rwaHandleConnect(connectorType, wallet)
       } catch (error) {
-        if (connectorType === ConnectorType.WalletConnect) {
-          setIsQrCodeInvalid(true)
-        }
       } finally {
         setIsWalletConnecting(false)
       }
@@ -156,24 +119,23 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         break
 
       case WalletStatus.WRONG_NETWORK:
-        
+        console.log('===>Enter WRONG_NETWORK')
         if (chains[0]) {
-          handleSwitchChain(chains[0].id)
-            .then(res => {
-              if (res) {
-                // window.location.reload()
-              } else {
-                toastError({
-                  title: t('switchNetwork', { network: networkText }),
-                })
-              }
-            })
+          handleSwitchChain(chains[0].id).then(res => {
+            if (res) {
+              // window.location.reload()
+            } else {
+              toastError({
+                title: t('switchNetwork', { network: networkText }),
+              })
+            }
+          })
         } else {
           toastError({
             title: t('switchNetwork', { network: networkText }),
           })
         }
-        
+
         // handleDisConnect()
         break
 
@@ -237,233 +199,66 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     await handleConnect(ConnectorType.WalletConnect, wallet)
   }
 
-  const goTo = (path: string) => {
-    setHoverOpen(false)
-    router.push(path)
-  }
-
-  const isShowingQrCode = connectorType === ConnectorType.WalletConnect
-
-  const dialogTitle =
-    isShowingQrCode && currentWallet ? (
-      <div className='flex items-center justify-center relative'>
-        <LazyImage
-          onClick={() => setConnectorType(undefined)}
-          className='w-6 h-6 absolute left-0 top-0 cursor-pointer'
-          src='/images/icons/back.png'
-        />
-        <span className='text-base font-semibold'>{currentWallet.info.name}</span>
-      </div>
-    ) : (
-      <span className='text-base font-semibold'>{t('Connect Wallet')}</span>
-    )
-
   return (
     <>
-      {(!account || !isSameChain) ? (
+      {!account || !isSameChain ? (
         <div
           className={cn(
-            'h-[36px] flex items-center px-6 bg-[#9CFF3A] text-sm font-medium rounded-[8px] cursor-pointer',
+            'bg-brand px-3 rounded-[8px] text-sm/4.5 font-medium h-9 flex items-center justify-center',
             props.connectBtnClassName
           )}
           onClick={() => {
-            setShowConnect(true)
-            setHoverOpen(false)
-            // toastTxSteps({duration: 100000, action: 'cancel', approveed: true})
-          }}
-          onMouseEnter={e => {
-            e.stopPropagation()
-            e.preventDefault()
-            setHoverOpen(false)
-          }}
-          onMouseOver={e => {
-            e.stopPropagation()
-            e.preventDefault()
+            const injectedWallet = wallets.find(w => w.detected)
+            if (!injectedWallet) {
+              toastError({ title: 'NO Injected Wallet' })
+              return
+            }
+            connectWallet(injectedWallet)
           }}
         >
           {t('Connect Wallet')}
         </div>
       ) : (
-        <HoverCard open={hoverOpen} onOpenChange={setHoverOpen}>
-          <HoverCardTrigger asChild>
-            <div className={cn(
-              'h-[36px] flex items-center px-2 py-1 bg-[#191B1E] text-sm font-semibold rounded-[8px] cursor-pointer text-white',
-              hoverOpen ? "bg-[#383A40]" : ""
-            )}>
-              {currentWallet?.info?.icon && (
-                <img src={currentWallet.info.icon} className='w-6 mr-2' />
-              )}
-              <div className='w-full h-full rounded-[6px] px-2 flex items-center justify-center'>
-                {shortenAddress(account)}
-              </div>
-            </div>
-          </HoverCardTrigger>
-
-          <HoverCardContent
-            align='end'
-            className='bg-[rgba(0,0,0,0)] w-[240px] border-none pt-2 -mr-[16px]'
-          >
-            <div
-              className='bg-[#131416] border border-[#232427] rounded-[8px] pt-2 text-white'
-            >
-              <div className='px-5 pb-2'>
-                <div className='flex items-center justify-between py-3'>
-                  <div className=' text-sm font-medium'>{shortenAddress(account)}</div>
-                  <CopyButton copyText={account} />
-                </div>
-
-                {/* <div className='py-3'>
-                  <div className='flex items-center'>
-                    <img src='/images/tokens/usdt.png' className='w-5 h-5' alt='' />
-                    <span className='text-[18px] font-semibold ml-2'>
-                      {formatTokenAmountWithCommas(
-                        usdtBalance?.balance ?? '0',
-                        usdtToken?.precision
-                      )}
-                    </span>
-                  </div>
-                  <div className='text-[#6C86AD] text-sm leading-6'>{t('Total USDT Balance')}</div>
-                </div> */}
-                <div
-                  className='flex items-center py-3 cursor-pointer'
-                  onClick={() => goTo('identity')}
-                >
-                  <div className={cn(
-                    ' flex items-center h-[23px] rounded-[4px] px-[6px] ',
-                    kycStatus === KYC_OVERALL_STATUS.VERIFIED && !pendingStep.step ? 'bg-[#25A750]' :
-                    (kycStatus === KYC_OVERALL_STATUS.ISSUE) ? 'bg-[#CA3F64]' : 'bg-[#FFB219]'
-                  )}>
-                    <img src={
-                      kycStatus === KYC_OVERALL_STATUS.VERIFIED ? '/images/v2/icons/verify.png' :
-                      (kycStatus === KYC_OVERALL_STATUS.ISSUE || pendingStep.step) ? '/images/v2/icons/issue.png' : '/images/v2/icons/unverify.png'
-                    } className='w-[20px] h-[14px]' alt='' />
-                    <span className='text-[12px] font-medium ml-1 text-black'>
-                      {!isSignatureValid ? t('identity.verifyID') : verifyTip || t('verified')}
-                    </span>
-                  </div>
-                  
-                </div>
-                <div
-                  className='flex items-center py-3 cursor-pointer'
-                  onClick={() => goTo('portfolio')}
-                >
-                  <img src='/images/v2/icons/assets.png' className='w-[16px] h-[16px]' alt='' />
-                  <span className='text-[14px] font-medium ml-2'>{t('v2.hd.h2')}</span>
-                </div>
-                <div
-                  className='flex items-center py-3 cursor-pointer'
-                  onClick={() => goTo('order')}
-                >
-                  <img src='/images/v2/icons/order.png' className='w-[16px] h-[16px]' alt='' />
-                  <span className='text-[14px] font-medium ml-2'>{t('v2.hd.h1')}</span>
-                </div>
-
-                
-              </div>
-
-              <Divide />
-
-              <div
-                className=' flex items-center justify-center py-3 cursor-pointer'
-                onClick={async () => {
-                  await handleDisConnect()
-                  toastError({
-                    title: t('walletDisconnect'),
-                  })
-                }}
-              >
-                <img src='/images/icons/disconnect.png' className='w-[14px] h-[14px]' alt='' />
-                <div className='ml-2 text-sm font-medium'>{t('Disconnect')}</div>
-              </div>
-            </div>
-          </HoverCardContent>
-        </HoverCard>
+        <button
+          type='button'
+          className='flex flex-row items-center gap-1 text-white text-sm/4.5 font-medium'
+          onClick={() => setWalletSheetOpen(true)}
+        >
+          <LazyImage src='/images/h5/bsc.svg' />
+          <span>{shortenAddress(account)}</span>
+          <span>chainID-{chainId}</span>
+          <LazyImage src='/images/h5/arrow-down.svg' />
+        </button>
       )}
 
-      <DialogController
-        open={showConnect}
-        openChange={open => {
-          setShowConnect(open)
-
-          if (!open) {
-            setTimeout(() => {
-              setConnectorType(undefined)
-            }, 500)
-          }
-        }}
-        title={dialogTitle}
-      >
-        <div className='rounded-[8px] pt-4 text-white w-[402px]'>
-          {connectorType === ConnectorType.WalletConnect ? (
-            <QrCodeView
-              refresh={() => handleConnect(ConnectorType.WalletConnect, currentWallet)}
-              currentWallet={currentWallet}
-              isQrCodeInvalid={isQrCodeInvalid}
-            />
-          ) : (
-            <div className='px-4'>
-              {wallets.map(wallet => (
-                <WalletItem
-                  key={wallet.info.name}
-                  wallet={wallet}
-                  onClick={() => connectWallet(wallet)}
-                />
-              ))}
+      <Dialog open={walletSheetOpen} onOpenChange={setWalletSheetOpen}>
+        <DialogContent
+          overlayClassName='bg-[#131416B2]'
+          className='left-0 bg-gray-900 gap-0 px-0 border border-gray-700  bottom-0 top-auto translate-x-0 translate-y-0 w-full min-w-0 rounded-t-[24px] rounded-b-none pb-[calc(env(safe-area-inset-bottom)+16px)] pt-0'
+          closeClassName='right-5 top-5'
+        >
+          <DialogTitle className='px-5 py-4 border-b border-b-gray-700 text-base/5 font-normal'>
+            {t('wallet')}
+          </DialogTitle>
+          <div className='flex flex-row items-center text-base/5 font-medium justify-between px-5 py-5'>
+            <div>{t('addr')}</div>
+            <div className='flex flex-row items-center gap-1'>
+              {shortenAddress(account!)}
+              <CopyButton copyText={account!} />
             </div>
-          )}
-        </div>
-      </DialogController>
-    </>
-  )
-}
-
-function QrCodeView({
-  isQrCodeInvalid,
-  currentWallet,
-  refresh,
-}: {
-  currentWallet: WalletConfig
-  isQrCodeInvalid: boolean
-  refresh: () => void
-}) {
-  const { t } = useTranslation()
-  const qrCodeData = useQrCodeData()
-
-  return (
-    <>
-      <div className='px-4'>
-        <div className='text-white items-center justify-center'>
-          <div className='relative m-auto w-[256px] h-[256px] border border-white/10 rounded-xl overflow-hidden flex items-center justify-center'>
-            {qrCodeData.dataUrl ? (
-              <img src={qrCodeData.dataUrl} className='w-full h-full' alt='' />
-            ) : isQrCodeInvalid ? (
-              <>
-                <QRCode value='connect error, qrcode invalide, please reconnect' size={256} />
-                <div className='w-full h-full absolute inset-0 bg-black/80 flex flex-row items-center justify-center'>
-                  <div className='relative w-[150px] flex flex-row items-center justify-center'>
-                    <button
-                      onClick={refresh}
-                      className='w-[62px] h-[62px] cursor-pointer bg-[#1D1D1D] rounded-lg disabled:cursor-not-allowed'
-                    >
-                      <LazyImage
-                        src='/images/icons/identity/refresh.png'
-                        className='w-[23px] h-7 m-auto'
-                      />
-                      <div className='absolute left-0 w-full bottom-[-30px] text-[10px] text-white'>
-                        <span className='text-base'>{t(`identity.face.fresh`)}</span>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              // <div className='ami-shimmer w-full h-full bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.6)_50%,transparent_100%)]'></div>
-              <CircleLoading />
-            )}
           </div>
-          <div className='text-base/6 text-center font-normal mt-4'>{t('scanCode')}</div>
-        </div>
-      </div>
+          <div
+            onClick={async () => {
+              await handleDisConnect()
+              setWalletSheetOpen(false)
+            }}
+            className='flex flex-row items-center justify-center py-4 gap-2'
+          >
+            <LazyImage src='/images/h5/disconnect.svg' />
+            <span className='text-base/4.5 font-medium'>{t('Disconnect')}</span>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

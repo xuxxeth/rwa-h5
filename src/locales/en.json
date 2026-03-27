@@ -7,6 +7,8 @@
   "pageError": "Page failed to load. Please try again",
   "Loading": "Loading...",
   "Connect Wallet": "Connect Wallet",
+  "wallet": "Wallet",
+  "addr": "Wallet Address",
   "Detected": "Detected",
   "Total USDT Balance": "Total USDT Balance",
   "My Assets": "My Portfolio",
