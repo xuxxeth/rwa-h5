@@ -17,16 +17,20 @@ export interface IH5DialogProps {
   trigger?: string | React.ReactNode,
   title?: string | React.ReactNode,
   children?: React.ReactNode
+  onClose?: () => void
+  onOpenChange?: (open: boolean) => void
 }
 
 
 export function H5Dialog({
   trigger,
   title,
-  children
+  children,
+  onClose,
+  onOpenChange
 }: IH5DialogProps) {
   return (
-    <Drawer>
+    <Drawer onOpenChange={(open) => onOpenChange?.(open)} onClose={() => onClose?.()}>
       <DrawerTrigger asChild>
         <div className=" cursor-pointer">{trigger}</div>
       </DrawerTrigger>

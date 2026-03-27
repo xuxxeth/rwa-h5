@@ -3,14 +3,12 @@ import { DatePicker, FormatStr } from '@/components/date-range-picker'
 import { DoctypeSelect } from '@/components/doctype-select'
 import { LazyImage } from '@/components/image/LazyImage'
 import { KycInput } from '@/components/input/KycInput'
-import { Select } from '@/components/select'
+import { SelectH5 } from '@/components/select/h5'
 import { Button } from '@/components/ui/button'
 import { usePersistentForm } from '@/hooks/usePersistentForm'
 import { useTranslation } from '@/hooks/useTranslation'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from '@/utils/tw'
-import { EmploymentSelect } from '@/components/employment-select'
-import { IncomeSelect } from '@/components/income-select'
 import { format } from 'date-fns/format'
 import storage from '@/utils/storage'
 import { KYC_UPLOAD_STORAGE_KEY } from './Upload/shared'
@@ -117,7 +115,7 @@ export const calcYearDate = function () {
   }
 }
 
-interface FormData {
+export interface BaseInfoFormData {
   // 基础信息
   firstName: string
   lastName: string
@@ -137,12 +135,6 @@ interface FormData {
   // 收信息
   source: number
   approvedProtocols: string[]
-  idCardFront?: string
-  idCardBack?: string
-  idCard?: string
-  passport?: string
-  addressCertification?: string
-  incomeCertifications?: string[]
 }
 
 export interface IBaseInfo {
@@ -173,6 +165,26 @@ const BaseInfo = memo(
       { value: '1', label: t('gender.male') },
       { value: '0', label: t('gender.female') },
     ]
+    const employmentList = [
+      { value: '1', label: t('employment.t1')},
+      { value: '2', label: t('employment.t2')},
+      { value: '3', label: t('employment.t3')},
+      { value: '4', label: t('employment.t4')},
+    ]
+    const incomeList = [
+      { value: '1', label: t('income.t1')},
+      { value: '2', label: t('income.t2')},
+      { value: '3', label: t('income.t3')},
+      { value: '4', label: t('income.t4')},
+      { value: '5', label: t('income.t5')},
+      { value: '6', label: t('income.t6')},
+      { value: '7', label: t('income.t7')},
+      { value: '8', label: t('income.t8')},
+      { value: '9', label: t('income.t9')},
+      { value: '10', label: t('income.t10')},
+      { value: '11', label: t('income.t11')},
+    ]
+
     const {
       register,
       handleSubmit,
@@ -181,7 +193,7 @@ const BaseInfo = memo(
       reset,
       clear,
       formState: { errors },
-    } = usePersistentForm<FormData>('kycBaseInfo', {
+    } = usePersistentForm<BaseInfoFormData>('kycBaseInfo', {
       firstName: userInfo?.basicInfo.firstName,
       lastName: '',
       fullName: '',
@@ -195,12 +207,6 @@ const BaseInfo = memo(
       useCertificateAddress: false,
       description: '',
       approvedProtocols: [],
-      idCardFront: '',
-      idCardBack: '',
-      idCard: '',
-      passport: '',
-      addressCertification: '',
-      incomeCertifications: [],
     })
     const firstName = watch('firstName')
     const lastName = watch('lastName')
@@ -222,7 +228,7 @@ const BaseInfo = memo(
 
     const [submiting, setSubmiting] = useState(false)
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = async (data: BaseInfoFormData) => {
       // 这里要再次判断一下dob，防止用户修改系统时间绕过前端校验
       const dobDate = parseISO(data.dob).getTime()
       if (dobDate < dateOptions.minDate || dobDate > dateOptions.maxDate) { 
@@ -247,11 +253,7 @@ const BaseInfo = memo(
           residentAddress: data.useCertificateAddress ? '' : data.residentAddress,
           useCertificateAddress: data.useCertificateAddress,
           files: {
-            idCardFront: data.type === 0 ? data.idCardFront || '' : '',
-            idCardBack: data.type === 0 ? data.idCardBack || '' : '',
-            idCard: data.type === 0 ? data.idCard || '' : '',
-            passport: data.type === 0 ? '' : data.passport || '',
-            addressCertification: data.addressCertification || '',
+            
           },
         },
         workInfo: {
@@ -262,7 +264,7 @@ const BaseInfo = memo(
           source: data.source || 1,
         },
         extraInfo: {
-          incomeCertifications: (data.incomeCertifications || []).filter(key => key),
+          incomeCertifications: [],
         },
         // approvedProtocols: [
         //   "AML-Policy-v3.0",
@@ -291,14 +293,16 @@ const BaseInfo = memo(
 
     useEffect(() => {
       if (userInfo && userInfo.basicInfo.firstName) {
+        const idinfo = { ...userInfo.idInfo, type: 1 }
         reset({
           ...userInfo.basicInfo,
-          ...userInfo.idInfo,
+          ...idinfo,
           ...userInfo.workInfo,
           ...userInfo.incomeInfo,
           ...userInfo.extraInfo,
           ...userInfo.idInfo.files,
           gendar: userInfo.basicInfo.gender,
+          
         })
       }
     }, [userInfo])
@@ -341,6 +345,9 @@ const BaseInfo = memo(
                         value: /^[a-zA-Z\u4e00-\u9fa5\s]+$/,
                         message: t('kyc.t64'),
                       },
+                      onChange: (e) => {
+                        setValue('firstName', e.target.value)
+                      }
                     })}
                   />
                   <ErrorBox error={errors.firstName?.message} />
@@ -428,10 +435,10 @@ const BaseInfo = memo(
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t7')} hide />
                 <InputBox>
-                  <Select
+                  <SelectH5
                     activeColor='#FFFFFF'
                     className='h-[38px] rounded-[4px]'
-                    placeholder={t('identity.select')}
+                    placeholder={t('identity.select') + t('kyc.t7')}
                     data={genderList}
                     defaultValue={String(gendar)}
                     onChange={data => {
@@ -562,17 +569,6 @@ const BaseInfo = memo(
             <div className=' grid grid-cols-1 font-normal'>
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t14')} hide />
-                {/* {type === 0 && (
-                  <div className='mt-3 flex gap-x-2 items-center mb-3'>
-                    <CheckBox
-                      checked={useCertificateAddress}
-                      onChange={v => {
-                        setValue('useCertificateAddress', v)
-                      }}
-                    />
-                    <div className='text-[rgba(255,255,255,0.6)] text-[14px]'>{t('kyc.t15')}</div>
-                  </div>
-                )} */}
                 <div className='text-[#9DA3AF] text-[14px] mt-2'>
                   {t('kyc.t68')}
                 </div>
@@ -611,10 +607,14 @@ const BaseInfo = memo(
                 <FormItemBox>
                   <FormItemLabel title={t('kyc.t17')} hide />
                   <InputBox>
-                    <EmploymentSelect
+                    <SelectH5
+                      activeColor='#FFFFFF'
+                      className='h-[38px] rounded-[4px]'
+                      placeholder={t('identity.select')}
+                      data={employmentList}
                       defaultValue={String(employment)}
                       onChange={data => {
-                        setValue('employment', Number(data.code))
+                        data && data.value && setValue('employment', Number(data.value))
                       }}
                     />
                   </InputBox>
@@ -657,10 +657,15 @@ const BaseInfo = memo(
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t22')} hide />
                 <InputBox>
-                  <IncomeSelect
+                  
+                  <SelectH5
+                    activeColor='#FFFFFF'
+                    className='h-[38px] rounded-[4px]'
+                    placeholder={t('identity.select')}
+                    data={incomeList}
                     defaultValue={String(source)}
                     onChange={data => {
-                      setValue('source', Number(data.code))
+                      data && data.value && setValue('source', Number(data.value))
                     }}
                   />
                 </InputBox>

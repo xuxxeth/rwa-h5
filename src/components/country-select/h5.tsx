@@ -77,6 +77,9 @@ const CountrySelectH5 = memo(
 
     return (
       <H5Dialog
+        onOpenChange={open => {
+          setOpen(open)
+        }}
         title={placeHolder}
         trigger={
           <div 
@@ -90,12 +93,16 @@ const CountrySelectH5 = memo(
               {currentCode ? (
                 <div className=" flex items-center gap-x-2 w-full">
                   
-                  <span className=" font-normal md:text-[14px]">{i18n.language === 'en' ? currentCountry.enName : currentCountry.zhName}</span>
+                  <span className=" font-normal text-[14px]">{i18n.language === 'en' ? currentCountry.enName : currentCountry.zhName}</span>
                 </div>
               ) : (
                 <span className="md:text-[14px] text-5">{placeHolder || 'Please select'} </span>
               )}
             </div>
+            <img src="/images/v2/icons/arrow-down.png" className={cn(
+              "w-[16px]",
+              open ? " rotate-180" : ""
+            )} />
           </div>
         }
       >

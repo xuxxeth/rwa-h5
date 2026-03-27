@@ -17,7 +17,7 @@ import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
 import {
   Text,
 } from './Upload/shared'
-import { retryRefresh, SectionBox, SectionTitle } from './BaseInfo'
+import { retryRefresh, SectionBox, SectionTitle, type BaseInfoFormData } from './BaseInfo'
 import { H5Dialog } from '@/components/dialog/H5Dialog'
 
 export const TitleWithTip = ({
@@ -51,25 +51,7 @@ export const TitleWithTip = ({
 }
 
 interface FormData {
-  // 基础信息
-  firstName: string
-  lastName: string
-  fullName: string
-  gendar: number // 0女，1男
-  dob: string // 出生日期
-  email: string
-  // 证件信息
-  type: number // 0身份证, 1护照
-  issueCountry: string
-  no: string
-  residentAddress: string
-  useCertificateAddress?: boolean // 是否使用证件地址
-  // 工作信息
-  employment: number // 就业情况
-  description: string // 就业 时 必填
-  // 收信息
-  source: number
-  approvedProtocols: string[]
+  
   idCardFront?: string
   idCardBack?: string
   idCard?: string
@@ -102,19 +84,7 @@ const ImageInfo = memo(
       clear,
       formState: { errors },
     } = usePersistentForm<FormData>('kycImageInfo', {
-      firstName: userInfo?.basicInfo.firstName,
-      lastName: '',
-      fullName: '',
-      gendar: 1,
-      email: '',
-      type: 1,
-      employment: 1,
-      source: 1,
-      issueCountry: 'CHN',
-      residentAddress: '',
-      useCertificateAddress: false,
-      description: '',
-      approvedProtocols: [],
+      
       idCardFront: '',
       idCardBack: '',
       idCard: '',
@@ -122,19 +92,24 @@ const ImageInfo = memo(
       addressCertification: '',
       incomeCertifications: [],
     })
-    const firstName = watch('firstName')
-    const lastName = watch('lastName')
-    const fullName = watch('fullName')
-    const email = watch('email')
-    const no = watch('no')
-    const type = watch('type')
-    const issueCountry = watch('issueCountry')
-    const gendar = watch('gendar')
-    const dob = watch('dob')
-    const useCertificateAddress = watch('useCertificateAddress')
-    const residentAddress = watch('residentAddress')
-    const employment = watch('employment')
-    const description = watch('description')
+    const {
+      watch: baseWatch,
+    } = usePersistentForm<BaseInfoFormData>('kycBaseInfo', {
+      
+    })
+    const firstName = baseWatch('firstName')
+    const lastName = baseWatch('lastName')
+    const fullName = baseWatch('fullName')
+    const email = baseWatch('email')
+    const no = baseWatch('no')
+    const type = baseWatch('type')
+    const issueCountry = baseWatch('issueCountry')
+    const gendar = baseWatch('gendar')
+    const dob = baseWatch('dob')
+    const useCertificateAddress = baseWatch('useCertificateAddress')
+    const residentAddress = baseWatch('residentAddress')
+    const employment = baseWatch('employment')
+    const description = baseWatch('description')
     const idCardFront = watch('idCardFront')
     const idCardBack = watch('idCardBack')
     const idCard = watch('idCard')
@@ -142,28 +117,28 @@ const ImageInfo = memo(
     const addressCertification = watch('addressCertification')
     const incomeCertifications = watch('incomeCertifications')
 
-    const source = watch('source')
+    const source = baseWatch('source')
 
     const preAccount = useRef<string | undefined>(undefined)
 
     const [submiting, setSubmiting] = useState(false)
 
     const onSubmit = useCallback(async (data: FormData) => {
-      if (type === 0) {
-        // 身份证，正反面都要传
-        if (!data.idCardFront) {
-          toastError({ title: t('kyc.t56') })
-          return
-        }
-        if (!data.idCardBack) {
-          toastError({ title: t('kyc.t57') })
-          return
-        }
-        if (!data.idCard) {
-          toastError({ title: t('kyc.t59') })
-          return
-        }
-      }
+      // if (type === 0) {
+      //   // 身份证，正反面都要传
+      //   if (!data.idCardFront) {
+      //     toastError({ title: t('kyc.t56') })
+      //     return
+      //   }
+      //   if (!data.idCardBack) {
+      //     toastError({ title: t('kyc.t57') })
+      //     return
+      //   }
+      //   if (!data.idCard) {
+      //     toastError({ title: t('kyc.t59') })
+      //     return
+      //   }
+      // }
       if (type === 1) {
         // 只判断护照
         if (!data.passport) {
@@ -216,7 +191,6 @@ const ImageInfo = memo(
         //   "Privacy-Agreement-v2.1"
         // ]
       }
-      console.log(params)
 
       if (submiting) return
       setSubmiting(true)
@@ -256,21 +230,6 @@ const ImageInfo = memo(
       employment,
       useCertificateAddress
     ])
-
-    useEffect(() => {
-      if (userInfo && userInfo.basicInfo.firstName) {
-        reset({
-          ...userInfo.basicInfo,
-          ...userInfo.idInfo,
-          ...userInfo.workInfo,
-          ...userInfo.incomeInfo,
-          ...userInfo.extraInfo,
-          ...userInfo.idInfo.files,
-          gendar: userInfo.basicInfo.gender,
-        })
-      }
-    }, [userInfo])
-
     useEffect(() => {
       if (account && preAccount.current && account !== preAccount.current) {
         clear()
