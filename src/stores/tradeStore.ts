@@ -20,6 +20,7 @@ export const useTradeStore = create<TradeStore>()(
       tradeType: TradeType.MARKET,
       sessionType: SessionType.PRE_MARKET_AND_AFTER_HOURS,
       slippage: DEFAULT_SLIPPAGE,
+      slippageDrawerOpen: false,
       isSignatureValid: false,
       txStep: 0,
       txError: '',
@@ -50,6 +51,9 @@ export const useTradeStore = create<TradeStore>()(
       },
       updateSlippage: (slippage: number) => {
         set({slippage})
+      },
+      setSlippageDrawerOpen: (open: boolean) => {
+        set({slippageDrawerOpen: open})
       },
       setIsSignatureValid: (valid: boolean) => {
         set({isSignatureValid: valid})

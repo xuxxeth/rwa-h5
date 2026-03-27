@@ -1,0 +1,34 @@
+import withIconColor from '../withIconColor'
+import type { SvgIconProps } from '../types'
+
+const Closed = ({ size, color, ...props }: SvgIconProps) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <rect width={18} height={18} rx={3} fill="#94A3B8" fillOpacity={0.1} />
+      <path
+        d="M13.2778 8.5H4.72222C4.04721 8.5 3.5 9.04721 3.5 9.72222V14C3.5 14.675 4.04721 15.2222 4.72222 15.2222H13.2778C13.9528 15.2222 14.5 14.675 14.5 14V9.72222C14.5 9.04721 13.9528 8.5 13.2778 8.5Z"
+        stroke="#94A3B8"
+        strokeWidth={1.35385}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.94446 8.5V6.05556C5.94446 5.24517 6.26638 4.46798 6.83941 3.89495C7.41244 3.32192 8.18963 3 9.00001 3C9.8104 3 10.5876 3.32192 11.1606 3.89495C11.7336 4.46798 12.0556 5.24517 12.0556 6.05556V8.5"
+        stroke="#94A3B8"
+        strokeWidth={1.35385}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+const Icon = withIconColor(Closed)
+export default Icon

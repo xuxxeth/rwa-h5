@@ -1,6 +1,6 @@
 import { cn, shortenAddress } from "@/utils";
 import { memo, useState } from "react";
-import { IconArrowDown } from "../icons/ArrowDown";
+import { IconArrowDown } from "../icons/ArrowDown.tsx";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
 import { useTradeStore } from "@/stores/tradeStore";
 import { LazyImage } from "../image/LazyImage";
@@ -66,7 +66,7 @@ export function StockDialog({
       <div className={cn(
         "flex items-center cursor-pointer py-[9px] shrink-0",
       )}
-        
+      
       >
         <LazyImage onClick={() => {if(inputToken && toggleEnable) { toggleFavorite(inputToken.stockId) }}} src={inputToken && isFavorite(inputToken.stockId) ? "/images/v2/icons/collected.png" : "/images/v2/icons/collect.png"} className={cn("w-4 h-4 mr-2",  !toggleEnable ? "cursor-not-allowed": '' )} />
         <div className="flex items-center"
@@ -77,7 +77,7 @@ export function StockDialog({
           <StockInfo inputToken={inputToken || undefined} />
           <IconArrowDown open={open} />
           {
-            inputToken?.state === 1 && 
+            inputToken?.state === 1 &&
               <IconWithTooltip
                 triggerClassName='ml-2'
                 icon='/images/v2/icons/trade_halt.svg'
@@ -94,10 +94,10 @@ export function StockDialog({
         title={t("Select a token")}
         open={tokenDialog.open}
         openChange={tokenDialog.setOpen}
-      > 
+      >
         <div>
           
-          <CTokenList 
+          <CTokenList
             onClick={(token) => {
               tokenDialog.hide()
               // updateInputToken(token)

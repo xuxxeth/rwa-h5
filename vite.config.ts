@@ -4,9 +4,17 @@ import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 import viteCompression from 'vite-plugin-compression'
 import svgr from 'vite-plugin-svgr'
-import { viteMockServe } from 'vite-plugin-mock'
+// import { viteMockServe } from 'vite-plugin-mock'
+import { resolve } from 'path'
+import process from 'node:process'
 // import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+const input: { main: string; icon?: string } = {
+  main: resolve(__dirname, 'index.html'),
+}
 
+if (process.env.NODE_ENV !== 'production') {
+  input.icon = resolve(__dirname, 'icon.html')
+}
 
 // https://vite.dev/config/
 // @ts-ignore
@@ -77,26 +85,32 @@ export default defineConfig(({ mode }) => {
       //     },
       //   }),
       svgr(),
-      viteMockServe({
-        mockPath: 'src/mocks',
-        enable: process.env.NODE_ENV === 'development',
-      }),
+      // viteMockServe({
+      //   mockPath: 'src/mocks',
+      //   enable: process.env.NODE_ENV === 'development',
+      // }),
     ],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
-    
     build: {
       assetsDir: 'static',
       rollupOptions: {
+        input,
         output: {
           manualChunks: {
             react: ['react', 'react-dom', 'react-router-dom'],
             'ca-common': ['ca-common-web'],
             'vendor-chart': ['@/lib/charting_library', 'recharts'], // TradingView 单独拆出来
-            'vendor-utils': [ 'axios', 'reconnecting-websocket', 'zustand', 'date-fns', 'react-day-picker']
+            'vendor-utils': [
+              'axios',
+              'reconnecting-websocket',
+              'zustand',
+              'date-fns',
+              'react-day-picker',
+            ],
           },
         },
       },

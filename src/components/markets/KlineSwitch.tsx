@@ -1,5 +1,5 @@
 import { memo, useState } from "react"
-import IconKline from "../icons/kline"
+import IconKline from "../icons/kline.tsx"
 
 const KlineSwitch = memo(
   ({ onChange }: { onChange?: (show: boolean) => void}) => {

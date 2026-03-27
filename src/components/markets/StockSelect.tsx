@@ -1,6 +1,6 @@
 import { cn } from "@/utils";
 import { memo, useState } from "react";
-import { IconArrowDown } from "../icons/ArrowDown";
+import { IconArrowDown } from "../icons/ArrowDown.tsx";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
 import { CTokenList } from "../ctoken-list";
 import { useTradeStore } from "@/stores/tradeStore";
@@ -56,21 +56,21 @@ export function StockSelect({
         <div className={cn(
           "flex items-center cursor-pointer",
         )}
-          
+        
         >
           <StockInfo inputToken={inputToken || undefined} />
           <IconArrowDown open={open} />
         </div>
       </HoverCardTrigger>
-       <HoverCardContent align="start" 
+       <HoverCardContent align="start"
           className="bg-[rgba(0,0,0,0)] w-[190px] border-none pt-3 -ml-[16px]"
        >
-        <div 
+        <div
           className="bg-[#131823] rounded-[8px] text-white relative w-full min-w-[470px] p-4"
           style={{boxShadow: '0px 5px 15px 0px rgba(0,0,0,0.25)'}}
         >
           <div className="h-[60px] w-[170px] absolute left-0 -top-[60px] bg-[rgba(0,0,0,0)]"></div>
-          <CTokenList 
+          <CTokenList
             from="StockSelect"
             onClick={(token) => {
               updateInputToken(token)

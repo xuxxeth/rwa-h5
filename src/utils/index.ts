@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 export * from './tw'
 export * from './sort'
 export * from './format'
+export * from './regex'
 
 export function shortenAddress(address: string, startLength = 4, endLength = 4): string {
   if (!address) return ''

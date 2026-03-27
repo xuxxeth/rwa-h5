@@ -16,7 +16,7 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
+.idea/mcp.json
 *.suo
 *.ntvs*
 *.njsproj
@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 /src/mocks
+/.continue/
+/localbuild/

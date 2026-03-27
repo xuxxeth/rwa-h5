@@ -16,7 +16,7 @@ import { useWssStore } from "@/stores/wssStore";
 import { DialogController, useShowDialog } from "@/components/dialog/DialogController";
 import { OrderList } from "@/components/markets/OrderList";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
-import IconOrder from "@/components/icons/order";
+import IconOrder from "@/components/icons/order.tsx";
 
 const FAQ = lazy(() => import("../../components/markets/FAQ"));
 
@@ -54,7 +54,7 @@ function LiteTrade() {
             <div className="w-[580px]">
               <BoxCard className="min-h-[600px] rounded-[32px] p-6 bg-[rgba(255,255,255,0.0)]">
                 {
-                  showKline ? <KlineBody /> : <InvestBody /> 
+                  showKline ? <KlineBody /> : <InvestBody />
                 }
                 
               </BoxCard>
@@ -110,7 +110,7 @@ function LiteTrade() {
         title={'订单确认'}
         open={orderDialog.open}
         openChange={orderDialog.setOpen}
-      > 
+      >
         <OrderList show={orderDialog.open} onClose={() => {
           orderDialog.setOpen(false)
           signature()
