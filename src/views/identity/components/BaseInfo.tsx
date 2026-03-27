@@ -1,23 +1,18 @@
-import { CheckBox, CheckBoxBySVG } from '@/components/check-box'
-import { CountrySelect } from '@/components/country-select'
+import { CountrySelectH5 } from '@/components/country-select/h5'
 import { DatePicker, FormatStr } from '@/components/date-range-picker'
 import { DoctypeSelect } from '@/components/doctype-select'
 import { LazyImage } from '@/components/image/LazyImage'
 import { KycInput } from '@/components/input/KycInput'
-import { Select } from '@/components/select'
+import { SelectH5 } from '@/components/select/h5'
 import { Button } from '@/components/ui/button'
 import { usePersistentForm } from '@/hooks/usePersistentForm'
 import { useTranslation } from '@/hooks/useTranslation'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
-import { Upload } from './Upload'
 import { cn } from '@/utils/tw'
-import { EmploymentSelect } from '@/components/employment-select'
-import { IncomeSelect } from '@/components/income-select'
 import { format } from 'date-fns/format'
 import storage from '@/utils/storage'
 import { KYC_UPLOAD_STORAGE_KEY } from './Upload/shared'
 import { useToast } from '@/hooks/useToast'
-import { kycApi } from '@/service/kyc/api'
 import type { IKycDetail, IKycSubmitData } from '@/service/kyc/types'
 import { RESPONSE_CODE } from '@/config/constants'
 import type { ApiResponse } from '@/service/client'
@@ -25,9 +20,7 @@ import { WarningInfo } from './WarningInfo'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
 import { parseISO } from 'date-fns'
-import {
-  Text,
-} from './Upload/shared'
+
 
 export async function retryRefresh(
   refresh: () => Promise<ApiResponse<IKycDetail>>,
@@ -122,7 +115,7 @@ export const calcYearDate = function () {
   }
 }
 
-interface FormData {
+export interface BaseInfoFormData {
   // 基础信息
   firstName: string
   lastName: string
@@ -142,12 +135,14 @@ interface FormData {
   // 收信息
   source: number
   approvedProtocols: string[]
-  idCardFront?: string
-  idCardBack?: string
-  idCard?: string
-  passport?: string
-  addressCertification?: string
-  incomeCertifications?: string[]
+}
+
+export interface IBaseInfo {
+  rejectReason?: string
+  userInfo?: IKycSubmitData
+  refresh?: () => Promise<ApiResponse<IKycDetail>>
+  onResetRetry?: () => void
+  next?: () => void
 }
 
 const BaseInfo = memo(
@@ -156,12 +151,8 @@ const BaseInfo = memo(
     userInfo,
     refresh,
     onResetRetry,
-  }: {
-    rejectReason?: string
-    userInfo?: IKycSubmitData
-    refresh?: () => Promise<ApiResponse<IKycDetail>>
-    onResetRetry?: () => void
-  }) => {
+    next
+  }: IBaseInfo) => {
     const { t } = useTranslation()
     const { account } = useActiveWeb3()
     const { toastSuccess, toastError } = useToast()
@@ -174,6 +165,26 @@ const BaseInfo = memo(
       { value: '1', label: t('gender.male') },
       { value: '0', label: t('gender.female') },
     ]
+    const employmentList = [
+      { value: '1', label: t('employment.t1')},
+      { value: '2', label: t('employment.t2')},
+      { value: '3', label: t('employment.t3')},
+      { value: '4', label: t('employment.t4')},
+    ]
+    const incomeList = [
+      { value: '1', label: t('income.t1')},
+      { value: '2', label: t('income.t2')},
+      { value: '3', label: t('income.t3')},
+      { value: '4', label: t('income.t4')},
+      { value: '5', label: t('income.t5')},
+      { value: '6', label: t('income.t6')},
+      { value: '7', label: t('income.t7')},
+      { value: '8', label: t('income.t8')},
+      { value: '9', label: t('income.t9')},
+      { value: '10', label: t('income.t10')},
+      { value: '11', label: t('income.t11')},
+    ]
+
     const {
       register,
       handleSubmit,
@@ -182,7 +193,7 @@ const BaseInfo = memo(
       reset,
       clear,
       formState: { errors },
-    } = usePersistentForm<FormData>('kycBaseInfo', {
+    } = usePersistentForm<BaseInfoFormData>('kycBaseInfo', {
       firstName: userInfo?.basicInfo.firstName,
       lastName: '',
       fullName: '',
@@ -196,12 +207,6 @@ const BaseInfo = memo(
       useCertificateAddress: false,
       description: '',
       approvedProtocols: [],
-      idCardFront: '',
-      idCardBack: '',
-      idCard: '',
-      passport: '',
-      addressCertification: '',
-      incomeCertifications: [],
     })
     const firstName = watch('firstName')
     const lastName = watch('lastName')
@@ -216,12 +221,6 @@ const BaseInfo = memo(
     const residentAddress = watch('residentAddress')
     const employment = watch('employment')
     const description = watch('description')
-    const idCardFront = watch('idCardFront')
-    const idCardBack = watch('idCardBack')
-    const idCard = watch('idCard')
-    const passport = watch('passport')
-    const addressCertification = watch('addressCertification')
-    const incomeCertifications = watch('incomeCertifications')
 
     const source = watch('source')
 
@@ -229,34 +228,7 @@ const BaseInfo = memo(
 
     const [submiting, setSubmiting] = useState(false)
 
-    const onSubmit = async (data: FormData) => {
-      if (type === 0) {
-        // 身份证，正反面都要传
-        if (!data.idCardFront) {
-          toastError({ title: t('kyc.t56') })
-          return
-        }
-        if (!data.idCardBack) {
-          toastError({ title: t('kyc.t57') })
-          return
-        }
-        if (!data.idCard) {
-          toastError({ title: t('kyc.t59') })
-          return
-        }
-      }
-      if (type === 1) {
-        // 只判断护照
-        if (!data.passport) {
-          toastError({ title: t('kyc.t58') })
-          return
-        }
-      }
-      // 无地址证明
-      if (!useCertificateAddress && !data.addressCertification) {
-        toastError({ title: t('kyc.t61') })
-        return
-      }
+    const onSubmit = async (data: BaseInfoFormData) => {
       // 这里要再次判断一下dob，防止用户修改系统时间绕过前端校验
       const dobDate = parseISO(data.dob).getTime()
       if (dobDate < dateOptions.minDate || dobDate > dateOptions.maxDate) { 
@@ -281,11 +253,7 @@ const BaseInfo = memo(
           residentAddress: data.useCertificateAddress ? '' : data.residentAddress,
           useCertificateAddress: data.useCertificateAddress,
           files: {
-            idCardFront: data.type === 0 ? data.idCardFront || '' : '',
-            idCardBack: data.type === 0 ? data.idCardBack || '' : '',
-            idCard: data.type === 0 ? data.idCard || '' : '',
-            passport: data.type === 0 ? '' : data.passport || '',
-            addressCertification: data.addressCertification || '',
+            
           },
         },
         workInfo: {
@@ -296,7 +264,7 @@ const BaseInfo = memo(
           source: data.source || 1,
         },
         extraInfo: {
-          incomeCertifications: (data.incomeCertifications || []).filter(key => key),
+          incomeCertifications: [],
         },
         // approvedProtocols: [
         //   "AML-Policy-v3.0",
@@ -304,29 +272,7 @@ const BaseInfo = memo(
         // ]
       }
       console.log(params)
-
-      if (submiting) return
-      setSubmiting(true)
-      const res = await kycApi.submitKyc(params)
-
-      if (res?.code === RESPONSE_CODE.SUCCESS) {
-        if (refresh) {
-          const detailRes = await retryRefresh(refresh)
-          setSubmiting(false)
-          
-          if (detailRes.code === RESPONSE_CODE.SUCCESS && detailRes.data?.overallStatus) {
-            // toastSuccess({ title: '提交成功' })
-            clear()
-          }
-        } else {
-          // toastSuccess({ title: '提交成功' })
-          clear()
-          setSubmiting(false)
-        }
-      } else {
-        toastError({ title: res?.message || 'Error' })
-        setSubmiting(false)
-      }
+      next?.()
     }
     const dobRef = useRef(dob)
     const dobInitRef = useRef(false)
@@ -343,18 +289,20 @@ const BaseInfo = memo(
           setValue('dob', dobRef.current || format(dateOptions.maxDate, FormatStr))
         }, 500)
       }
-    }, [dob])
+    }, [dob,])
 
     useEffect(() => {
       if (userInfo && userInfo.basicInfo.firstName) {
+        const idinfo = { ...userInfo.idInfo, type: 1 }
         reset({
           ...userInfo.basicInfo,
-          ...userInfo.idInfo,
+          ...idinfo,
           ...userInfo.workInfo,
           ...userInfo.incomeInfo,
           ...userInfo.extraInfo,
           ...userInfo.idInfo.files,
           gendar: userInfo.basicInfo.gender,
+          
         })
       }
     }, [userInfo])
@@ -373,11 +321,12 @@ const BaseInfo = memo(
 
     return (
       <>
+        
         {rejectReason && <WarningInfo text={rejectReason} />}
         <form onSubmit={handleSubmit(onSubmit)} className='w-full mt-2'>
           <SectionBox>
             <SectionTitle>{t('kyc.t2')}</SectionTitle>
-            <div className=' grid grid-cols-4 font-normal gap-x-6'>
+            <div className=' grid grid-cols-2 font-normal gap-x-6'>
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t3')} hide />
                 <InputBox>
@@ -396,6 +345,9 @@ const BaseInfo = memo(
                         value: /^[a-zA-Z\u4e00-\u9fa5\s]+$/,
                         message: t('kyc.t64'),
                       },
+                      onChange: (e) => {
+                        setValue('firstName', e.target.value)
+                      }
                     })}
                   />
                   <ErrorBox error={errors.firstName?.message} />
@@ -478,15 +430,15 @@ const BaseInfo = memo(
                 </FormItemBox>
               </div>
             </div>
-            <div className=' grid grid-cols-3 font-normal gap-x-6'>
+            <div className=' grid grid-cols-2 font-normal gap-x-6'>
               {/* 性别 */}
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t7')} hide />
                 <InputBox>
-                  <Select
+                  <SelectH5
                     activeColor='#FFFFFF'
                     className='h-[38px] rounded-[4px]'
-                    placeholder={t('identity.select')}
+                    placeholder={t('identity.select') + t('kyc.t7')}
                     data={genderList}
                     defaultValue={String(gendar)}
                     onChange={data => {
@@ -517,6 +469,7 @@ const BaseInfo = memo(
                   </div>
                 </InputBox>
               </FormItemBox>
+              <div className=' col-span-2'>
               {/* 邮箱 */}
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t9')} hide />
@@ -548,11 +501,12 @@ const BaseInfo = memo(
                   <ErrorBox error={errors.email?.message} />
                 </InputBox>
               </FormItemBox>
+              </div>
             </div>
           </SectionBox>
           <SectionBox>
             <SectionTitle>{t('kyc.t10')}</SectionTitle>
-            <div className=' grid grid-cols-3 font-normal gap-x-6'>
+            <div className=' grid grid-cols-2 font-normal gap-x-6'>
               {/* 证件类型 */}
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t11')} hide />
@@ -571,8 +525,8 @@ const BaseInfo = memo(
                 <FormItemLabel title={t('kyc.t12')} hide />
                 {/* 证件签发国 */}
                 <InputBox>
-                  <CountrySelect
-                    placeHolder={t('kyc.t28')}
+                  <CountrySelectH5
+                    placeHolder={t('kyc.t12')}
                     defaultValue={issueCountry}
                     onChange={data => {
                       setValue('issueCountry', data.code)
@@ -583,6 +537,7 @@ const BaseInfo = memo(
                   />
                 </InputBox>
               </FormItemBox>
+              <div className=' col-span-2'>
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t13')} hide />
                 {/* 证件号码 */}
@@ -608,22 +563,12 @@ const BaseInfo = memo(
                   <ErrorBox error={errors.no?.message} />
                 </InputBox>
               </FormItemBox>
+              </div>
             </div>
 
             <div className=' grid grid-cols-1 font-normal'>
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t14')} hide />
-                {/* {type === 0 && (
-                  <div className='mt-3 flex gap-x-2 items-center mb-3'>
-                    <CheckBox
-                      checked={useCertificateAddress}
-                      onChange={v => {
-                        setValue('useCertificateAddress', v)
-                      }}
-                    />
-                    <div className='text-[rgba(255,255,255,0.6)] text-[14px]'>{t('kyc.t15')}</div>
-                  </div>
-                )} */}
                 <div className='text-[#9DA3AF] text-[14px] mt-2'>
                   {t('kyc.t68')}
                 </div>
@@ -654,61 +599,27 @@ const BaseInfo = memo(
             </div>
           </SectionBox>
 
-          <SectionBox className='pb-5'>
-            <div className=' flex items-center mb-5'>
-              <SectionTitle>{t('identity.upload.uploadId')}</SectionTitle>
-              <span className='text-[#CA3F64] ml-1 flex items-center'>*</span>
-            </div>
-
-            {/* 上传证件 */}
-            <Upload
-              type={'passport'}
-              keys={type === 1 ? passport : [idCardFront || '', idCardBack || '', idCard || '']}
-
-              onChanged={keys => {
-                setValue('passport', keys as string)
-                // if (type === 1) {
-                //   setValue('passport', keys as string)
-                // } else {
-                //   setValue('idCardFront', keys[0])
-                //   setValue('idCardBack', keys[1])
-                //   setValue('idCard', keys[2])
-                // }
-              }}
-            />
-          </SectionBox>
-          <SectionBox className='pb-5'>
-            {/* 上传地址证明 */}
-            <div className=' flex items-center mb-5'>
-              <SectionTitle>{t('identity.upload.uploadAddr')}</SectionTitle>
-              {
-                !useCertificateAddress && <span className='text-[#CA3F64] ml-1 flex items-center'>*</span>
-              }
-              
-            </div>
-            <Upload
-              type='address'
-              keys={addressCertification}
-              onChanged={keys => {
-                setValue('addressCertification', keys as string)
-              }}
-            />
-          </SectionBox>
           <SectionBox>
             <SectionTitle>{t('kyc.t16')}</SectionTitle>
-            <div className=' grid grid-cols-3 font-normal gap-x-6'>
+            <div className=' grid grid-cols-2 font-normal gap-x-6'>
               {/* 就业状况 */}
-              <FormItemBox>
-                <FormItemLabel title={t('kyc.t17')} hide />
-                <InputBox>
-                  <EmploymentSelect
-                    defaultValue={String(employment)}
-                    onChange={data => {
-                      setValue('employment', Number(data.code))
-                    }}
-                  />
-                </InputBox>
-              </FormItemBox>
+              <div className=' col-span-2'>
+                <FormItemBox>
+                  <FormItemLabel title={t('kyc.t17')} hide />
+                  <InputBox>
+                    <SelectH5
+                      activeColor='#FFFFFF'
+                      className='h-[38px] rounded-[4px]'
+                      placeholder={t('identity.select')}
+                      data={employmentList}
+                      defaultValue={String(employment)}
+                      onChange={data => {
+                        data && data.value && setValue('employment', Number(data.value))
+                      }}
+                    />
+                  </InputBox>
+                </FormItemBox>
+              </div>
               <div className=' col-span-2'>
                 {employment === 4 && (
                   <FormItemBox>
@@ -741,55 +652,32 @@ const BaseInfo = memo(
           </SectionBox>
           <SectionBox>
             <SectionTitle>{t('kyc.t21')}</SectionTitle>
-            <div className=' grid grid-cols-2 font-normal gap-x-6'>
+            <div className=' grid grid-cols-1 font-normal gap-x-6'>
               {/* 收入类型 */}
               <FormItemBox>
                 <FormItemLabel title={t('kyc.t22')} hide />
                 <InputBox>
-                  <IncomeSelect
+                  
+                  <SelectH5
+                    activeColor='#FFFFFF'
+                    className='h-[38px] rounded-[4px]'
+                    placeholder={t('identity.select')}
+                    data={incomeList}
                     defaultValue={String(source)}
                     onChange={data => {
-                      setValue('source', Number(data.code))
+                      data && data.value && setValue('source', Number(data.value))
                     }}
                   />
                 </InputBox>
               </FormItemBox>
             </div>
           </SectionBox>
-          <SectionBox>
-            <SectionTitle>{t('kyc.t19')}</SectionTitle>
-            
-            <div className="my-5">
-              <Text text='uploadIncome' className=' text-[#9DA3AF]' />
-              <Text text='extraTips' className='text-sm mt-2' />
-            </div>
-            <Upload
-              type='extra'
-              keys={incomeCertifications}
-              onChanged={keys => {
-                // const _keys = (keys as string[]).filter(key => key)
-                setValue('incomeCertifications', keys as string[])
-              }}
-            />
-            <div className='h-2'></div>
-          </SectionBox>
-          <div className='flex items-center text-base text-[#909090] py-3'>
+          <div className='flex items-center text-base text-[#909090] py-3 px-6'>
             <span className='text-[#CA3F64] mr-1 flex items-center'>*</span>
             {t('kyc.t20')}
           </div>
-          {/* <div className='mt-8 flex gap-x-2 items-start'>
-            <div className=' shrink-0 relative top-[2px]'>
-              <CheckBox />
-            </div>
-            <div className='text-[rgba(255,255,255,0.6)] text-[16px]'>
-              {t('identity.aggree1')}
-              <a href='' target='_blank' className='text-[rgba(26,133,255,1)]'>
-                {t('identity.aggree3')}
-              </a>
-              {t('identity.aggree2')}
-            </div>
-          </div> */}
-          <div className='flex justify-center mt-8'>
+          
+          <div className='flex justify-center mt-8 px-6'>
             <Button
               disabled={submiting}
               loading={submiting}

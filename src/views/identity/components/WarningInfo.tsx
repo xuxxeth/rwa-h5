@@ -11,8 +11,8 @@ const WarningInfo = memo(
     const { t } = useTranslation()
     
     return (
-      <div className="bg-[#361604] min-h-[48px] rounded-[4px] flex text-white font-normal text-[16px] px-5 py-3">
-        <LazyImage src="/images/kyc/warning.png" className="w-6 h-6 mr-[2px]" />
+      <div className="bg-[#361604] min-h-[48px] rounded-[4px] flex text-white font-normal text-[14px] px-6 py-3">
+        <LazyImage src="/images/kyc/warning.png" className="w-5 h-5 mr-[2px]" />
         {text || t('kyc.t1')}
       </div>
     )
