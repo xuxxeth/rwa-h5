@@ -1,18 +1,9 @@
-import { CountrySelect } from '@/components/country-select'
-import { DatePicker, FormatStr } from '@/components/date-range-picker'
-import { DoctypeSelect } from '@/components/doctype-select'
-import { LazyImage } from '@/components/image/LazyImage'
-import { KycInput } from '@/components/input/KycInput'
-import { Select } from '@/components/select'
 import { Button } from '@/components/ui/button'
 import { usePersistentForm } from '@/hooks/usePersistentForm'
 import { useTranslation } from '@/hooks/useTranslation'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Upload } from './Upload'
-import { cn } from '@/utils/tw'
-import { EmploymentSelect } from '@/components/employment-select'
-import { IncomeSelect } from '@/components/income-select'
-import { format } from 'date-fns/format'
+
 import storage from '@/utils/storage'
 import { KYC_UPLOAD_STORAGE_KEY } from './Upload/shared'
 import { useToast } from '@/hooks/useToast'
@@ -23,27 +14,40 @@ import type { ApiResponse } from '@/service/client'
 import { WarningInfo } from './WarningInfo'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
-import { parseISO } from 'date-fns'
 import {
   Text,
 } from './Upload/shared'
-import { FormItemBox, FormItemLabel, InputBox, retryRefresh, SectionBox, SectionTitle } from './BaseInfo'
+import { retryRefresh, SectionBox, SectionTitle } from './BaseInfo'
+import { H5Dialog } from '@/components/dialog/H5Dialog'
 
-
-export const calcYearDate = function () {
-  const now = new Date()
-
-  // 计算最小日期（65岁 —— 最早生日）
-  const minDate = new Date(now.getFullYear() - 65, now.getMonth(), now.getDate()).getTime()
-
-  // 计算最大日期（18岁 —— 最晚生日）
-  const maxDate = new Date(now.getFullYear() - 18, now.getMonth(), now.getDate() - 1).getTime()
-
-  return {
-    minDate,
-    maxDate,
-    defaultDate: maxDate,
-  }
+export const TitleWithTip = ({
+  title,
+  tip,
+  required = true
+}: {
+  title: string
+  tip?: string | React.ReactNode
+  required?: boolean
+}) => {
+  return (
+    <H5Dialog 
+      trigger={
+        <div className=' flex items-center gap-x-1'>
+          {
+            required && <span className='text-[#CA3F64] flex items-center'>*</span>
+          }
+          
+          <SectionTitle>{title}</SectionTitle>
+          <img src="/images/h5/icons/info.png" className='w-[14px] h-[14px]' alt="" />
+        </div>
+      }
+      title={title}
+    >
+      <div className='px-6 py-5 text-[16px]'>
+        {tip}
+      </div>
+    </H5Dialog>
+  )
 }
 
 interface FormData {
@@ -89,15 +93,6 @@ const ImageInfo = memo(
     const { t } = useTranslation()
     const { account } = useActiveWeb3()
     const { toastSuccess, toastError } = useToast()
-    const [dateOptions, setDateOptions] = useState({
-      minDate: 0,
-      maxDate: 0,
-      defaultDate: 0,
-    })
-    const genderList = [
-      { value: '1', label: t('gender.male') },
-      { value: '0', label: t('gender.female') },
-    ]
     const {
       register,
       handleSubmit,
@@ -153,7 +148,7 @@ const ImageInfo = memo(
 
     const [submiting, setSubmiting] = useState(false)
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = useCallback(async (data: FormData) => {
       if (type === 0) {
         // 身份证，正反面都要传
         if (!data.idCardFront) {
@@ -181,43 +176,37 @@ const ImageInfo = memo(
         toastError({ title: t('kyc.t61') })
         return
       }
-      // 这里要再次判断一下dob，防止用户修改系统时间绕过前端校验
-      const dobDate = parseISO(data.dob).getTime()
-      if (dobDate < dateOptions.minDate || dobDate > dateOptions.maxDate) { 
-        toastError({ title: t('kyc.t67') })
-        return
-      }
 
       const params: IKycSubmitData = {
         type: 1,
         basicInfo: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          fullName: data.fullName,
-          gender: data.gendar,
-          dob: data.dob,
-          email: data.email,
+          firstName: firstName,
+          lastName: lastName,
+          fullName: fullName,
+          gender:  gendar,
+          dob: dob,
+          email: email,
         },
         idInfo: {
-          type: data.type,
-          issueCountry: data.issueCountry,
-          no: data.no,
-          residentAddress: data.useCertificateAddress ? '' : data.residentAddress,
-          useCertificateAddress: data.useCertificateAddress,
+          type: type,
+          issueCountry: issueCountry,
+          no: no,
+          residentAddress: useCertificateAddress ? '' : residentAddress,
+          useCertificateAddress: useCertificateAddress,
           files: {
-            idCardFront: data.type === 0 ? data.idCardFront || '' : '',
-            idCardBack: data.type === 0 ? data.idCardBack || '' : '',
-            idCard: data.type === 0 ? data.idCard || '' : '',
-            passport: data.type === 0 ? '' : data.passport || '',
+            idCardFront: type === 0 ? data.idCardFront || '' : '',
+            idCardBack: type === 0 ? data.idCardBack || '' : '',
+            idCard: type === 0 ? data.idCard || '' : '',
+            passport: type === 0 ? '' : data.passport || '',
             addressCertification: data.addressCertification || '',
           },
         },
         workInfo: {
-          employment: data.employment,
-          description: data.employment === 4 ? data.description : '',
+          employment: employment ,
+          description: employment === 4 ? description : '',
         },
         incomeInfo: {
-          source: data.source || 1,
+          source: source || 1,
         },
         extraInfo: {
           incomeCertifications: (data.incomeCertifications || []).filter(key => key),
@@ -251,23 +240,22 @@ const ImageInfo = memo(
         toastError({ title: res?.message || 'Error' })
         setSubmiting(false)
       }
-    }
-    const dobRef = useRef(dob)
-    const dobInitRef = useRef(false)
-
-    useEffect(() => {
-      dobRef.current = dob // 每次更新时同步
-    }, [dob])
-    useEffect(() => {
-      const dateOptions = calcYearDate()
-      setDateOptions(dateOptions)
-      if (!dobInitRef.current) {
-        dobInitRef.current = true
-        setTimeout(() => {
-          setValue('dob', dobRef.current || format(dateOptions.maxDate, FormatStr))
-        }, 500)
-      }
-    }, [dob])
+    }, [
+      firstName,
+      lastName,
+      fullName,
+      gendar,
+      dob,
+      email,
+      type,
+      issueCountry,
+      no,
+      residentAddress,
+      description,
+      source,
+      employment,
+      useCertificateAddress
+    ])
 
     useEffect(() => {
       if (userInfo && userInfo.basicInfo.firstName) {
@@ -300,9 +288,8 @@ const ImageInfo = memo(
         {rejectReason && <WarningInfo text={rejectReason} />}
         <form onSubmit={handleSubmit(onSubmit)} className='w-full mt-2'>
           <SectionBox className='pb-5'>
-            <div className=' flex items-center mb-5'>
-              <SectionTitle>{t('identity.upload.uploadId')}</SectionTitle>
-              <span className='text-[#CA3F64] ml-1 flex items-center'>*</span>
+            <div className='mb-5'>
+              <TitleWithTip title={t('identity.upload.uploadId')} tip={t('identity.upload.passportTips')} />
             </div>
 
             {/* 上传证件 */}
@@ -325,10 +312,37 @@ const ImageInfo = memo(
           <SectionBox className='pb-5'>
             {/* 上传地址证明 */}
             <div className=' flex items-center mb-5'>
-              <SectionTitle>{t('identity.upload.uploadAddr')}</SectionTitle>
-              {
-                !useCertificateAddress && <span className='text-[#CA3F64] ml-1 flex items-center'>*</span>
-              }
+              
+              <div className='mb-5'>
+                <TitleWithTip title={t('identity.upload.uploadAddr')} tip={
+                  <div>
+                    <Text text='validAddrInc' className='mb-1 text-white text-[16px]' />
+                    <ul className='list-disc pl-3.5'>
+                      {['addr2', 'addr3', 'addr4', 'addr5', 'addr6', 'addr7'].map(item => (
+                        <li key={item}>
+                          <Text text={item} className='text-[16px] text-white' />
+                        </li>
+                      ))}
+                    </ul>
+                    <Text text='addrEnsure' className='text-white text-[16px] mb-1 mt-2' />
+                    <ul className='list-disc pl-3.5'>
+                      {['ensure1', 'ensure2', 'ensure3', 'ensure4', 'ensure5'].map(item => (
+                        <li key={item}>
+                          <Text text={item} className='text-[16px] text-white' />
+                        </li>
+                      ))}
+                    </ul>
+                    <Text text='addrNote' className='text-white text-[16px] mb-1 mt-2' />
+                    <ul className='list-disc pl-3.5'>
+                      {['note1', 'note2'].map(item => (
+                        <li key={item}>
+                          <Text text={item} className='text-[16px] text-white' />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                } />
+              </div>
               
             </div>
             <Upload
@@ -340,12 +354,10 @@ const ImageInfo = memo(
             />
           </SectionBox>
           <SectionBox>
-            <SectionTitle>{t('kyc.t19')}</SectionTitle>
-            
-            <div className="my-5">
-              <Text text='uploadIncome' className=' text-[#9DA3AF]' />
-              <Text text='extraTips' className='text-sm mt-2' />
+            <div className='mb-5'>
+              <TitleWithTip title={t('identity.upload.uploadIncome')} tip={t('identity.upload.extraTips')} required={false} />
             </div>
+            
             <Upload
               type='extra'
               keys={incomeCertifications}

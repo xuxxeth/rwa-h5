@@ -194,7 +194,7 @@ function Identity({ account }: { account: string }) {
           <BaseInfoWrap
             refresh={refresh}
             userInfo={kycDetail.userInfo}
-            rejectReason={kycDetail.rejectReason || 'kycDetail.rejectReason'}
+            rejectReason={kycDetail.rejectReason}
           />
         ),
       },
