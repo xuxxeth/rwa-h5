@@ -16,7 +16,7 @@ import { MARKET_STATUS } from '@/config/constants'
 import { ConnectButtonText } from '@/components/button/ConnectButtonText'
 import SignButton from '@/components/button/SignButton'
 import { TradeType } from '@/hooks/useCaCommon'
-import { parseAmount, truncateUP, formatTokenAmountWithCommas } from '@/utils'
+import { parseAmount, truncateUP, formatTokenAmountWithCommas, INTEGER_REGEX } from '@/utils'
 import { useTokenBalance } from '@/hooks/useTokenBalances'
 import { useTrading } from '@/hooks/useTrading'
 import { useTxToast } from '@/hooks/useTxToast'
@@ -32,8 +32,8 @@ import { useLimitOrder } from '@/components/markets/TradeBox/useLimitOrder'
 import { useLimitOrderUIState } from '@/components/markets/TradeBox/useLimitOrderUIState'
 import { useTradeGateState } from '@/components/markets/TradeBox/useTradeGateState'
 import { useTradeCallbacks } from '@/components/markets/TradeBox/useTradeCallbacks'
-import { DialogController, useShowDialog } from '@/components/dialog/DialogController'
-import { OrderConfirm } from '@/components/order-confirm'
+import { useShowDialog } from '@/components/dialog/DialogController'
+import { OrderConfirmDrawer } from '@/components/drawer/OrderConfirmDrawer'
 import { isTiko } from '@/service/client'
 
 
@@ -234,8 +234,6 @@ export const TradePage = () => {
     ? `${formatTokenAmountWithCommas(outputTokenBalance?.balance || '0')} ${outputToken?.symbol || ''}`
     : undefined
 
-  const INTEGER_REGEX = /^(?:|[1-9]\d*)$/
-
   return (
     <div className='flex min-h-screen flex-col bg-gray-950'>
       <div className='flex flex-col gap-3 px-5 py-[10px]'>
@@ -332,33 +330,26 @@ export const TradePage = () => {
         <Footer />
       </div>
 
-      {/* Order confirmation dialog */}
-      <DialogController
-        className='p-0'
-        headerClassName='px-4 pt-4'
-        overlayClassName='z-[49]'
-        title={t('v2.tx.t29')}
+      {/* Order confirmation drawer */}
+      <OrderConfirmDrawer
         open={orderDialog.open}
-        openChange={orderDialog.setOpen}
-      >
-        <OrderConfirm
-          action={action}
-          tradeType={tradeType}
-          sessionType={sessionType}
-          slippage={slippage}
-          orderValue={orderValue}
-          platformFee={platformFee}
-          brokerageFee={brokerageFee}
-          tradingActivityFee={tradingActivityFee}
-          estimatedFee={estimatedFee}
-          feeRate={inputToken?.feeRate ?? ''}
-          networkFeeInNative={marketInfo.networkFeeInNative}
-          onClick={() => {
-            orderDialog.hide()
-            order.submit()
-          }}
-        />
-      </DialogController>
+        onOpenChange={orderDialog.setOpen}
+        action={action}
+        tradeType={tradeType}
+        sessionType={sessionType}
+        slippage={slippage}
+        orderValue={orderValue}
+        platformFee={platformFee}
+        brokerageFee={brokerageFee}
+        tradingActivityFee={tradingActivityFee}
+        estimatedFee={estimatedFee}
+        feeRate={inputToken?.feeRate ?? ''}
+        networkFeeInNative={marketInfo.networkFeeInNative}
+        onClick={() => {
+          orderDialog.hide()
+          order.submit()
+        }}
+      />
     </div>
   )
 }

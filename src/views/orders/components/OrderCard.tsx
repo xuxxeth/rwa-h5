@@ -6,6 +6,7 @@ import { useRwaByStockId } from '@/hooks/useRwaBalances'
 import CopyButton from '@/components/button/copyButton'
 import { LazyImage } from '@/components/image/LazyImage'
 import type { IOpenOrder, OrderSide, OrderState, OrderType, SessionType } from '@/service/scan/types'
+import { Address } from '@/components/Address.tsx'
 
 /* ── 状态映射 ── */
 const STATUS_CONFIG: Record<number, { textKey: string; className: string }> = {
@@ -91,23 +92,21 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
   const canCancel = order.state !== 8 && order.state !== 3 && order.state !== 5 && order.state !== 2
 
   return (
-    <div className="flex flex-col gap-5 border-b border-gray-875 py-5">
+    <div className='flex flex-col gap-5 border-b border-gray-875 py-5'>
       {/* Row 1: Token info + Cancel button */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         {/* Left: icon + name + tags */}
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           {/* Token icon stack */}
-          <div className="flex items-end -space-x-2">
-            {rwa?.icon && (
-              <LazyImage src={rwa.icon} className="h-8 w-8 rounded-full" />
-            )}
+          <div className='flex items-end -space-x-2'>
+            {rwa?.icon && <LazyImage src={rwa.icon} className='h-8 w-8 rounded-full' />}
           </div>
           {/* Name + tags */}
-          <div className="flex flex-col justify-center gap-1">
-            <span className="text-[16px] font-medium leading-[1.25em] text-white">
+          <div className='flex flex-col justify-center gap-1'>
+            <span className='text-[16px] font-medium leading-[1.25em] text-white'>
               {rwa?.symbol ?? '--'}
             </span>
-            <div className="flex items-center gap-1.5">
+            <div className='flex items-center gap-1.5'>
               <SideTag side={order.side} />
               <OrderTypeTag orderType={order.orderType} />
             </div>
@@ -115,31 +114,31 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
         </div>
 
         {/* Right: Cancel + time */}
-        <div className="flex flex-col items-end justify-center gap-1">
+        <div className='flex flex-col items-end justify-center gap-1'>
           {canCancel ? (
             <button
               disabled={canceling}
               className={cn(
                 'text-[14px] font-medium leading-[1.25em] text-brand',
-                (canceling) && 'opacity-50',
+                canceling && 'opacity-50'
               )}
               onClick={() => onCancel?.(order.orderId)}
             >
               {canceling ? t('assets.order.cancelOrdering') : t('assets.order.cancelOrder')}
             </button>
           ) : (
-            <span className="text-[14px] leading-[1.25em] text-gray-500">
+            <span className='text-[14px] leading-[1.25em] text-gray-500'>
               {t('assets.order.cancelOrder')}
             </span>
           )}
-          <span className="text-[12px] leading-[1.25em] text-gray-400">
+          <span className='text-[12px] leading-[1.25em] text-gray-400'>
             {formatTimestamp(order.txTime)}
           </span>
         </div>
       </div>
 
       {/* Row 2: 委托价格 / 成交数量 / 成交均价 */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <DataCell
           label={`${t('portfolio.orderTable.orderPrice')}（${order.currency ?? 'USDT'}）`}
           value={order.orderType === 1 ? t('market') : toFixed(order.price)}
@@ -155,12 +154,12 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
               ? toFixed(String(Number(order.settledAmount) / Number(order.settledSize)))
               : '--'
           }
-          align="right"
+          align='right'
         />
       </div>
 
       {/* Row 3: 成交金额 / 状态 / 交易时段 */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <DataCell
           label={`${t('portfolio.orderTable.filledValue')}（${order.currency ?? 'USDT'}）`}
           value={textSuffix(toFixed(order.settledAmount), order.currency ?? 'USDT')}
@@ -173,21 +172,25 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
         <DataCell
           label={t('portfolio.orderTable.session')}
           value={order.sessionType === 0 ? t('portfolio.rthOnly') : t('portfolio.preAfter')}
-          align="right"
+          align='right'
         />
       </div>
 
       {/* Row 4: 哈希 */}
-      <div className="flex items-center justify-between">
-        <span className="text-[12px] leading-[1em] text-gray-450">
+      <div className='flex items-center justify-between'>
+        <span className='text-[12px] leading-[1em] text-gray-450'>
           {t('portfolio.orderTable.txHash')}
         </span>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[12px] leading-[1.25em] text-blue-50">
+       {/* <div className='flex items-center gap-1.5'>
+          <span className='text-[12px] leading-[1.25em] text-blue-50'>
             {shortenAddress(order.txHash ?? '', 4, 4)}
           </span>
           <CopyButton copyText={order.txHash ?? ''} />
-        </div>
+        </div>*/}
+        <Address
+          className='text-[12px] leading-[1.25em] text-blue-50'
+          address={order.txHash ?? ''}
+        />
       </div>
     </div>
   )

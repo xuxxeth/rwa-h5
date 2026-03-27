@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 import viteCompression from 'vite-plugin-compression'
 import svgr from 'vite-plugin-svgr'
-import { viteMockServe } from 'vite-plugin-mock'
+// import { viteMockServe } from 'vite-plugin-mock'
 import { resolve } from 'path'
 import process from 'node:process'
 // import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
@@ -85,10 +85,10 @@ export default defineConfig(({ mode }) => {
       //     },
       //   }),
       svgr(),
-      viteMockServe({
-        mockPath: 'src/mocks',
-        enable: process.env.NODE_ENV === 'development',
-      }),
+      // viteMockServe({
+      //   mockPath: 'src/mocks',
+      //   enable: process.env.NODE_ENV === 'development',
+      // }),
     ],
     resolve: {
       alias: {

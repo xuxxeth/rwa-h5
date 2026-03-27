@@ -40,4 +40,4 @@ export interface FontIconProps
   type?: TIconType
 }
 
-export type IconKey = 'chart' | 'close' | 'Add' | 'NavMenu' | 'TikoLogo' | 'PreMarket' | 'MarketOpen' | 'AfterHours' | 'Night' | 'Closed' | 'KycUnverified' | 'KycVerified' | 'KycException' | 'KycAdditionalInfo'
+export type IconKey = 'chart' | 'close' | 'Add' | 'NavMenu' | 'TikoLogo' | 'PreMarket' | 'MarketOpen' | 'AfterHours' | 'Night' | 'Closed' | 'KycUnverified' | 'KycVerified' | 'KycException' | 'KycAdditionalInfo' | 'Copy' | 'Disconnect' | 'Yes'

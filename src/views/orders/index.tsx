@@ -10,6 +10,7 @@ import { useTradeStore } from '@/stores/tradeStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useToast } from '@/hooks/useToast'
 import CopyButton from '@/components/button/copyButton'
+import NoRecord from '@/components/no-record'
 
 const TIKO_LITE_TRADE_URL = 'https://www.tiko.cc/lite-trade'
 
@@ -71,23 +72,24 @@ export const OrdersPage = () => {
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-950">
+    <div className='flex min-h-screen flex-col bg-gray-950'>
       {/* TittleBar */}
       <TittleBar title={t('assets.order.openOrders')} />
 
       {/* 订单列表 */}
-      <div className="flex flex-1 flex-col px-5">
+      <div className='flex flex-1 flex-col px-5'>
         {isLoading ? (
-          <div className="flex flex-1 items-center justify-center">
-            <span className="text-[14px] text-gray-400">{t('assets.loading')}...</span>
+          <div className='flex flex-1 items-center justify-center'>
+            <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
           </div>
         ) : orders.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2.5 py-4">
-            <span className="text-[14px] text-gray-400">{t('noRecord')}</span>
-          </div>
+          // <div className="flex flex-1 flex-col items-center justify-center gap-2.5 py-4">
+          //   <span className="text-[14px] text-gray-400">{t('noRecord')}</span>
+          // </div>
+          <NoRecord />
         ) : (
           <>
-            {orders.map((order) => (
+            {orders.map(order => (
               <OrderCard
                 key={order.orderId}
                 order={order}
@@ -99,31 +101,23 @@ export const OrdersPage = () => {
             {/* 加载更多 / 底部状态 */}
             <div
               ref={loadMoreRef}
-              className="flex flex-col items-center justify-center gap-2.5 py-4"
+              className='flex flex-col items-center justify-center gap-2.5 py-4'
             >
               {isFetchingNextPage ? (
-                <span className="text-[14px] text-gray-400">{t('assets.loading')}...</span>
+                <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
               ) : hasNextPage ? (
-                <button
-                  className="text-[14px] text-gray-400"
-                  onClick={() => fetchNextPage()}
-                >
+                <button className='text-[14px] text-gray-400' onClick={() => fetchNextPage()}>
                   {t('assets.scrollToLoadMore')}
                 </button>
               ) : (
                 <>
-                  <span className="text-[14px] text-gray-400">
-                    {t('assets.noMoreData')}
-                  </span>
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="text-[12px] text-gray-500">
+                  <span className='text-[14px] text-gray-400'>{t('assets.noMoreData')}</span>
+                  <div className='flex items-center justify-center gap-1'>
+                    <span className='text-[12px] text-gray-500'>
                       {t('portfolio.webHistory', {
-                        defaultValue:
-                          '历史订单请前往web端官网查看，',
+                        defaultValue: '历史订单请前往web端官网查看，',
                       })}
-                      <span className="text-[12px] text-gray-500">
-                        {TIKO_LITE_TRADE_URL}
-                      </span>
+                      <span className='text-[12px] text-gray-500'>{TIKO_LITE_TRADE_URL}</span>
                     </span>
                     <CopyButton copyText={TIKO_LITE_TRADE_URL} />
                   </div>

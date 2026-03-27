@@ -13,20 +13,26 @@ import KycUnverified from './set/KycUnverified.tsx'
 import KycVerified from './set/KycVerified.tsx'
 import KycException from './set/KycException.tsx'
 import KycAdditionalInfo from './set/KycAdditionalInfo.tsx'
+import CopyIcon from './set/Copy.tsx'
+import Disconnect from './set/Disconnect.tsx'
+import Yes from './set/Yes.tsx'
 
 export {
-Add,
-NavMenu,
-TikoLogo,
-SessionPreMarket,
-SessionMarketOpen,
-SessionAfterHours,
-SessionNight,
-SessionClosed,
-KycUnverified,
-KycVerified,
-KycException,
-KycAdditionalInfo
+  Add,
+  NavMenu,
+  TikoLogo,
+  SessionPreMarket,
+  SessionMarketOpen,
+  SessionAfterHours,
+  SessionNight,
+  SessionClosed,
+  KycUnverified,
+  KycVerified,
+  KycException,
+  KycAdditionalInfo,
+  CopyIcon,
+  Disconnect,
+  Yes
 }
 
 

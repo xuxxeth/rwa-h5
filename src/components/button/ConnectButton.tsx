@@ -23,6 +23,7 @@ import { useKycStatus } from '@/hooks/useKycStatus'
 import { KYC_OVERALL_STATUS } from '@/service/kyc/types'
 import { usePendingStep } from '@/hooks/usePendingStep'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { WalletDrawer } from '@/components/drawer/WalletDrawer.tsx'
 
 const WalletStatus = {
   IDLE: 'IDLE',
@@ -230,8 +231,9 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
           <LazyImage src='/images/h5/arrow-down.svg' />
         </button>
       )}
+      <WalletDrawer open={walletSheetOpen} onOpenChange={open => setWalletSheetOpen(open)} />
 
-      <Dialog open={walletSheetOpen} onOpenChange={setWalletSheetOpen}>
+      {/*<Dialog open={walletSheetOpen} onOpenChange={setWalletSheetOpen}>
         <DialogContent
           overlayClassName='bg-[#131416B2]'
           className='left-0 bg-gray-900 gap-0 px-0 border border-gray-700  bottom-0 top-auto translate-x-0 translate-y-0 w-full min-w-0 rounded-t-[24px] rounded-b-none pb-[calc(env(safe-area-inset-bottom)+16px)] pt-0'
@@ -258,7 +260,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
             <span className='text-base/4.5 font-medium'>{t('Disconnect')}</span>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog>*/}
     </>
   )
 }
