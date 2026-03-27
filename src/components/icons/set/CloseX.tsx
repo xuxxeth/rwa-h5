@@ -1,7 +1,7 @@
 import withIconColor from '../withIconColor'
 import type { SvgIconProps } from '../types'
 
-const ChevronDown = ({ size, color, ...props }: SvgIconProps) => {
+const CloseX = ({ size, color, ...props }: SvgIconProps) => {
   return (
     <svg
       width={size}
@@ -12,8 +12,9 @@ const ChevronDown = ({ size, color, ...props }: SvgIconProps) => {
       {...props}
     >
       <path
-        d="M4.375 7.1875L10 12.8125L15.625 7.1875"
+        d="M15 5L5 15M5 5L15 15"
         stroke={color || 'currentColor'}
+        strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -21,5 +22,5 @@ const ChevronDown = ({ size, color, ...props }: SvgIconProps) => {
   )
 }
 
-const Icon = withIconColor(ChevronDown)
+const Icon = withIconColor(CloseX)
 export default Icon

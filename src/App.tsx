@@ -21,6 +21,7 @@ import GoogleAnalytics from '@/components/google-analytics/GoogleAnalytics'
 import { createPortal } from 'react-dom'
 import { Header } from '@/components/Header.tsx'
 import { Footer } from '@/components/Footer.tsx'
+import { Settings } from '@/components/Settings.tsx'
 
 BigNumber.config({
   DECIMAL_PLACES: 80, // 足够精度，避免 DeFi 里丢失小数
@@ -93,6 +94,8 @@ function App() {
         !isNoMenus && (isHomeMenus ? <HomeMenus /> : <Menus />)
       } */}
       <Header />
+      {/* Header 占位，高度与 Header 一致 */}
+      <div className="h-[52px]" />
       <RoutesWrapper />
       {createPortal(
         <Toaster position='top-right' />,
@@ -100,6 +103,7 @@ function App() {
       )}
       
       <Updater />
+      <Settings />
     </>
   )
 }

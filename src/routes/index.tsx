@@ -14,6 +14,7 @@ const MarketTrading = lazy(() => import('../views/trade'))
 const Identity = lazy(() => import('../views/identity'))
 // const Assets = lazy(() => import('../views/assets'))
 const Portfolio = lazy(() => import('../views/assets/v2'))
+const Orders = lazy(() => import('../views/orders'))
 
 // 路由表
 const routes: RouteObject[] = [
@@ -34,6 +35,10 @@ const routes: RouteObject[] = [
   {
     path: '/order',
     element: <Portfolio />,
+  },
+  {
+    path: '/orders',
+    element: <Orders />,
   },
   {
     path: '/identity',

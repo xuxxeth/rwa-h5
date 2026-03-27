@@ -1,36 +1,38 @@
 import History from '@/components/icons/set/History'
 import { Badge } from '@/components/Badge'
 import { useRouter } from '@/hooks/useRouter'
+import { useTranslation } from '@/hooks/useTranslation'
+import { useTradeStore } from '@/stores/tradeStore'
+import { TradeType } from '@/hooks/useCaCommon'
 
-interface OrderTypeSelectorProps {
-  activeType: 'market' | 'limit'
-  onChange: (type: 'market' | 'limit') => void
-}
-
-export const OrderTypeSelector = ({ activeType, onChange }: OrderTypeSelectorProps) => {
+export const OrderTypeSelector = () => {
+  const { t } = useTranslation()
   const router = useRouter()
+  const tradeType = useTradeStore(state => state.tradeType)
+  const updateTradeType = useTradeStore(state => state.updateTradeType)
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-1">
         <button
           className={`rounded-[8px] px-4 py-1 text-[14px] ${
-            activeType === 'market'
+            tradeType === TradeType.MARKET
               ? 'bg-gray-850 text-white'
               : 'text-gray-400'
           }`}
-          onClick={() => onChange('market')}
+          onClick={() => updateTradeType(TradeType.MARKET)}
         >
-          市价
+          {t('market')}
         </button>
         <button
           className={`rounded-[8px] px-4 py-1 text-[14px] ${
-            activeType === 'limit'
+            tradeType === TradeType.LIMIT
               ? 'bg-gray-850 text-white'
               : 'text-gray-400'
           }`}
-          onClick={() => onChange('limit')}
+          onClick={() => updateTradeType(TradeType.LIMIT)}
         >
-          限价
+          {t('limit')}
         </button>
       </div>
       <button

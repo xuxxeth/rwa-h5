@@ -6,7 +6,7 @@ export const Badge = () => {
       className="absolute"
       style={{
         right: '-5px',
-        top: '5px',
+        top: '0',
         width: '6px',
         height: '6px',
         aspectRatio: '1/1',

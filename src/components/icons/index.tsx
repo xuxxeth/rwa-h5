@@ -4,11 +4,15 @@ import type { IconKey, SvgIconProps } from './types'
 import Add from './set/Add.tsx'
 import NavMenu from './set/NavMenu.tsx'
 import TikoLogo from './set/TikoLogo.tsx'
-import SessionPreMarket from './set/SessionPreMarket.tsx'
-import SessionMarketOpen from './set/SessionMarketOpen.tsx'
-import SessionAfterHours from './set/SessionAfterHours.tsx'
-import SessionNight from './set/SessionNight.tsx'
-import SessionClosed from './set/SessionClosed.tsx'
+import SessionPreMarket from './set/PreMarket.tsx'
+import SessionMarketOpen from './set/MarketOpen.tsx'
+import SessionAfterHours from './set/AfterHours.tsx'
+import SessionNight from './set/Night.tsx'
+import SessionClosed from './set/Closed.tsx'
+import KycUnverified from './set/KycUnverified.tsx'
+import KycVerified from './set/KycVerified.tsx'
+import KycException from './set/KycException.tsx'
+import KycAdditionalInfo from './set/KycAdditionalInfo.tsx'
 
 export {
 Add,
@@ -18,7 +22,11 @@ SessionPreMarket,
 SessionMarketOpen,
 SessionAfterHours,
 SessionNight,
-SessionClosed
+SessionClosed,
+KycUnverified,
+KycVerified,
+KycException,
+KycAdditionalInfo
 }
 
 

@@ -1,14 +1,15 @@
 import withIconColor from '../withIconColor'
 import type { SvgIconProps } from '../types'
 
-const Closed = (props: SvgIconProps) => {
+const Closed = ({ size, color, ...props }: SvgIconProps) => {
   return (
     <svg
-      width={props.size}
-      height={props.size}
+      width={size}
+      height={size}
       viewBox="0 0 18 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <rect width={18} height={18} rx={3} fill="#94A3B8" fillOpacity={0.1} />
       <path

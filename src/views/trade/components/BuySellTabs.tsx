@@ -1,9 +1,11 @@
-interface BuySellTabsProps {
-  activeTab: 'buy' | 'sell'
-  onChange: (tab: 'buy' | 'sell') => void
-}
+import { useTradeStore } from '@/stores/tradeStore'
+import { useTranslation } from '@/hooks/useTranslation'
 
-export const BuySellTabs = ({ activeTab, onChange }: BuySellTabsProps) => {
+export const BuySellTabs = () => {
+  const { t } = useTranslation()
+  const activeTab = useTradeStore(state => state.activeConvertTab)
+  const updateActiveConvertTab = useTradeStore(state => state.updateActiveConvertTab)
+
   return (
     <div className="flex items-center rounded-[6px] bg-gray-900">
       <button
@@ -12,9 +14,9 @@ export const BuySellTabs = ({ activeTab, onChange }: BuySellTabsProps) => {
             ? 'bg-[rgba(37,167,80,0.2)] text-green-100'
             : 'text-gray-400'
         }`}
-        onClick={() => onChange('buy')}
+        onClick={() => updateActiveConvertTab('buy')}
       >
-        买入
+        {t('Buy')}
       </button>
       <button
         className={`flex-1 rounded-[6px] px-4 py-[10px] text-center text-[14px] font-medium transition-colors ${
@@ -22,9 +24,9 @@ export const BuySellTabs = ({ activeTab, onChange }: BuySellTabsProps) => {
             ? 'bg-[rgba(202,63,100,0.2)] text-red-100'
             : 'text-gray-400'
         }`}
-        onClick={() => onChange('sell')}
+        onClick={() => updateActiveConvertTab('sell')}
       >
-        卖出
+        {t('Sell')}
       </button>
     </div>
   )

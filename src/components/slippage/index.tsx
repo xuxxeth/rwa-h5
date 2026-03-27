@@ -5,6 +5,7 @@ import { Button } from "../ui/button"
 import { SlippageCheckBox } from "../check-box"
 import { NumberInput } from "../input/NumberInput"
 import { DEFAULT_SLIPPAGE } from "@/config/constants"
+import { SLIPPAGE_INPUT_REGEX } from "@/utils/regex"
 
 type SlippageProps = {
   maxSlippage?: string,
@@ -62,9 +63,9 @@ const Slippage = memo(
             </div>
             <div className="bg-[#131416] px-2 rounded-[4px] h-[31px] w-[129px] flex items-center justify-between text-[#9DA3AF] text-[12px]">
               <NumberInput
-                className="text-[12px] h-[29px] placeholder:text-[12px] text-center  w-[100px]" 
+                className="text-[12px] h-[29px] placeholder:text-[12px] text-center  w-[100px]"
                 placeholder={`0.1～${maxValue}`}
-                regex={/^(?:[0-2](?:\.[0-9]{0,1})?|3(?:\.0?)?)$/}
+                regex={SLIPPAGE_INPUT_REGEX}
                 value={inputValue}
                 onInput={(value) => {
                   setInputValue(value)
@@ -76,9 +77,9 @@ const Slippage = memo(
           </div>
         </div>
         <div className="px-6">
-          <Button 
+          <Button
             disabled={current === 1 && (maxValue <= 0 || Number(inputValue) <= 0 || Number(inputValue) > maxValue)}
-            onClick={() => onConfirm && onConfirm(current === 0 ? DEFAULT_SLIPPAGE : Number(inputValue))} 
+            onClick={() => onConfirm && onConfirm(current === 0 ? DEFAULT_SLIPPAGE : Number(inputValue))}
             className="w-full h-[48px] rounded-[8px]">{t('Confirm')}
           </Button>
         </div>

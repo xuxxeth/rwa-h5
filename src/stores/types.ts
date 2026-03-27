@@ -74,6 +74,7 @@ export interface TradeStore {
   tradeType: TradeType;
   sessionType: SessionType;
   slippage: number;
+  slippageDrawerOpen: boolean;
   isSignatureValid: boolean;
   txStep: number;
   txError: string;
@@ -87,6 +88,7 @@ export interface TradeStore {
   updateTradeType: (tradeType: TradeType) => void;
   updateSessionType: (sessionType: SessionType) => void;
   updateSlippage: (slippage: number) => void;
+  setSlippageDrawerOpen: (open: boolean) => void;
   setIsSignatureValid: (valid: boolean) => void
   setTxStep: (step: number) => void
   setTxError: (msg: string) => void

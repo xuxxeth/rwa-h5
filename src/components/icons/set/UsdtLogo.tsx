@@ -1,14 +1,15 @@
 import withIconColor from '../withIconColor'
 import type { SvgIconProps } from '../types'
 
-const UsdtLogo = (props: SvgIconProps) => {
+const UsdtLogo = ({ size, color, ...props }: SvgIconProps) => {
   return (
     <svg
-      width={props.size}
-      height={props.size}
+      width={size}
+      height={size}
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <g clipPath="url(#clip0_usdt_logo)">
         <path

@@ -89,12 +89,14 @@ body {
   background-color: #131416;
   min-height: 100vh;
   font-family: 'Google Sans Flex';
+  font-size: 14px;
+  line-height: 1.2;
 }
 /* [data-sonner-toaster] {
   width: 100% !important;
   min-width: 0 !important;
   max-width: none !important;
-  transform: translate(50%, 50%); 
+  transform: translate(50%, 50%);
   align-items: center !important;
   justify-content: center !important;
   display: flex;
@@ -238,15 +240,20 @@ body {
 
 /* 这里是根据 ui 给出的颜色定义写的*/
 @theme {
+  --color-gray-975: #101114;
   --color-gray-950: #131416;
   --color-gray-900: #1a1b1e;
+  --color-gray-875: #202129;
   --color-gray-850: #232427;
   --color-gray-800: #282a2f;
   --color-gray-750: #383a40;
   --color-gray-700: #41464f;
   --color-gray-500: #737a87;
+  --color-gray-450: #848e9c;
   --color-gray-400: #9da3af;
 
+  --color-white: #FFFFFF;
+  --color-orange-50: #f29339;
   --color-yellow-50: #ffb219;
   --color-blue-50: #009dff;
   --color-green-50: #25a750;
@@ -287,6 +294,31 @@ body {
     }
     to {
       transform: translateX(-100%);
+    }
+  }
+
+  --animate-accordion-down: accordion-down 200ms ease-out;
+  --animate-accordion-up: accordion-up 200ms ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
     }
   }
 }
@@ -491,10 +523,10 @@ body {
     rgba(255,255,255,0.1),
     rgba(255,255,255,0.2)
   );
-  -webkit-mask: 
+  -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
-  mask: 
+  mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;

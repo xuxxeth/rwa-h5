@@ -1,7 +1,7 @@
 import withIconColor from '../withIconColor'
 import type { SvgIconProps } from '../types'
 
-const PreMarket = (props: SvgIconProps) => {
+const SessionPreMarket = (props: SvgIconProps) => {
   return (
     <svg
       width={props.size}
@@ -71,5 +71,5 @@ const PreMarket = (props: SvgIconProps) => {
   )
 }
 
-const Icon = withIconColor(PreMarket)
+const Icon = withIconColor(SessionPreMarket)
 export default Icon

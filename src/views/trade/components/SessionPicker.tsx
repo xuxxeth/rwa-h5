@@ -1,26 +1,15 @@
-import ChevronDown from '@/components/icons/set/ChevronDown'
+import { SessionTypeSelect } from '@/components/session-type-select'
+import { useTradeStore } from '@/stores/tradeStore'
+import { TradeType } from '@/hooks/useCaCommon'
 
-interface SessionPickerProps {
-  value?: string
-  onClick?: () => void
-}
+export const SessionPicker = () => {
+  const tradeType = useTradeStore(state => state.tradeType)
+  const isMarket = tradeType === TradeType.MARKET
 
-export const SessionPicker = ({
-  value = '仅盘中',
-  onClick,
-}: SessionPickerProps) => {
+  // Session type selection is only available for limit orders
+  if (isMarket) return null
+
   return (
-    <div
-      className="flex items-center justify-between rounded-[6px] border border-gray-850 bg-gray-900 px-4 py-2 cursor-pointer"
-      onClick={onClick}
-    >
-      <span className="border-b border-dashed border-gray-400 text-[14px] text-gray-400">
-        交易时段
-      </span>
-      <div className="flex items-center gap-[2px]">
-        <span className="text-[14px] text-white">{value} </span>
-        <ChevronDown size={20} />
-      </div>
-    </div>
+    <SessionTypeSelect from="lite-trade" />
   )
 }
