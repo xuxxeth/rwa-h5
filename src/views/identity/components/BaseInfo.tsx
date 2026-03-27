@@ -1,4 +1,4 @@
-import { CountrySelect } from '@/components/country-select'
+import { CountrySelectH5 } from '@/components/country-select/h5'
 import { DatePicker, FormatStr } from '@/components/date-range-picker'
 import { DoctypeSelect } from '@/components/doctype-select'
 import { LazyImage } from '@/components/image/LazyImage'
@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { usePersistentForm } from '@/hooks/usePersistentForm'
 import { useTranslation } from '@/hooks/useTranslation'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
-import { Upload } from './Upload'
 import { cn } from '@/utils/tw'
 import { EmploymentSelect } from '@/components/employment-select'
 import { IncomeSelect } from '@/components/income-select'
@@ -16,7 +15,6 @@ import { format } from 'date-fns/format'
 import storage from '@/utils/storage'
 import { KYC_UPLOAD_STORAGE_KEY } from './Upload/shared'
 import { useToast } from '@/hooks/useToast'
-import { kycApi } from '@/service/kyc/api'
 import type { IKycDetail, IKycSubmitData } from '@/service/kyc/types'
 import { RESPONSE_CODE } from '@/config/constants'
 import type { ApiResponse } from '@/service/client'
@@ -24,10 +22,7 @@ import { WarningInfo } from './WarningInfo'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
 import { parseISO } from 'date-fns'
-import {
-  Text,
-} from './Upload/shared'
-import { NavigatorH5 } from '@/components/navigator'
+
 
 export async function retryRefresh(
   refresh: () => Promise<ApiResponse<IKycDetail>>,
@@ -523,8 +518,8 @@ const BaseInfo = memo(
                 <FormItemLabel title={t('kyc.t12')} hide />
                 {/* 证件签发国 */}
                 <InputBox>
-                  <CountrySelect
-                    placeHolder={t('kyc.t28')}
+                  <CountrySelectH5
+                    placeHolder={t('kyc.t12')}
                     defaultValue={issueCountry}
                     onChange={data => {
                       setValue('issueCountry', data.code)
