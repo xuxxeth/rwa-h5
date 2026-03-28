@@ -31,7 +31,7 @@ const IdentityLayout = memo(
     const router = useRouter()
     return (
       <div className="flex justify-center ">
-        <div className=" px-5 min-h-[600px] text-white w-[926px]">
+        <div className=" min-h-[600px] text-white ">
           {/* <div className=" text-[24px] font-medium mt-8">{t('identity.Identity_verification')}</div> */}
           {/* <div className="mt-5 flex items-center gap-x-[4px]">
             <TipLine active />

@@ -28,16 +28,15 @@ function Root() {
             name: chain.displayName,
             rpcUrls: {
               ..._chain.rpcUrls,
-              public: { http: [..._chain.rpcUrls.public.http, chain.rpc] }
+              public: { http: [..._chain.rpcUrls.public.http, chain.rpc] },
             },
             blockExplorers: {
-              default: { name: chain.displayName, url: chain.scan }
-            }
+              default: { name: chain.displayName, url: chain.scan },
+            },
           }
         }
-        
       })
-      .filter((chain) => chain !== undefined)
+      .filter(chain => chain !== undefined)
   }, [chainList])
 
   return (
@@ -56,9 +55,19 @@ function Root() {
   )
 }
 
+if (typeof window !== 'undefined') {
+  const params = new URLSearchParams(window.location.search)
+  const enableDebug = params.get('debug') === '1'
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+
+  if (enableDebug && isMobile && !(window as any).__VCONSOLE__) {
+    import('vconsole').then(({ default: VConsole }) => {
+      ;(window as any).__VCONSOLE__ = new VConsole()
+    })
+  }
+}
 
 createRoot(document.getElementById('root')!).render(
-  
   <StrictMode>
     <ErrorBoundary fallback={<ErrorChildren />}>
       <Suspense fallback={<SuspenseLoading />}>
@@ -66,5 +75,4 @@ createRoot(document.getElementById('root')!).render(
       </Suspense>
     </ErrorBoundary>
   </StrictMode>
-    
 )
