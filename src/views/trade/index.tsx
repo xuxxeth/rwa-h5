@@ -35,6 +35,7 @@ import { useTradeCallbacks } from '@/components/markets/TradeBox/useTradeCallbac
 import { useShowDialog } from '@/components/dialog/DialogController'
 import { OrderConfirmDrawer } from '@/components/drawer/OrderConfirmDrawer'
 import { isTiko } from '@/service/client'
+import { MarketCloseTips } from './components/MarketCloseTips.tsx'
 
 
 export const TradePage = () => {
@@ -326,6 +327,8 @@ export const TradePage = () => {
           {Number(orderValue) > 0 && <TradeSummary />}
         </div>
 
+        <MarketCloseTips />
+        
         {/* 底部信息 */}
         <Footer />
       </div>

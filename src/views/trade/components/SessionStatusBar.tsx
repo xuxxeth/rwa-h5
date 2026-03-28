@@ -70,7 +70,7 @@ export const SessionStatusBar = memo(() => {
         <Icon size={18} />
         <span className="text-[12px] text-white">{t1} | {t2}</span>
         <span className="text-[14px] font-mono" style={{ color }}>
-          {countdown.H}H : {countdown.M}M : {countdown.S}S
+          {countdown.H}H:{countdown.M}M:{countdown.S}S
         </span>
       </div>
     </div>

@@ -16,6 +16,7 @@ import KycAdditionalInfo from './set/KycAdditionalInfo.tsx'
 import CopyIcon from './set/Copy.tsx'
 import Disconnect from './set/Disconnect.tsx'
 import Yes from './set/Yes.tsx'
+import InfoWarning from './set/InfoWarning.tsx'
 
 export {
   Add,
@@ -32,7 +33,8 @@ export {
   KycAdditionalInfo,
   CopyIcon,
   Disconnect,
-  Yes
+  Yes,
+  InfoWarning
 }
 
 
