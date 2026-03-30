@@ -84,7 +84,7 @@ export const TradeSummary = ({
   return (
     <div className="flex flex-col gap-2">
       {/* 兑换比例 */}
-      <div className="flex items-center justify-center gap-1">
+      <div className="flex items-center gap-1">
         <span className="text-[14px] text-gray-400">{rateFrom}</span>
         <SwapArrow
           size={14}
