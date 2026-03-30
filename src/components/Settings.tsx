@@ -33,11 +33,11 @@ export const Settings = () => {
           className="fixed inset-y-0 left-0 z-[201] w-full bg-[#131416] shadow-xl duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
         >
           {/* 隐藏的标题，满足无障碍 */}
-          <DialogPrimitive.Title className="sr-only">Setting</DialogPrimitive.Title>
+          <DialogPrimitive.Title className="sr-only">{t('Setting')}</DialogPrimitive.Title>
           <DialogPrimitive.Description className="sr-only">App settings panel</DialogPrimitive.Description>
 
           {/* 标题栏 */}
-          <TittleBar title="Setting" onBack={() => setOpen(false)} />
+          <TittleBar title={t('Setting')} onBack={() => setOpen(false)} />
 
           {/* 内容区域 */}
           <div className="flex flex-1 flex-col">
@@ -45,7 +45,7 @@ export const Settings = () => {
             {/* 设置列表 */}
             <div className="flex flex-col px-5">
               {/* 交易确认弹窗 */}
-              <SettingItem label={t('交易确认弹窗')}>
+              <SettingItem label={t('v2.hd.h3')}>
                 <SettingSwitch
                   checked={showConfirm}
                   onCheckedChange={setShowConfirm}
@@ -53,7 +53,7 @@ export const Settings = () => {
               </SettingItem>
 
               {/* Language */}
-              <SettingItem label="Language">
+              <SettingItem label={t('Language')}>
                 <LanguageSwitcher
                   value={i18n.language}
                   options={languageOptions}
@@ -62,7 +62,7 @@ export const Settings = () => {
               </SettingItem>
 
               {/* 网络费代币 */}
-              <SettingItem label={t('网络费代币')}>
+              <SettingItem label={t('v2.hd.h4')}>
                 <div className="flex items-center gap-2">
                   <img
                     src="/images/tokens/bnb.png"
