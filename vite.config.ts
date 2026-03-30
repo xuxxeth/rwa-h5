@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
@@ -7,6 +7,30 @@ import svgr from 'vite-plugin-svgr'
 // import { viteMockServe } from 'vite-plugin-mock'
 import { resolve } from 'path'
 import process from 'node:process'
+
+/**
+ * Dev-only plugin: serve MPA html entries (e.g. /icon.html) before
+ * the SPA history-fallback middleware rewrites them to index.html.
+ */
+function mpaDevPlugin(entries: string[]): Plugin {
+  return {
+    name: 'mpa-dev-entries',
+    configureServer(server) {
+      // Use server.middlewares.use directly (pre-hook) so it runs
+      // BEFORE Vite's built-in SPA history-fallback middleware.
+      server.middlewares.use((req, _res, next) => {
+        if (req.url) {
+          // Strip trailing slash: /icon.html/ → /icon.html
+          const match = entries.find((e) => req.url === `/${e}/`)
+          if (match) {
+            req.url = `/${match}`
+          }
+      }
+        next()
+      })
+    },
+  }
+}
 // import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 const input: { main: string; icon?: string } = {
   main: resolve(__dirname, 'index.html'),
@@ -26,6 +50,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      mpaDevPlugin(['icon.html']),
       react(),
       tailwindcss(),
       viteCompression(),
@@ -130,5 +155,6 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+
   }
 })
