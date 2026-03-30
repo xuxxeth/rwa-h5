@@ -65,18 +65,18 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
   const kycInfo = useMemo(() => {
     // Verified & no pending step => green verified
     if (kycStatus === KYC_OVERALL_STATUS.VERIFIED && !pendingStep.step) {
-      return { icon: <KycVerified size={20} />, label: t('verified'), color: '#25A750' }
+      return { icon: <KycVerified size={14} />, label: t('verified'), color: '#25A750' }
     }
     // Issue (blacklist) => red exception
     if (kycStatus === KYC_OVERALL_STATUS.ISSUE) {
-      return { icon: <KycException size={20} />, label: t('issue'), color: '#CA3F64' }
+      return { icon: <KycException size={14} />, label: t('issue'), color: '#CA3F64' }
     }
     // Has pending step (expired / additional info) => yellow additional info
     if (pendingStep.step) {
-      return { icon: <KycAdditionalInfo size={20} />, label: t('kyc.t51'), color: '#FFB219' }
+      return { icon: <KycAdditionalInfo size={14} />, label: t('kyc.t51'), color: '#FFB219' }
     }
     // Default: unverified => yellow unverified
-    return { icon: <KycUnverified size={18} />, label: t('notVerified'), color: '#FFB219' }
+    return { icon: <KycUnverified size={14} />, label: t('notVerified'), color: '#FFB219' }
   }, [kycStatus, pendingStep.step, t])
 
   /** Whether clicking KYC status should navigate */
