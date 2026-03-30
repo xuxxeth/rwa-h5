@@ -61,23 +61,23 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
     router.push('identity')
   }, [onOpenChange, router, kycStatus])
 
-  /** Render the correct KYC icon based on status */
-  const kycIcon = useMemo(() => {
+  /** Render the correct KYC icon + label based on status */
+  const kycInfo = useMemo(() => {
     // Verified & no pending step => green verified
     if (kycStatus === KYC_OVERALL_STATUS.VERIFIED && !pendingStep.step) {
-      return <KycVerified size={20} />
+      return { icon: <KycVerified size={14} />, label: t('verified'), color: '#25A750' }
     }
     // Issue (blacklist) => red exception
     if (kycStatus === KYC_OVERALL_STATUS.ISSUE) {
-      return <KycException size={20} />
+      return { icon: <KycException size={14} />, label: t('issue'), color: '#CA3F64' }
     }
     // Has pending step (expired / additional info) => yellow additional info
     if (pendingStep.step) {
-      return <KycAdditionalInfo size={20} />
+      return { icon: <KycAdditionalInfo size={14} />, label: t('kyc.t51'), color: '#FFB219' }
     }
     // Default: unverified => yellow unverified
-    return <KycUnverified size={18} />
-  }, [kycStatus, pendingStep.step])
+    return { icon: <KycUnverified size={14} />, label: t('notVerified'), color: '#FFB219' }
+  }, [kycStatus, pendingStep.step, t])
 
   /** Whether clicking KYC status should navigate */
   const isKycClickable = useMemo(() => {
@@ -113,7 +113,10 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
             style={{ cursor: isKycClickable ? 'pointer' : 'default' }}
           >
             <span className='text-[16px] font-medium text-white'>{t('verificationStatus')}</span>
-            {kycIcon}
+            <div className={'flex items-center gap-[4px]'}>
+              {kycInfo.icon}
+              <span className={'text-[14px]'} style={{ color: kycInfo.color }}>{kycInfo.label}</span>
+            </div>
           </div>
 
           {/* Disconnect */}

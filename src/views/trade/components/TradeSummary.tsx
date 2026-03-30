@@ -1,81 +1,113 @@
+import { useState, useMemo } from 'react'
 import SwapArrow from '@/components/icons/set/SwapArrow'
 import EditPencil from '@/components/icons/set/EditPencil'
 import { SlippageDrawer } from '@/components/drawer/SlippageDrawer'
 import { useTradeStore } from '@/stores/tradeStore'
-import { useBaseStore } from '@/stores/baseStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { useCalcFee } from '@/hooks/useCalcFee'
-import { useOrderBase } from '@/components/markets/TradeBox/useOrderBase'
-import { useEffectivePrice } from '@/components/markets/TradeBox/useEffectivePrice'
+import { DEFAULT_SLIPPAGE } from '@/config/constants'
+import { TradeType } from '@/hooks/useCaCommon'
 import { EstimatedFeeAccordion } from './EstimatedFeeAccordion'
+import { divide, toFixed } from '@/utils'
 
 interface TradeSummaryProps {
-  /** 如 "1 AMZNt" */
-  fromAmount?: string
-  /** 如 "300 USDT" */
-  toAmount?: string
-  /** 滑点值，如 "0.3% (推荐)" */
-  slippage?: string
+  /** 兑换来源数量，如 "1 AMZNt" */
+  fromAmount: string
+  /** 兑换目标数量，如 "300 USDT" */
+  toAmount: string
+  /** 滑点数值 */
+  slippage: number
+  /** 限价/市价，用于兑换比例展示 */
+  limitPrice: string
+  /** RWA token symbol，如 "AMZNt" */
+  symbol: string
+  /** 计价 token symbol，如 "USDT" */
+  usdSymbol: string
+  /** 预估手续费(总) */
+  estimatedFee: string
+  /** 平台费 */
+  platformFee: string
+  /** 经纪费 */
+  brokerageFee: string
+  /** 交易活动费 */
+  tradingActivityFee: string
+  /** 网络费(原生币) */
+  networkFeeInNative: string
+  /** 是否买入 */
+  isBuy: boolean
+  /** RWA token 精度 */
+  decimals: number
 }
 
 export const TradeSummary = ({
-  fromAmount = '1 AMZNt',
-  toAmount = '300 USDT',
-  slippage = '0.3% (推荐)',
+  fromAmount,
+  toAmount,
+  slippage,
+  limitPrice,
+  symbol,
+  usdSymbol,
+  estimatedFee,
+  platformFee,
+  brokerageFee,
+  tradingActivityFee,
+  networkFeeInNative,
+  isBuy,
+  decimals,
 }: TradeSummaryProps) => {
   const { t } = useTranslation()
   const setSlippageDrawerOpen = useTradeStore((s) => s.setSlippageDrawerOpen)
-
-  const inputToken = useTradeStore((s) => s.inputToken)
-  const inputSize = useTradeStore((s) => s.inputSize)
-  const limitPrice = useTradeStore((s) => s.limitPrice)
-  const activeConvertTab = useTradeStore((s) => s.activeConvertTab)
   const tradeType = useTradeStore((s) => s.tradeType)
-  const storeSlippage = useTradeStore((s) => s.slippage)
-  const marketInfo = useBaseStore((s) => s.marketInfo)
 
-  const isBuy = activeConvertTab === 'buy'
+  // 兑换比例 toggle 状态
+  const [isRateReversed, setIsRateReversed] = useState(false)
 
-  const effectivePrice = useEffectivePrice({
-    tradeType,
-    action: activeConvertTab,
-    limitPrice,
-    slippage: storeSlippage,
-  })
+  // 正向：1 {symbol} = {limitPrice} {usdSymbol}
+  // 反向：1 {usdSymbol} = {1/limitPrice} {symbol}
+  const { rateFrom, rateTo } = useMemo(() => {
+    if (!isRateReversed) {
+      return {
+        rateFrom: `1 ${symbol}`,
+        rateTo: `${limitPrice} ${usdSymbol}`,
+      }
+    }
+    const inversePrice = toFixed(divide('1', limitPrice), decimals)
+    return {
+      rateFrom: `1 ${usdSymbol}`,
+      rateTo: `${inversePrice} ${symbol}`,
+    }
+  }, [isRateReversed, limitPrice, symbol, usdSymbol, decimals])
 
-  const orderValue = useOrderBase(effectivePrice, inputSize)
+  // 滑点展示，与 EstimatedInfo 保持一致
+  const slippageDisplay = `${slippage}%${slippage === DEFAULT_SLIPPAGE ? ` (${t('v3.t3')})` : ''}`
 
-  const { estimatedFee, platformFee, brokerageFee, tradingActivityFee } = useCalcFee(
-    orderValue,
-    inputSize,
-    isBuy,
-    inputToken?.feeRate,
-  )
-
-  const networkFeeInNative = marketInfo?.networkFeeInNative ?? '0'
-  const feeSymbol = 'USDT'
+  const feeSymbol = usdSymbol
 
   return (
     <div className="flex flex-col gap-2">
       {/* 兑换比例 */}
-      <div className="flex items-center justify-center gap-1">
-        <span className="text-[14px] text-gray-400">{fromAmount}</span>
-        <SwapArrow size={14} className={'text-brand'} />
-        <span className="text-[14px] text-gray-400">{toAmount}</span>
+      <div className="flex items-center gap-1">
+        <span className="text-[14px] text-gray-400">{rateFrom}</span>
+        <SwapArrow
+          size={14}
+          className={'cursor-pointer text-brand'}
+          onClick={() => setIsRateReversed((prev) => !prev)}
+        />
+        <span className="text-[14px] text-gray-400">{rateTo}</span>
       </div>
 
-      {/* 滑点 */}
-      <div className="flex items-center justify-between">
-        <span className="border-b border-dashed border-gray-400 text-[14px] text-gray-400">
-          {t('v3.t2')}
-        </span>
-        <div className="flex items-center gap-1">
-          <span className="text-[14px] text-white">{slippage}</span>
-          <button className="text-white" onClick={() => setSlippageDrawerOpen(true)}>
-            <EditPencil size={18} />
-          </button>
+      {/* 滑点 (仅市价单显示) */}
+      {tradeType === TradeType.MARKET && (
+        <div className="flex items-center justify-between">
+          <span className="border-b border-dashed border-gray-400 text-[14px] text-gray-400">
+            {t('v3.t2')}
+          </span>
+          <div className="flex items-center gap-1">
+            <span className="text-[14px] text-white">{slippageDisplay}</span>
+            <button className="text-white" onClick={() => setSlippageDrawerOpen(true)}>
+              <EditPencil size={18} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 预估交易费用 - Accordion */}
       <EstimatedFeeAccordion
@@ -90,7 +122,7 @@ export const TradeSummary = ({
           {
             label: t('v2.tx.t33'),
             value: `${tradingActivityFee} ${feeSymbol}`,
-            visible: !isBuy,
+            visible: !isBuy as boolean,
           },
           {
             label: t('v2.tx.t34'),

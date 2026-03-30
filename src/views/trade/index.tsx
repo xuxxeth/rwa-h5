@@ -1,4 +1,6 @@
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useRwas } from '@/hooks/useRwaBalances'
+import { useTokens } from '@/hooks/useTokens'
 import { SessionStatusBar } from './components/SessionStatusBar'
 import { BuySellTabs } from './components/BuySellTabs'
 import { OrderTypeSelector } from './components/OrderTypeSelector'
@@ -16,7 +18,7 @@ import { MARKET_STATUS } from '@/config/constants'
 import { ConnectButtonText } from '@/components/button/ConnectButtonText'
 import SignButton from '@/components/button/SignButton'
 import { TradeType } from '@/hooks/useCaCommon'
-import { parseAmount, truncateUP, formatTokenAmountWithCommas, INTEGER_REGEX } from '@/utils'
+import { parseAmount, truncateUP, formatTokenAmountWithCommas, INTEGER_REGEX, symbolToLower } from '@/utils'
 import { useTokenBalance } from '@/hooks/useTokenBalances'
 import { useTrading } from '@/hooks/useTrading'
 import { useTxToast } from '@/hooks/useTxToast'
@@ -34,7 +36,10 @@ import { useTradeGateState } from '@/components/markets/TradeBox/useTradeGateSta
 import { useTradeCallbacks } from '@/components/markets/TradeBox/useTradeCallbacks'
 import { useShowDialog } from '@/components/dialog/DialogController'
 import { OrderConfirmDrawer } from '@/components/drawer/OrderConfirmDrawer'
+import { SymbolSelectDrawer } from '@/components/drawer/SymbolSelectDrawer'
+import { USDSelectDrawer } from '@/components/drawer/USDSelectDrawer'
 import { isTiko } from '@/service/client'
+import { MarketCloseTips } from './components/MarketCloseTips.tsx'
 
 
 export const TradePage = () => {
@@ -43,6 +48,8 @@ export const TradePage = () => {
   const { toastError } = useToast()
   const { account, isSameChain } = useActiveWeb3()
   const orderDialog = useShowDialog()
+  const tokenDialog = useShowDialog()
+  const outputTokenDialog = useShowDialog()
 
   // ── Store bindings (reuses tradeStore + baseStore + kycStore + settingStore) ──
   const {
@@ -66,6 +73,50 @@ export const TradePage = () => {
     realtimeData,
     slippage,
   } = useTradeStoreBindings()
+
+  const updateInputToken = useTradeStore(state => state.updateInputToken)
+  const updateOutputToken = useTradeStore(state => state.updateOutputToken)
+  const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
+  const rwaList = useRwas()
+  const tokenList = useTokens()
+
+  // ── Output token list with balance (same logic as USDTSelect) ──
+  const tokenListWithBalance = useMemo(() => {
+    return tokenList.map(token => ({
+      ...token,
+      ...tokenWithBalance[symbolToLower(token.symbol)]
+    }))
+  }, [tokenList, tokenWithBalance])
+
+  const hasMultipleOutputTokens = tokenListWithBalance.length > 1
+
+  // ── Token selector callback (same logic as CurrencyInputPanel v2) ──
+  const handleTokenClick = useCallback(() => {
+    tokenDialog.setOpen(true)
+  }, [])
+
+  // ── Output token selector callback (same logic as USDTSelect) ──
+  const handleOutputTokenClick = useCallback(() => {
+    if (hasMultipleOutputTokens) {
+      outputTokenDialog.setOpen(true)
+    }
+  }, [hasMultipleOutputTokens])
+
+  // ── Token initialization from route param (same logic as CurrencyInputPanel) ──
+  useEffect(() => {
+    if (!router.params.symbol) {
+      rwaList[0] && updateInputToken(rwaList[0])
+    } else {
+      const _rwa = rwaList.find(rwa => rwa.symbol.toLowerCase() === router.params.symbol?.toLowerCase())
+      _rwa && updateInputToken(_rwa)
+    }
+  }, [rwaList.length, inputToken, router.params])
+
+  useEffect(() => {
+    if (tokenList[0]) {
+      updateOutputToken(tokenList[0])
+    }
+  }, [tokenList.length])
 
   const marketTradeState = useBaseStore(state => state.marketTradeState)
   const tradeType = useTradeStore(state => state.tradeType)
@@ -252,14 +303,14 @@ export const TradePage = () => {
           <SessionPicker />
 
           {/* Price input (read-only for market orders) */}
-          <AmountInput
+          {tradeType === TradeType.LIMIT && <AmountInput
             label={tradeType === TradeType.MARKET ? t('v3.price') : t('v2.tx.t24')}
             value={limitPrice}
             onChange={handlePriceChange}
             tokenSymbol={outputToken?.symbol}
             readOnly={tradeType === TradeType.MARKET}
             showDropdown={false}
-          />
+          />}
 
           {/* Size input */}
           <AmountInput
@@ -269,18 +320,21 @@ export const TradePage = () => {
             tokenSymbol={inputToken?.symbol}
             balance={action === 'sell' ? inputBalanceDisplay : undefined}
             showDropdown
+            onTokenClick={handleTokenClick}
             regex={INTEGER_REGEX}
             isInsufficient={uiState.isSellInsufficient}
           />
 
-          {/* Estimated pay / receive (read-only) */}
+          {/* Estimated pay / receive (read-only, with output token switch like USDTSelect) */}
           <AmountInput
             label={action === 'buy' ? t('v2.tx.t26') : t('v2.tx.t27')}
             value={allOrderValue}
             onChange={() => {}}
             tokenSymbol={outputToken?.symbol}
+            tokenLogo={outputToken?.icon}
             balance={action === 'buy' ? outputBalanceDisplay : undefined}
-            showDropdown={false}
+            showDropdown={hasMultipleOutputTokens}
+            onTokenClick={handleOutputTokenClick}
             readOnly
             isInsufficient={uiState.isBuyInsufficient}
           />
@@ -323,12 +377,46 @@ export const TradePage = () => {
             </Button>
           )}
 
-          {Number(orderValue) > 0 && <TradeSummary />}
+          {Number(orderValue) > 0 && <TradeSummary
+            fromAmount={`${inputSize} ${inputToken?.symbol || ''}`}
+            toAmount={`${allOrderValue} ${outputToken?.symbol || ''}`}
+            slippage={slippage}
+            limitPrice={limitPrice}
+            symbol={inputToken?.symbol || ''}
+            usdSymbol={outputToken?.symbol || 'USDT'}
+            estimatedFee={estimatedFee}
+            platformFee={platformFee}
+            brokerageFee={brokerageFee}
+            tradingActivityFee={tradingActivityFee}
+            networkFeeInNative={marketInfo.networkFeeInNative}
+            isBuy={action === 'buy'}
+            decimals={inputToken?.decimals ?? 6}
+          />}
         </div>
 
+        <MarketCloseTips />
+        
         {/* 底部信息 */}
         <Footer />
       </div>
+
+      {/* Token selector drawer */}
+      <SymbolSelectDrawer
+        open={tokenDialog.open}
+        onOpenChange={tokenDialog.setOpen}
+        onClick={(token) => {
+          router.push('/trade/' + token.symbol)
+        }}
+      />
+
+      {/* Output token selector drawer */}
+      <USDSelectDrawer
+        open={outputTokenDialog.open}
+        onOpenChange={outputTokenDialog.setOpen}
+        onClick={(token) => {
+          updateOutputToken(token)
+        }}
+      />
 
       {/* Order confirmation drawer */}
       <OrderConfirmDrawer

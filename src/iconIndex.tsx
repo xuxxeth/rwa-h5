@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { ICON_KEYS, getIcon } from '@/components/icons'
 import { useState } from 'react'
 import type { IconKey } from '@/components/icons/types.ts'
+import { useToast } from '@/hooks/useToast.tsx'
+import { toast, Toaster } from 'sonner'
+
 
 
 function capitalizeFirstLetter(string: string) {
@@ -12,43 +15,18 @@ function capitalizeFirstLetter(string: string) {
 
 // eslint-disable-next-line react-refresh/only-export-components
 function IconPage () {
+  const { toastSuccess } = useToast()
+  
   const handleCopy = async (value: string) => {
     await navigator.clipboard.writeText(value)
-    // toast.success(`复制成功: ${value}`);
+    toast.success(`复制成功: ${value}`)
+    event?.stopPropagation()
   }
 
   const [type] = useState('js')
 
   return (
     <div className="p-2 font-mono">
-      {/*<Toaster />*/}
-      <div className="my-2">
-        {/*<RadioButton*/}
-        {/*  value={type}*/}
-        {/*  onChange={handleChange}*/}
-        {/*  options={[*/}
-        {/*    { value: 'component', label: '使用组件' },*/}
-        {/*    { value: 'js', label: '使用js' },*/}
-        {/*  ]}*/}
-        {/*/>*/}
-        <div className="flex justify-center space-x-2">
-          {type === 'component' ? (
-            <div className="min-w-[430px] border bg-slate-900 p-2 text-slate-50">
-              {`import { ChartIcon } from '@/components/icons'; `}
-              <br />
-              <br />
-              {` <ChartIcon type="primary" size={16}/> `}
-            </div>
-          ) : (
-            <div className="w-fit min-w-[430px] border bg-slate-900 p-2 text-slate-50">
-              {`import { getIcon } from '@/components/icons'; `}
-              <br />
-              <br />
-              {` <div> { getIcon('ChartIcon', { type:'primary', size: 16 }) } </div> `}
-            </div>
-          )}
-        </div>
-      </div>
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-8">
         {ICON_KEYS.map((key) => {
           const value = type === 'component' ? `${capitalizeFirstLetter(key)}Icon` : key
@@ -73,5 +51,8 @@ function IconPage () {
 
 
 createRoot(document.getElementById('root')!).render(
-  <IconPage/>
+  <>
+    <Toaster position='top-right' toastOptions={{ classNames: { toast: '!text-white !bg-zinc-800 !border-zinc-700' } }} />
+    <IconPage />
+  </>
 )

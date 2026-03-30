@@ -80,7 +80,7 @@ export const AmountInput = ({
               />
               <span className="text-[14px] text-white">{tokenSymbol}</span>
               {showDropdown && (
-                <ChevronDown size={16} />
+                <ChevronDown size={16} className={'text-white'} />
               )}
             </button>
           )}
