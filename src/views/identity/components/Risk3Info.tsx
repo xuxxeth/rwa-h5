@@ -101,8 +101,8 @@ const Risk3Info = memo(
               />
               
             </SectionBox>
-          <div className="flex justify-center mt-8">
-            <Button disabled={submiting} loading={submiting} type="submit" className="bg-white text-black w-full lg:w-[400px] rounded-[8px]"
+          <div className="flex justify-center mt-8 px-6">
+            <Button disabled={submiting} loading={submiting} type="submit" className="bg-white text-black w-full lg:w-[400px] rounded-[8px] h-[48px]"
             >
               { t('identity.continue') }
               

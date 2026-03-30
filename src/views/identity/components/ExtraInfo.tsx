@@ -114,7 +114,7 @@ const ExtraInfo = memo(
     }
 
     return (
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-2 px-6">
         
         {/* <SectionBox className="pb-5"> */}
           <SectionTitle>{t('kyc.t25')}</SectionTitle>
@@ -124,10 +124,19 @@ const ExtraInfo = memo(
           {
             fields.map((item, index) => {
               return (
-                <div key={`${_id}-${index}`} className=" flex justify-between mb-5">
+                <div key={`${_id}-${index}`} className="  mb-5 bg-[#131416] rounded-[4px] border border-[#383A40] overflow-hidden">
+                  <div className="text-[16px] text-white p-2 bg-[#1A1B1E] relative h-[36px] flex items-center">
+                    {t('kyc.t19')}{' '}{index + 1}
+                    {
+                      fields.length > 1 && 
+                        <img onClick={() => remove(index)} src="/images/h5/icons/delete.png" className="w-[42px] h-[36px] absolute right-0 top-0" alt="" />
+                    }
+                    
+                  </div>
                   <SectionBox className="p-4 w-full"> 
-                    <div className=" grid grid-cols-2 mb-5">
+                    <div className=" grid grid-cols-1 mb-5">
                       <div>
+                        
                         <div className="flex items-end justify-between font-normal mb-2">
                           <div className="text-[16px]">{t('kyc.t40')} </div>
                           <div className="text-[12px] text-[#909090]">{extraList[index].name.length}/30</div>
@@ -201,7 +210,8 @@ const ExtraInfo = memo(
                     }
                     
                   </SectionBox>
-                  <div className="w-[24px] ml-5 shrink-0">
+                  
+                  {/* <div className="w-[24px] ml-5 shrink-0">
                     {
                       fields.length > 1 && 
                         <LazyImage src="/images/kyc/minus.png" className="w-6 h-6 mb-5 cursor-pointer"
@@ -215,17 +225,24 @@ const ExtraInfo = memo(
                       />
                     }
                     
-                  </div>
+                  </div> */}
                 </div>
               )
             })
           }
           
-          
-        {/* </SectionBox>   */}
+        <div className="">
+          <Button className=" bg-[#1A1B1E] text-white w-full rounded-[8px] h-[48px] text-[14px]"
+            onClick={() => append({ name: "", description: "", files: [] })}
+          >
+            <img src="/images/h5/icons/add.png" className="w-[18px] h-[18px]" alt="" />
+            新增补充资料
+            
+          </Button>
+        </div>  
         
         <div className="flex justify-center mt-8">
-          <Button disabled={submiting} loading={submiting} type="submit" className="bg-white text-black w-full lg:w-[400px] rounded-[8px]"
+          <Button disabled={submiting} loading={submiting} type="submit" className="bg-white text-black w-full lg:w-[400px] rounded-[8px] h-[48px]"
           >
             { t('kyc.t39') }
             
