@@ -248,7 +248,6 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         >
           <LazyImage src='/images/h5/bsc.svg' />
           <span>{shortenAddress(account)}</span>
-          <span>chainID-{chainId}</span>
           <LazyImage src='/images/h5/arrow-down.svg' />
         </button>
       )}
