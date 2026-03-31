@@ -205,21 +205,21 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     router.push(path)
   }
 
-  const isShowingQrCode = connectorType === ConnectorType.WalletConnect
+  // const isShowingQrCode = connectorType === ConnectorType.WalletConnect
 
-  const dialogTitle =
-    isShowingQrCode && currentWallet ? (
-      <div className='flex items-center justify-center relative'>
-        <LazyImage
-          onClick={() => setConnectorType(undefined)}
-          className='w-6 h-6 absolute left-0 top-0 cursor-pointer'
-          src='/images/icons/back.png'
-        />
-        <span className='text-base font-semibold'>{currentWallet.info.name}</span>
-      </div>
-    ) : (
-      <span className='text-base font-semibold'>{t('Connect Wallet')}</span>
-    )
+  // const dialogTitle =
+  //   isShowingQrCode && currentWallet ? (
+  //     <div className='flex items-center justify-center relative'>
+  //       <LazyImage
+  //         onClick={() => setConnectorType(undefined)}
+  //         className='w-6 h-6 absolute left-0 top-0 cursor-pointer'
+  //         src='/images/icons/back.png'
+  //       />
+  //       <span className='text-base font-semibold'>{currentWallet.info.name}</span>
+  //     </div>
+  //   ) : (
+  //     <span className='text-base font-semibold'>{t('Connect Wallet')}</span>
+  //   )
 
   return (
     <>
