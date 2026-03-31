@@ -23,6 +23,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { scanApi } from '@/service/scan/api'
 import { TableHeader, type ITableConfig } from '@/components/table-header'
 import { type IOpenOrder } from '@/service/scan/types'
+import { OrderState } from '@/service/scan/types'
 import {
   cn,
   textPrefix,
@@ -263,7 +264,7 @@ const openOrderTableConfig: ITableConfig<
           refetch={refetch}
           className='max-w-[50px] text-ellipsis overflow-hidden'
           orderId={item.orderId}
-          disabled={item.state === 8}
+          disabled={item.state === OrderState.PendingCancel}
         />
       )
     },

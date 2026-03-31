@@ -5,6 +5,7 @@ import { type IRwa } from '@/service/base/types'
 import { openOrderOptions, infiniteOpenOrderOptions } from '@/queries'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { type IOpenOrder } from '@/service/scan/types'
+import { OrderState } from '@/service/scan/types'
 import {
   SideCell,
   TokenCell,
@@ -31,7 +32,7 @@ import { useTradeStore } from '@/stores/tradeStore'
 export default function OpenOrderTable(props: {
   chainId: number
   account: string
-  rwaTokens: IRwa[] 
+  rwaTokens: IRwa[]
   orderChanged: OrderChanged | null
 }) {
   const { chainId, account, rwaTokens, orderChanged } = props
@@ -254,7 +255,7 @@ const openOrderTableConfig: ITableConfig<IOpenOrder, { rwaTokens: IRwa[]; refetc
     key: 'action',
     sortable: false,
     render: (item: IOpenOrder, { refetch }) => (
-      <CancelOrderButton refetch={refetch} orderId={item.orderId} disabled={item.state === 8} />
+      <CancelOrderButton refetch={refetch} orderId={item.orderId} disabled={item.state === OrderState.PendingCancel} />
     ),
     width: 90,
   },
@@ -308,7 +309,7 @@ function CancelOrderButton(props: { orderId: string; refetch: () => void; disabl
 
       const res = await cancelOrder(orderId, { wait: true, skipSimulate: true })
       if (res.code === 9200) {
-        
+      
       } else {
         // @ts-ignore
         const errorMessage = res.data?.message

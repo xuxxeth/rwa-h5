@@ -5,18 +5,19 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { useRwaByStockId } from '@/hooks/useRwaBalances'
 import CopyButton from '@/components/button/copyButton'
 import { LazyImage } from '@/components/image/LazyImage'
-import type { IOpenOrder, OrderSide, OrderState, OrderType, SessionType } from '@/service/scan/types'
+import type { IOpenOrder, OrderType, SessionType } from '@/service/scan/types'
+import { OrderSide, OrderState } from '@/service/scan/types'
 import { Address } from '@/components/Address.tsx'
 
 /* ── 状态映射 ── */
 const STATUS_CONFIG: Record<number, { textKey: string; className: string }> = {
-  0: { textKey: 'assets.order.state.open', className: 'text-white' },
-  1: { textKey: 'assets.order.state.partiallyFilled', className: 'text-orange-50' },
-  2: { textKey: 'assets.order.state.orderFailed', className: 'text-red-50' },
-  3: { textKey: 'assets.order.state.cancelled', className: 'text-gray-400' },
-  5: { textKey: 'assets.order.state.filled', className: 'text-white' },
-  8: { textKey: 'assets.order.state.pendingCancel', className: 'text-gray-400' },
-  9: { textKey: 'assets.order.state.open', className: 'text-white' },
+  [OrderState.PendingSubmit]: { textKey: 'assets.order.state.open', className: 'text-white' },
+  [OrderState.PartialFilled]: { textKey: 'assets.order.state.partiallyFilled', className: 'text-orange-50' },
+  [OrderState.Failed]: { textKey: 'assets.order.state.orderFailed', className: 'text-red-50' },
+  [OrderState.Cancelled]: { textKey: 'assets.order.state.cancelled', className: 'text-gray-400' },
+  [OrderState.Filled]: { textKey: 'assets.order.state.filled', className: 'text-white' },
+  [OrderState.PendingCancel]: { textKey: 'assets.order.state.pendingCancel', className: 'text-gray-400' },
+  [OrderState.PendingFill]: { textKey: 'assets.order.state.open', className: 'text-white' },
 }
 
 /* ── 子组件 ── */
@@ -24,7 +25,7 @@ const STATUS_CONFIG: Record<number, { textKey: string; className: string }> = {
 /** 买入 / 卖出 Tag */
 function SideTag({ side }: { side: OrderSide }) {
   const { t } = useTranslation()
-  const isBuy = side === 0
+  const isBuy = side === OrderSide.Buy
   return (
     <span
       className={cn(
@@ -89,7 +90,7 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
   const { t } = useTranslation()
   const rwa = useRwaByStockId(order.stockId)
   const statusConfig = STATUS_CONFIG[order.state] ?? STATUS_CONFIG[0]
-  const canCancel = order.state !== 8 && order.state !== 3 && order.state !== 5 && order.state !== 2
+  const canCancel = order.state !== OrderState.PendingCancel && order.state !== OrderState.Cancelled && order.state !== OrderState.Filled && order.state !== OrderState.Failed
 
   return (
     <div className='flex flex-col gap-5 border-b border-gray-875 py-5'>
@@ -115,7 +116,7 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
 
         {/* Right: Cancel + time */}
         <div className='flex flex-col items-end justify-center gap-1'>
-          {canCancel ? (
+          {canCancel || canceling ? (
             <button
               disabled={canceling}
               className={cn(
@@ -181,7 +182,7 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
         <span className='text-[12px] leading-[1em] text-gray-450'>
           {t('portfolio.orderTable.txHash')}
         </span>
-       {/* <div className='flex items-center gap-1.5'>
+        {/* <div className='flex items-center gap-1.5'>
           <span className='text-[12px] leading-[1.25em] text-blue-50'>
             {shortenAddress(order.txHash ?? '', 4, 4)}
           </span>

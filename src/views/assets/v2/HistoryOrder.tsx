@@ -146,7 +146,7 @@ function HistoryOrder(props: {
           />
         </div>
       )}
-      <OrderTable<IOrder, IOrderHistoryFilter & { limit?: number }>
+      <OrderTable<IOrder, IOrderHistoryFilter>
         chainId={chainId}
         dataMode={dataMode}
         account={account}

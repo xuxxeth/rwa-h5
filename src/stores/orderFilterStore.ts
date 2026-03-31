@@ -120,6 +120,7 @@ export interface IOrderHistoryFilter {
   states?: string
   orderType?: string
   after?: string
+  limit?: number
   startTime?: number
   endTime?: number
 }
@@ -150,6 +151,7 @@ export interface ITradeHistoryFilter {
   stockIds?: string
   side?: string
   after?: string
+  limit?: number
   startTime?: number
   endTime?: number
   orderType?: string

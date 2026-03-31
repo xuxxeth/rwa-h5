@@ -119,7 +119,7 @@ function TradeHistory(props: {
           />
         </div>
       )}
-      <OrderTable<ITrade, ITradeHistoryFilter & { limit?: number }>
+      <OrderTable<ITrade, ITradeHistoryFilter>
         chainId={chainId}
         dataMode={dataMode}
         PAGE_LIMIT={PAGE_LIMIT}

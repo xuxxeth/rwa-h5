@@ -8,6 +8,7 @@ import { DEFAULT_SLIPPAGE } from '@/config/constants'
 import { TradeType } from '@/hooks/useCaCommon'
 import { EstimatedFeeAccordion } from './EstimatedFeeAccordion'
 import { divide, toFixed } from '@/utils'
+import IconWithTooltip from '@/components/icon-tooltip'
 
 interface TradeSummaryProps {
   /** 兑换来源数量，如 "1 AMZNt" */
@@ -97,9 +98,18 @@ export const TradeSummary = ({
       {/* 滑点 (仅市价单显示) */}
       {tradeType === TradeType.MARKET && (
         <div className="flex items-center justify-between">
-          <span className="border-b border-dashed border-gray-400 text-[14px] text-gray-400">
-            {t('v3.t2')}
-          </span>
+          <IconWithTooltip
+            tooltip={
+              <div className="text-xs">
+                <div className="text-white mt-1">{t('v3.t2')}</div>
+                <div className="text-[#C7CCD6] mt-1">{t('v3.t6')}</div>
+              </div>
+            }
+          >
+            <span className="border-b border-dashed border-gray-400 text-[14px] text-gray-400 cursor-pointer">
+              {t('v3.t2')}
+            </span>
+          </IconWithTooltip>
           <div className="flex items-center gap-1">
             <span className="text-[14px] text-white">{slippageDisplay}</span>
             <button className="text-white" onClick={() => setSlippageDrawerOpen(true)}>

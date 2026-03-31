@@ -4,10 +4,14 @@ import { useRouter } from '@/hooks/useRouter'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useTradeStore } from '@/stores/tradeStore'
 import { TradeType } from '@/hooks/useCaCommon'
+import { useActiveWeb3 } from '@/hooks/useActiveWe3'
+import { useSignatureValidStatus } from '@/hooks/useSignature'
 
 export const OrderTypeSelector = () => {
   const { t } = useTranslation()
   const router = useRouter()
+  const { account } = useActiveWeb3()
+  const [isSignatureValid] = useSignatureValidStatus()
   const tradeType = useTradeStore(state => state.tradeType)
   const updateTradeType = useTradeStore(state => state.updateTradeType)
 
@@ -35,13 +39,16 @@ export const OrderTypeSelector = () => {
           {t('limit')}
         </button>
       </div>
-      <button
-        className="relative flex items-center justify-center text-gray-400"
-        onClick={() => router.push('/orders')}
-      >
-        <History size={20} />
-        <Badge />
-      </button>
+      
+      {!!account && isSignatureValid && (
+        <button
+          className="relative flex items-center justify-center text-gray-400"
+          onClick={() => router.push('/orders')}
+        >
+          <History size={20} />
+          {/*<Badge />*/}
+        </button>
+      )}
     </div>
   )
 }

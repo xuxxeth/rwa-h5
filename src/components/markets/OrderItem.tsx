@@ -3,6 +3,7 @@ import { LazyImage } from "../image/LazyImage"
 import { useTranslation } from "@/hooks/useTranslation"
 import React from "react"
 import type { IOpenOrder } from "@/service/scan/types"
+import { OrderSide, OrderState } from "@/service/scan/types"
 import { cn } from "@/lib/utils"
 import { formatNumberWithCommas, formatTimestamp, textPrefix, textSuffix, toFixed } from "@/utils/format"
 import { OrderStatusCell } from "@/views/assets/Shared"
@@ -34,7 +35,7 @@ const OrderItem = memo(
 
     const { t } = useTranslation()
     const rwaToken = useRwaByStockId(order.stockId)
-    const disableCancel = useMemo(() => order.state === 8, [order.state])
+    const disableCancel = useMemo(() => order.state === OrderState.PendingCancel, [order.state])
     return (
       <div className="mt-2 py-2">
         <OrderItemWRap>
@@ -55,9 +56,9 @@ const OrderItem = memo(
         <OrderItemWRap>
           <div className={cn(
             "text-[14px] flex items-center gap-x-1",
-            order.side === 0 ? 'text-[rgba(33,201,94,1)]' : 'text-[rgba(255,89,60,1)]'
+            order.side === OrderSide.Buy ? 'text-[rgba(33,201,94,1)]' : 'text-[rgba(255,89,60,1)]'
           )}>
-            {order.side === 0 ? t('assets.order.buy') : t('assets.order.sell')}
+            {order.side === OrderSide.Buy ? t('assets.order.buy') : t('assets.order.sell')}
           </div>
           <div className=" text-white">
             {order.orderType === 0 ? t('limit') : t('market')}
