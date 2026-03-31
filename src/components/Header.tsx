@@ -15,7 +15,7 @@ export const Header = () => {
     >
       <div className='flex items-center gap-2'>
         <NavMenu size={24} className='cursor-pointer' onClick={() => setOpen(true)} />
-        <TikoLogo size={55} />
+        <TikoLogo size={55} className='cursor-pointer' onClick={() => window.location.href = import.meta.env.VITE_HOME_URL} />
       </div>
       <div>
         <SwitchButton />
