@@ -267,7 +267,6 @@
   "signatureVerify": "簽名驗證",
   "signatureVerifyDescTop": "為確保您的個人資料安全，",
   "signatureVerifyDescBottom": "請使用錢包簽名以查看訂單與交易記錄",
-
   "gotoSignature": "立即簽名",
   "Coming Soon": "即將推出",
   "Holdings Only": "僅顯示持倉項目",
@@ -710,7 +709,8 @@
       "t41": "當前帳戶異常，禁止賣出。",
       "t42": "虧損",
       "t43": "距開盤",
-      "t44": "市場已收盤。訂單將於下一個交易時段提交。"
+      "t44": "市場已收盤。訂單將於下一個交易時段提交。",
+      "txInProgress": "交易進行中"
     },
     "hd": {
       "h1": "訂單",

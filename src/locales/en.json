@@ -712,7 +712,8 @@
       "t41": "Account status abnormal. Selling is disabled.",
       "t42": "Loss",
       "t43": "Time until opening ",
-      "t44": "Markets Closed — Orders will be queued and executed in the next trading session."
+      "t44": "Markets Closed — Orders will be queued and executed in the next trading session.",
+      "txInProgress": "Transaction in progress"
     },
     "hd": {
       "h1": "Orders",
