@@ -9,6 +9,8 @@ import {
 } from '@/stores/orderFilterStore'
 import { type ErrorHandlers } from '@/config/constants'
 
+const DEFAULT_PAGE_LIMIT = 10
+
 // 获取市场行情的 queryOptions
 export function marketQuoteOptions(chainId: number) {
   return queryOptions({
@@ -37,7 +39,7 @@ export function openOrderOptions(
   })
 }
 
-export function infiniteOrderOptions<T extends { orderId: string }, F extends { after?: string }>(
+export function infiniteOrderOptions<T extends { orderId: string }, F extends { after?: string; limit?: number }>(
   api: (filters: F, errorHandlers?: ErrorHandlers) => Promise<{ data: T[] }>,
   account: string,
   chainId: number,
@@ -46,6 +48,7 @@ export function infiniteOrderOptions<T extends { orderId: string }, F extends { 
   filters?: F,
   errorHandlers?: ErrorHandlers
 ) {
+  const limit = filters?.limit ?? DEFAULT_PAGE_LIMIT
   return infiniteQueryOptions<
     {
       data: T[]
@@ -73,7 +76,7 @@ export function infiniteOrderOptions<T extends { orderId: string }, F extends { 
         errorHandlers
       )
       const orders = data?.data ?? []
-      const hasNextPage = orders.length > 0
+      const hasNextPage = orders.length >= limit
       const nextPageParams = hasNextPage ? scrollId(orders[orders.length - 1]) : undefined
       return {
         data: orders,
@@ -120,7 +123,8 @@ export function infiniteOpenOrderOptions(
         errorHandlers
       )
       const orders = data?.data ?? []
-      const hasNextPage = orders.length > 0
+      const limit = filters?.limit ?? DEFAULT_PAGE_LIMIT
+      const hasNextPage = orders.length >= limit
       const nextPageParams = hasNextPage ? orders[orders.length - 1].orderId : undefined
       return {
         data: orders,
@@ -183,7 +187,8 @@ export function infiniteOrderHistoryOptions(
         errorHandlers
       )
       const orders = data?.data ?? []
-      const hasNextPage = orders.length > 0
+      const limit = filters?.limit ?? DEFAULT_PAGE_LIMIT
+      const hasNextPage = orders.length >= limit
       const nextPageParams = hasNextPage ? orders[orders.length - 1].orderId : undefined
 
       return {
@@ -240,7 +245,8 @@ export function infiniteTradeHistoryOptions(
       // pageParam 是前一页的最后一个orderId，初始值为undefined
       const data = await scanApi.getTrades({ ...filters, after: pageParam }, errorHandlers)
       const trades = data?.data ?? []
-      const hasNextPage = trades.length > 0
+      const limit = filters?.limit ?? DEFAULT_PAGE_LIMIT
+      const hasNextPage = trades.length >= limit
       const nextPageParams = hasNextPage ? trades[trades.length - 1].id : undefined
 
       return {

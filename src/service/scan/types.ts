@@ -1,16 +1,43 @@
 // 0 限价单 1 市价单
 export type OrderType = 0 | 1
-// 0 买单 1 卖单
-export type OrderSide = 0 | 1
-// 0 待提交 1 部分成交 2 下单失败（无成交） 3 已撤销  5 全部成交 8 待撤单 9 待成交
-export type OrderState = 0 | 1 | 2 | 3 | 5 | 8 | 9
+
+// 交易方向
+export const OrderSide = {
+  Buy: 0,
+  Sell: 1,
+} as const
+export type OrderSide = (typeof OrderSide)[keyof typeof OrderSide]
+
+// 订单状态
+export const OrderState = {
+  PendingSubmit: 0,
+  PartialFilled: 1,
+  Failed: 2,
+  Cancelled: 3,
+  Filled: 5,
+  PendingCancel: 8,
+  PendingFill: 9,
+} as const
+export type OrderState = (typeof OrderState)[keyof typeof OrderState]
+
 // 0 未风控 1 已风控
 export type RiskType = 0 | 1
 
 // 0 Day(当日有效) 1 GTD(指定日期有效) 2 GTC(一直有效)
 export type Tif = 0 | 1 | 2
 
-export type Reason = 0 | 1 | 2 | 3
+// 订单失败/取消原因
+export const OrderReason = {
+  None: 0,
+  System: 1,
+  MarketClose: 2,
+  Void: 3,
+  Rejected: 4,
+  PriceDeviation: 5,
+  UserNotFound: 6,
+  PricePrecision: 7,
+} as const
+export type OrderReason = (typeof OrderReason)[keyof typeof OrderReason]
 
 // 0 仅盘中 4 盘前+盘后
 export type SessionType = 0 | 4
@@ -32,7 +59,7 @@ export interface IOpenOrder {
   settledSize: string
   txTime: number
   txHash: string
-  reason: Reason
+  reason: OrderReason
   currency: string
   sessionType: SessionType
 }
@@ -58,7 +85,7 @@ export interface IOrder {
   settledAmount: string
   // 成交数量
   settledSize: string
-  reason: Reason
+  reason: OrderReason
   txTime: number
   tradeTime: number
   txHash: string
@@ -81,6 +108,6 @@ export interface ITrade {
   stockId: number
   txHash: string
   txTime: number
-  reason: Reason
+  reason: OrderReason
   currency: string
 }

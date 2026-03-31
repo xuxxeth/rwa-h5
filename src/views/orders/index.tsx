@@ -11,6 +11,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { useToast } from '@/hooks/useToast'
 import CopyButton from '@/components/button/copyButton'
 import NoRecord from '@/components/no-record'
+import { Copy } from '@/components/Copy.tsx'
 
 const TIKO_LITE_TRADE_URL = 'https://www.tiko.cc/lite-trade'
 
@@ -112,14 +113,15 @@ export const OrdersPage = () => {
               ) : (
                 <>
                   <span className='text-[14px] text-gray-400'>{t('assets.noMoreData')}</span>
-                  <div className='flex items-center justify-center gap-1'>
-                    <span className='text-[12px] text-gray-500'>
-                      {t('portfolio.webHistory', {
-                        defaultValue: '历史订单请前往web端官网查看，',
-                      })}
-                      <span className='text-[12px] text-gray-500'>{TIKO_LITE_TRADE_URL}</span>
-                    </span>
-                    <CopyButton copyText={TIKO_LITE_TRADE_URL} />
+                  <div className='inline-block align-middle text-center text-[12px] text-gray-500'>
+                    {t('portfolio.webHistory', {
+                      defaultValue: '历史订单请前往web端官网查看，',
+                    })}
+                    {TIKO_LITE_TRADE_URL}
+                    <Copy
+                      className={'inline-block ml-[2px] !text-gray-500'}
+                      content={TIKO_LITE_TRADE_URL}
+                    />
                   </div>
                 </>
               )}

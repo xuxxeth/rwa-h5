@@ -3,6 +3,7 @@ import { LazyImage } from '../image/LazyImage'
 import { cn } from '@/lib/utils'
 import { useTranslation } from '@/hooks/useTranslation'
 import { TooltipArrow } from '@radix-ui/react-tooltip'
+import { useState, useCallback, useRef, useEffect } from 'react'
 
 interface IconWithTooltipProps {
   icon?: string
@@ -24,10 +25,44 @@ function IconWithTooltip({
   triggerClassName,
   iconOrTextClassName,
   tooltipClassName,
-  open,
-  onOpenChange,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: IconWithTooltipProps) {
   const { t } = useTranslation()
+  const [internalOpen, setInternalOpen] = useState(false)
+  const triggerRef = useRef<HTMLDivElement>(null)
+
+  const isControlled = controlledOpen !== undefined
+  const isOpen = isControlled ? controlledOpen : internalOpen
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (isControlled) {
+        controlledOnOpenChange?.(nextOpen)
+      } else {
+        setInternalOpen(nextOpen)
+      }
+    },
+    [isControlled, controlledOnOpenChange]
+  )
+
+  const handleTriggerClick = useCallback(() => {
+    handleOpenChange(!isOpen)
+  }, [isOpen, handleOpenChange])
+
+  // Close tooltip when tapping outside
+  useEffect(() => {
+    if (!isOpen) return
+    const handleOutsideClick = (e: PointerEvent) => {
+      if (triggerRef.current && !triggerRef.current.contains(e.target as Node)) {
+        handleOpenChange(false)
+      }
+    }
+    document.addEventListener('pointerdown', handleOutsideClick)
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsideClick)
+    }
+  }, [isOpen, handleOpenChange])
 
   const renderTrigger = () => {
     if (children) {
@@ -47,9 +82,13 @@ function IconWithTooltip({
 
   return (
     <TooltipProvider>
-      <Tooltip delayDuration={0} open={open} onOpenChange={onOpenChange}>
+      <Tooltip delayDuration={0} open={isOpen} onOpenChange={handleOpenChange}>
         <TooltipTrigger asChild>
-          <div className={cn('cursor-pointer flex items-center justify-center', triggerClassName)}>
+          <div
+            ref={triggerRef}
+            className={cn('cursor-pointer flex items-center justify-center', triggerClassName)}
+            onClick={handleTriggerClick}
+          >
             {renderTrigger()}
           </div>
         </TooltipTrigger>
@@ -58,6 +97,9 @@ function IconWithTooltip({
             'px-4 py-2 rounded-[8px] bg-gray-700 text-white font-normal text-xs duration-0 animate-none max-w-[250px]',
             tooltipClassName
           )}
+          onPointerDownOutside={(e) => {
+            e.preventDefault()
+          }}
         >
           {typeof tooltip === 'string' ? t(tooltip) : tooltip}
           <TooltipArrow className='fill-gray-700' />

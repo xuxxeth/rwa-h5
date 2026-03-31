@@ -31,7 +31,7 @@ export const Copy = ({ content, className = '' }: { content?: string; className?
     }
   }
   return (
-    <div className={`h-[12px] w-[12px] cursor-pointer ${className}`}>
+    <div className={`h-[12px] w-[12px] align-middle cursor-pointer ${className}`}>
       {isCopied ? (
         <div
           onClick={e => {
@@ -39,7 +39,7 @@ export const Copy = ({ content, className = '' }: { content?: string; className?
             e.preventDefault()
           }}
         >
-          <Yes size={12} className="text-brand" />
+          <Yes size={12} className='!text-brand' />
         </div>
       ) : (
         <div onClick={onCopy}>

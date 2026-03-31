@@ -8,6 +8,7 @@ import { useTradeStore } from "@/stores/tradeStore";
 import { useWssStore } from "@/stores/wssStore";
 import storage from "@/utils/storage";
 import { KYC_UPLOAD_STORAGE_KEY } from "@/views/identity/components/Upload/shared";
+import { OrderReason } from "@/service/scan/types";
 import { lazy, memo, useEffect, useRef } from "react";
 const KycState = lazy(() => import("@/components/kyc-state"));
 const Compliance = lazy(() => import("@/components/compliance"));
@@ -16,10 +17,10 @@ const NO_SHOW_PATH = ['/']
 
 const Updater = memo(
   () => {
-    // const { 
-    //   isOnline, 
-    //   blockNumber, 
-    //   error 
+    // const {
+    //   isOnline,
+    //   blockNumber,
+    //   error
     // } = useNetworkStatus({
     //   interval: 15000 // 15秒检查一次
     // });
@@ -64,26 +65,26 @@ const Updater = memo(
         if (isMarket) {
           message = t("v2.tx.t125")
           // CANCELLED状态
-          if (newOrder.r === 0 || newOrder.r === 1 || newOrder.r === 2) { 
+          if (newOrder.r === OrderReason.None || newOrder.r === OrderReason.System || newOrder.r === OrderReason.MarketClose) {
             // 假市价单正常撤单，则提示價格波動過大，超出滑點範圍。請提高滑點後重試。
-            if (newOrder.r === 0 || newOrder.r === 1) {
+            if (newOrder.r === OrderReason.None || newOrder.r === OrderReason.System) {
               message = t("v2.tx.t121")
             }
             // 收市撤单则提示订单到期已关闭
-            if (newOrder.r === 2) {
+            if (newOrder.r === OrderReason.MarketClose) {
               message = t("v2.tx.t122")
             }
           }
           // FAILED状态
-          if (newOrder.r === 3 || newOrder.r === 4 || newOrder.r === 5 || newOrder.r === 6 || newOrder.r === 7) {
+          if (newOrder.r === OrderReason.Void || newOrder.r === OrderReason.Rejected || newOrder.r === OrderReason.PriceDeviation || newOrder.r === OrderReason.UserNotFound || newOrder.r === OrderReason.PricePrecision) {
             isFailed = true
-            if (newOrder.r === 3 || newOrder.r === 4) {
+            if (newOrder.r === OrderReason.Void || newOrder.r === OrderReason.Rejected) {
               message = t("v2.tx.t123")
             }
-            if (newOrder.r === 5) {
+            if (newOrder.r === OrderReason.PriceDeviation) {
               message = t("v2.tx.t124")
             }
-            if (newOrder.r === 6 || newOrder.r === 7) {
+            if (newOrder.r === OrderReason.UserNotFound || newOrder.r === OrderReason.PricePrecision) {
               message = t("v2.tx.t125")
             }
           }

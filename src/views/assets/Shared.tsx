@@ -12,6 +12,7 @@ import VectorSVG from '@/components/pagination/vector.svg?react'
 import { CheckBoxBySVG } from '@/components/check-box'
 import { textSuffix, toFixed, sum } from '@/utils'
 import type { IOrder, OrderType, RiskType } from '@/service/scan/types'
+import { OrderReason, OrderSide, OrderState } from '@/service/scan/types'
 import BigNumber from 'bignumber.js'
 import IconWithTooltip from '@/components/icon-tooltip'
 import NoRecord, { NoRecordAndSeeMore } from '@/components/no-record'
@@ -113,7 +114,7 @@ export function ValueCell(props: { value: string; currency?: string }) {
 }
 
 export function ReasonCell({ reason }: { reason: IOrder['reason'] }) {
-  if (reason === 0) return <div>--</div>
+  if (reason === OrderReason.None) return <div>--</div>
 
   const reasonMap: Record<number, string> = {
     1: '1',
@@ -138,14 +139,14 @@ export function ReasonCell({ reason }: { reason: IOrder['reason'] }) {
   )
 }
 
-export function SideCell(props: { side: 0 | 1; className?: string }) {
+export function SideCell(props: { side: OrderSide; className?: string }) {
   const { t } = useTranslation()
   const { side, className } = props
 
   return (
     <TextCell
-      text={side === 0 ? t('assets.order.buy') : t('assets.order.sell')}
-      className={cn(side === 0 ? 'text-green-50' : 'text-red-50', className)}
+      text={side === OrderSide.Buy ? t('assets.order.buy') : t('assets.order.sell')}
+      className={cn(side === OrderSide.Buy ? 'text-green-50' : 'text-red-50', className)}
     />
   )
 }
@@ -184,37 +185,37 @@ export function TokenCell(props: {
 }
 
 export const openStatus = {
-  value: [0, 9], // 0 待提交 // 9 待成交
+  value: [OrderState.PendingSubmit, OrderState.PendingFill],
   text: 'open',
   className: 'text-white',
 }
 
 export const partiallyFilledStatus = {
-  value: [1], // 1 部分成交
+  value: [OrderState.PartialFilled],
   text: 'partiallyFilled',
   className: 'text-[rgba(255,178,25,1)]',
 }
 
 export const failedStatus = {
-  value: [2], // 2 下单失败
+  value: [OrderState.Failed],
   text: 'orderFailed',
   className: 'text-red-50',
 }
 
 export const cancelledStatus = {
-  value: [3], // 3 已撤销
+  value: [OrderState.Cancelled],
   text: 'cancelled',
   className: 'text-gray-400',
 }
 
 export const filledStatus = {
-  value: [5], // 5 全部成交
+  value: [OrderState.Filled],
   text: 'filled',
   className: 'text-white',
 }
 
 export const pendingCancelStatus = {
-  value: [8], //8 待撤单
+  value: [OrderState.PendingCancel],
   text: 'pendingCancel',
   className: 'text-gray-500',
 }

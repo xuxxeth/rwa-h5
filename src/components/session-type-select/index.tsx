@@ -61,37 +61,39 @@ const SessionTypeSelect = memo(
             from === 'lite-trade'
               ? 'bg-[#1A1B1E]'
               : 'border border-solid border-[rgba(35,36,39,1)]',
-            isOpenOrClose ? 'border-[#232427]' : 'border-[#1A1B1E]',
+            isOpenOrClose ? 'border-[#232427]' : 'border-[#1A1B1E]'
           )}
-          onClick={() => {
-            if (!isOpenOrClose) {
-              setDrawerOpen(true)
-            }
-          }}
         >
-          <div className="flex w-full items-center justify-between gap-2 text-[14px] font-normal text-white">
+          <div className='flex w-full items-center justify-between gap-2 text-[14px] font-normal text-white'>
             <IconWithTooltip
               tooltip={
                 <div>
                   <div>
-                    <span className="font-semibold">{t('v3.t16') ?? ' '}：</span>
+                    <span className='font-semibold'>{t('v3.t16') ?? ' '}：</span>
                     <span>{t('v3.t19')}</span>
                   </div>
-                  <div className="mt-2">
-                    <span className="font-semibold">{t('v3.t17') ?? ' '}：</span>
+                  <div className='mt-2'>
+                    <span className='font-semibold'>{t('v3.t17') ?? ' '}：</span>
                     <span> {t('v3.t20')}</span>
                   </div>
                 </div>
               }
             >
-              <div className="cursor-pointer border-b border-dashed border-[#9DA3AF] text-[14px] text-[#9DA3AF]">
+              <div className='cursor-pointer border-b border-dashed border-[#9DA3AF] text-[14px] text-[#9DA3AF]'>
                 {t('v3.t18') ?? ' '}
               </div>
             </IconWithTooltip>
-            <div className="flex items-center">
-              <span className="text-[#9DA3AF]">{orderValue ?? ''}</span>
-              <span className="ml-2 text-[14px] text-white">{typeItem.label ?? '--'}</span>
-              {!isOpenOrClose && <ChevronDown size={20} className="ml-1 text-white" />}
+            <div
+              className='flex items-center'
+              onClick={() => {
+                if (!isOpenOrClose) {
+                  setDrawerOpen(true)
+                }
+              }}
+            >
+              <span className='text-[#9DA3AF]'>{orderValue ?? ''}</span>
+              <span className='ml-2 text-[14px] text-white'>{typeItem.label ?? '--'}</span>
+              {!isOpenOrClose && <ChevronDown size={20} className='ml-1 text-white' />}
             </div>
           </div>
         </div>
@@ -101,9 +103,8 @@ const SessionTypeSelect = memo(
           open={drawerOpen}
           onOpenChange={setDrawerOpen}
           value={typeItem.code}
-          onChange={(code) => {
-            const label =
-              code === SessionType.DEFAULT ? t('v3.t16') : t('v3.t17')
+          onChange={code => {
+            const label = code === SessionType.DEFAULT ? t('v3.t16') : t('v3.t17')
             setTypeItem({ code, label })
             updateSessionType(code)
           }}
