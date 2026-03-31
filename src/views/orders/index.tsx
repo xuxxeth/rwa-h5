@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { TittleBar } from '@/components/TittleBar'
 import { OrderCard } from './components/OrderCard'
@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/useToast'
 import CopyButton from '@/components/button/copyButton'
 import NoRecord from '@/components/no-record'
 import { Copy } from '@/components/Copy.tsx'
+import { useOrderChanged } from '@/views/assets/v2/shared'
 
 const TIKO_LITE_TRADE_URL = 'https://www.tiko.cc/lite-trade'
 
@@ -31,10 +32,18 @@ export const OrdersPage = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isFetchedAfterMount,
     refetch,
   } = useInfiniteQuery(
     infiniteOpenOrderOptions(account ?? '', chainId ?? 0, isSignatureValid),
   )
+
+  // WS 订单状态变更时自动刷新，与 OpenOrderTable 保持一致
+  const orderChanged = useOrderChanged()
+  useEffect(() => {
+    if (!isFetchedAfterMount || isLoading || !orderChanged) return
+    refetch()
+  }, [orderChanged])
 
   const orders = useMemo(
     () => data?.pages.flatMap((p) => p.data) ?? [],
