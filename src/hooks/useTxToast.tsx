@@ -102,7 +102,7 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
         : (currentStep?.labelIng ?? '')
 
   return (
-    <div className='w-[375px] overflow-hidden rounded-[8px]'>
+    <div className='w-[335px] overflow-hidden rounded-[8px]'>
       {/* Header */}
       <div className='flex items-center justify-between gap-2 border border-gray-750 bg-gray-800 px-3 py-1.5 rounded-t-[8px]'>
         <span className='text-[12px] font-medium leading-[1.25em] text-white'>
@@ -122,8 +122,8 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
 
       {/* Body */}
       <div className='relative flex flex-col gap-2 border border-t-0 border-gray-750 bg-gray-850 p-3 rounded-b-[8px]'>
-        {/* Steps row */}
-        <div className='flex w-full items-center justify-between'>
+        {/* Steps row: each step is a column (icon + label), with connectors between icons */}
+        <div className='flex w-full items-start justify-between gap-2'>
           {stepsList.map((step, index) => {
             const state: StepState =
               txStep > step.step
@@ -133,10 +133,22 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
                   : 'pending'
 
             return (
-              <div key={step.step} className='flex flex-1 items-center'>
-                <StepIcon state={state} icon={step.icon} />
+              <React.Fragment key={step.step}>
+                {/* Step column: icon + label */}
+                <div className='flex flex-col items-center gap-2'>
+                  <StepIcon state={state} icon={step.icon} />
+                  <span
+                    className={cn(
+                      'text-[12px] font-medium leading-[1.25em]',
+                      txStep >= step.step ? 'text-white' : 'text-gray-400',
+                    )}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+                {/* Connector line between icons */}
                 {index < stepsList.length - 1 && (
-                  <div className='mx-2 h-[1px] flex-1'>
+                  <div className='mt-[16px] h-[1px] flex-1'>
                     <div
                       className={cn(
                         'h-full w-full transition-colors duration-300',
@@ -145,25 +157,9 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
                     />
                   </div>
                 )}
-              </div>
+              </React.Fragment>
             )
           })}
-        </div>
-        
-        {/* Step labels */}
-        <div className='flex w-full items-center justify-between'>
-          {stepsList.map((step, index) => (
-            <div
-              key={step.step}
-              className={cn(
-                'flex-1 text-[12px] font-medium leading-[1.25em]',
-                txStep >= step.step ? 'text-white' : 'text-gray-400',
-                index === 0 ? 'text-left' : index === stepsList.length - 1 ? 'text-right' : 'text-center',
-              )}
-            >
-              {step.label}
-            </div>
-          ))}
         </div>
 
         {/* Description */}
