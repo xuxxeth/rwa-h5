@@ -1,41 +1,24 @@
 import { lazy } from 'react'
-import { type RouteObject } from 'react-router-dom'
+import { Navigate, type RouteObject } from 'react-router-dom'
 
 // 懒加载页面
-// const Home = lazy(() => import('../views/home'))
-
-const Home = lazy(() => import('../views/home/v2'))
-
-const LiteTrade = lazy(() => import('../views/lite-trade/indexv2'))
-const NotFound = lazy(() => import('../views/not-found'))
 const Components = lazy(() => import('../views/components'))
 // Markets children routes
 const MarketTrading = lazy(() => import('../views/trade'))
 const Identity = lazy(() => import('../views/identity'))
-// const Assets = lazy(() => import('../views/assets'))
-const Portfolio = lazy(() => import('../views/assets/v2'))
 const Orders = lazy(() => import('../views/orders'))
-
 // 路由表
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <Home />,
+    element: <Navigate to={'/trade'} replace />,
   },
-  
+
   {
     path: '/trade/:symbol?',
     element: <MarketTrading />,
   },
-  {
-    path: '/lite-trade/:symbol?',
-    element: <LiteTrade />,
-  },
-  
-  {
-    path: '/order',
-    element: <Portfolio />,
-  },
+
   {
     path: '/orders',
     element: <Orders />,
@@ -44,16 +27,15 @@ const routes: RouteObject[] = [
     path: '/identity',
     element: <Identity />,
   },
-  
+
   {
     path: '/com',
     element: <Components />,
   },
-  
 
   {
     path: '*', // 兜底路由
-    element: <NotFound />,
+    element: <Navigate to={'/trade'} replace />,
   },
 ]
 

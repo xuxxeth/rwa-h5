@@ -236,6 +236,8 @@ body {
 
 @theme {
   --breakpoint-xl: 90rem;
+  --spacing-navbar: 52px;
+  --min-height-main: calc(100vh - 52px);
 }
 
 /* 这里是根据 ui 给出的颜色定义写的*/

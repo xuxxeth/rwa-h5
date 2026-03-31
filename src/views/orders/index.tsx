@@ -72,9 +72,9 @@ export const OrdersPage = () => {
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className='flex min-h-screen flex-col bg-gray-950'>
+    <div className='flex min-h-main flex-col bg-gray-950'>
       {/* TittleBar */}
-      <TittleBar title={t('assets.order.openOrders')} />
+      <TittleBar className='sticky top-navbar z-[5]' title={t('assets.order.openOrders')} />
 
       {/* 订单列表 */}
       <div className='flex flex-1 flex-col px-5'>
