@@ -1,36 +1,46 @@
 import { openScanUrl } from '@/utils/scan'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslation } from './useTranslation'
+import ToastSuccess from '@/components/icons/set/ToastSuccess'
+import ToastError from '@/components/icons/set/ToastError'
+import ToastWarning from '@/components/icons/set/ToastWarning'
+import ToastInfo from '@/components/icons/set/ToastInfo'
+import OpenOutline from '@/components/icons/set/OpenOutline'
+import CloseX from '@/components/icons/set/CloseX'
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
 
 interface CustomToastOptions {
-  title: string,
-  message?: string
+  title: string
   btnText?: string
-  duration?: number,
-  type?: ToastType,
-  tx?: string,
+  duration?: number
+  type?: ToastType
+  tx?: string
   onClick?: () => void
-
 }
+
+const TOAST_THEME: Record<ToastType, { color: string; icon: ReactNode }> = {
+  success: { color: 'var(--color-green-100)', icon: <ToastSuccess size={24} /> },
+  error: { color: 'var(--color-red-100)', icon: <ToastError size={24} /> },
+  warning: { color: 'var(--color-yellow-50)', icon: <ToastWarning size={24} /> },
+  info: { color: 'var(--color-blue-50)', icon: <ToastInfo size={24} /> },
+}
+
 interface ToastItemProps {
   t: string | number
   title: string
-  message?: string
   btnText?: string
   duration: number
   color: string
-  icon: string,
-  tx?: string,
+  icon: ReactNode
+  tx?: string
   onClick?: () => void
 }
 
 export function ToastItem({
   t,
   title,
-  message,
   btnText,
   duration,
   color,
@@ -42,35 +52,21 @@ export function ToastItem({
   const { t: $t } = useTranslation()
   return (
     <div
-      className="relative flex items-center justify-between gap-4
-                 rounded-[8px] bg-[#282A2F] px-4 py-3 min-h-[54px] pb-[13px] text-white overflow-hidden"
-      onMouseEnter={() => {
-        setPaused(true)
-      }}
-      onMouseLeave={() => {
-        setPaused(false)
-      }}
+      className='relative flex w-[375px] items-center justify-between gap-3 overflow-hidden rounded-[8px] bg-gray-800 p-3 text-white'
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
       {/* 左侧内容 */}
-      <div className="flex items-center gap-3 flex-1 min-w-0">
-        <img src={icon} className="w-[18px] h-[18px]" />
-        <div className="w-[220px]">
-          <div className=" font-normal text-[14px] ">
-            {title}
-          </div>
-          {message && (
-            <div className="text-[#9DA3AF] text-[12px] mt-1">
-              {message}
-            </div>
-          )}
-        </div>
+      <div className='flex min-w-0 flex-1 items-center gap-3'>
+        <div className='shrink-0'>{icon}</div>
+        <div className='w-[220px] text-[12px] font-normal leading-[1.25em]'>{title}</div>
       </div>
 
       {/* 右侧按钮 */}
-      <div className="flex items-center gap-3 shrink-0">
+      <div className='flex shrink-0 items-center gap-3'>
         {btnText && (
           <button
-            className="text-[14px] font-medium px-[14px]"
+            className='px-2 py-1.5 text-[14px] font-medium'
             onClick={(e) => {
               e.stopPropagation()
               e.preventDefault()
@@ -81,27 +77,30 @@ export function ToastItem({
             {btnText}
           </button>
         )}
-        {
-          tx && 
-            <span className=' inline-flex items-center cursor-pointer text-[14px]'
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                openScanUrl(tx)
-              }}
-            >{$t('v2.tx.t0')} <img src="/images/v2/icons/link-active.png" className='w-[14px] h-[14px] ml-1' alt="" /> </span>
-        }
+        {tx && (
+          <button
+            className='inline-flex items-center gap-1 rounded px-2 py-1.5 text-[14px] font-normal text-white'
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+              openScanUrl(tx)
+            }}
+          >
+            {$t('v2.tx.t0')}
+            <OpenOutline size={14} color='#FFFFFF' />
+          </button>
+        )}
         <button onClick={() => toast.dismiss(t)}>
-          <img src="/images/v2/icons/close.png" className="w-4 h-4" />
+          <CloseX size={16} color='#FFFFFF' />
         </button>
       </div>
 
       {/* 底部背景条 */}
-      <div className="absolute left-0 bottom-0 right-0 h-[3px] bg-[#41464F]" />
+      <div className='absolute bottom-0 left-0 right-0 h-[3px] rounded-[10px] bg-gray-700' />
 
       {/* 进度条 */}
       <div
-        className="absolute left-0 bottom-0 right-0 h-[3px] origin-left"
+        className='absolute bottom-0 left-0 right-0 h-[3px] origin-left'
         style={{
           backgroundColor: color,
           animation: `toast-progress ${duration}ms linear forwards`,
@@ -113,54 +112,39 @@ export function ToastItem({
 }
 
 export function useToast() {
-  function toastFun({ title, message, btnText , duration, type, tx, onClick }: CustomToastOptions) {
-
-    let color = '#009DFF'
-    let icon = '/images/v2/icons/info.png'
-    if (type === 'success') {
-      color = '#2EE4A7'
-      icon = '/images/v2/icons/success.png'
-    }
-    if (type === 'warning') {
-      color = '#FFB219'
-      icon = '/images/v2/icons/warning.png'
-    }
-    if (type === 'error') {
-      color = '#F63C6B'
-      icon = '/images/v2/icons/error.png'
-    }
-    toast.custom((t) => {
-      return (
+  function toastFun({ title, btnText, duration, type, tx, onClick }: CustomToastOptions) {
+    const theme = TOAST_THEME[type ?? 'info']
+    toast.custom(
+      (t) => (
         <ToastItem
           t={t}
           title={title}
-          message={message}
           btnText={btnText}
           duration={duration || 3000}
-          color={color}
-          icon={icon}
+          color={theme.color}
+          icon={theme.icon}
           tx={tx}
           onClick={onClick}
         />
-      )
-    }, { duration: duration || 3000 })
+      ),
+      { duration: duration || 3000 },
+    )
   }
-
 
   function toastSuccess(data: CustomToastOptions) {
-    toastFun({...data, type: 'success'})
+    toastFun({ ...data, type: 'success' })
   }
   function toastError(data: CustomToastOptions) {
-    toastFun({...data, type: 'error'})
+    toastFun({ ...data, type: 'error' })
   }
   function toastWarning(data: CustomToastOptions) {
-    toastFun({...data, type: 'warning'})
+    toastFun({ ...data, type: 'warning' })
   }
   function toastInfo(data: CustomToastOptions) {
-    toastFun({...data, type: 'info'})
+    toastFun({ ...data, type: 'info' })
   }
   function toastShow(data: CustomToastOptions) {
-    toastFun({...data})
+    toastFun({ ...data })
   }
 
   return { toastSuccess, toastError, toastWarning, toastInfo, toastShow }
