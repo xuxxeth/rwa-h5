@@ -1,6 +1,7 @@
 import { lazy } from 'react'
 import { Navigate, type RouteObject } from 'react-router-dom'
 
+const Home = lazy(() => import('../views/home/v2'))
 // 懒加载页面
 const Components = lazy(() => import('../views/components'))
 // Markets children routes
@@ -11,7 +12,7 @@ const Orders = lazy(() => import('../views/orders'))
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <Navigate to={'/trade'} replace />,
+    element: <Home />,
   },
 
   {
@@ -35,7 +36,7 @@ const routes: RouteObject[] = [
 
   {
     path: '*', // 兜底路由
-    element: <Navigate to={'/trade'} replace />,
+    element: <Home/>,
   },
 ]
 
