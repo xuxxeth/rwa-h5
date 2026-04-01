@@ -17,6 +17,8 @@ export const kycApi = {
   getLivenessUrl: (step: number = 1) =>
     client.get<ApiResponse<ILivenessUrlRes>>('/v1/kyc/api/liveness/create-liveness-url', {
       type: step,
+      // 1-PC，2-H5（不传默认PC）
+      clientType: 2,
     }),
   validateLivenessImage: (s3Key: string, step: number) =>
     client.get<ApiResponse<boolean>>('/v1/kyc/api/liveness/validate-image', { key: s3Key, type: step }),

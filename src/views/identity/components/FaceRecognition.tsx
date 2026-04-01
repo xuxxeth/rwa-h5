@@ -9,6 +9,7 @@ import type { ApiResponse } from '@/service/client'
 import { usePendingStep } from '@/hooks/usePendingStep'
 import { CircleLoading } from '@/components/loading'
 import { useToast } from '@/hooks/useToast'
+import LivenessComplete from '../LivenessComplete'
 
 const faceLangPrefix = 'identity.face'
 
@@ -16,10 +17,12 @@ export default function FaceRecognition({
   refresh: refreshKycDetail,
   onResetRetry,
   status,
+  isLivenessComplete,
 }: {
   refresh: () => Promise<ApiResponse<IKycDetail>>
   onResetRetry: () => void
   status?: number
+  isLivenessComplete?: boolean
 }) {
   const { toastSuccess } = useToast()
 
@@ -45,6 +48,7 @@ export default function FaceRecognition({
       clickLockRef.current = true
 
       setIsLoading(true)
+      
       const { data } = await kycApi.getLivenessUrl(pendingStep.step || 1)
       if (data) {
         setIsExpired(data.expireTime ? data.expireTime < Date.now() : false)
@@ -52,6 +56,8 @@ export default function FaceRecognition({
         setIsMaxTimesReached(false)
 
         if (data.url && data.expireTime) {
+          window.location.href = data.url
+
           setUrlInfo({ url: data.url, expireTime: data.expireTime, bizNo: data.bizNo! })
           toastSuccess({
             title: t(`${faceLangPrefix}.toast1`, { times: data.leftAvailableTimes }),
@@ -134,53 +140,52 @@ export default function FaceRecognition({
     }
   }, [urlInfo])
 
-  const showQrcode = !isMaxTimesReached && urlInfo && urlInfo.url
+  // const showQrcode = !isMaxTimesReached && urlInfo && urlInfo.url
+
+  // if (isLivenessComplete) {
+  //   return (
+  //     <div>
+  //       <LivenessComplete />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className='p-8 bg-[#0E0E0E] rounded-lg flex flex-col gap-5'>
-      <div className='text-lg'>{t(`${faceLangPrefix}.rg`)}</div>
-      <div className='text-base text-60'>{t(`${faceLangPrefix}.title`)}</div>
-      <div className='m-4 self-center relative w-[224px] h-[224px]'>
-        {isLoading ? (
-          <CircleLoading className='absolute inset-0 m-auto' />
-        ) : urlInfo === undefined ? (
-          <>
-            <QRCode value='click to get qr code' size={224} />
-            <QrCodeMask>
-              <div className='w-[62px] h-[62px] p-2.5 bg-[#1D1D1D] rounded-lg'>
-                <LazyImage src='/images/icons/identity/code.png' />
-              </div>
-            </QrCodeMask>
-          </>
-        ) : isMaxTimesReached ? (
-          <MaxTimesReached />
-        ) : showQrcode ? (
-          <>
-            <QRCode value={urlInfo.url} size={224} margin={0} />
-            {isExpired && (
-              <QrCodeMask>
-                <QrCodeExpirted refresh={refreshQrCode} isLoading={isLoading} />
-              </QrCodeMask>
-            )}
-          </>
-        ) : null}
-      </div>
+      {isLivenessComplete ? (
+        <LivenessComplete />
+      ) : (
+        <>
+          <div className='text-lg'>{t(`${faceLangPrefix}.rg`)}</div>
+          <LazyImage src='/images/kyc/face.svg' className='w-[200px] h-[200px] m-auto' />
 
-      <div className='text-base text-60 px-5 py-3 rounded-sm bg-[#361604] flex items-center'>
-        <LazyImage src='/images/kyc/warning.png' className='w-5 h-5 mr-1' />
-        {errorMsg ? errorMsg : t(`${faceLangPrefix}.${isMaxTimesReached ? 'times' : 'tip'}`)}
-      </div>
-      {urlInfo === undefined && (
+          <div className='text-base text-60 px-5 py-3 rounded-sm bg-[#361604] flex items-center'>
+            <LazyImage src='/images/kyc/warning.png' className='w-5 h-5 mr-1' />
+            {errorMsg ? errorMsg : t(`${faceLangPrefix}.${isMaxTimesReached ? 'times' : 'tip'}`)}
+          </div>
+        </>
+      )}
+
+      <button
+        onClick={() => {
+          refreshQrCode()
+        }}
+        disabled={isLoading}
+        className='w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none px-6 py-2 bg-white text-base/5 font-semibold text-black m-auto border border-white rounded-lg cursor-pointer'
+      >
+        {t(`${faceLangPrefix}.go`)}
+      </button>
+      {/* {urlInfo === undefined && (
         <button
           onClick={() => {
             refreshQrCode()
           }}
           disabled={isLoading}
-          className='w-[402px] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none px-6 py-2 text-white m-auto border border-white rounded-lg cursor-pointer'
+          className='w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none px-6 py-2 text-white m-auto border border-white rounded-lg cursor-pointer'
         >
           {t(`${faceLangPrefix}.getQr`)}
         </button>
-      )}
+      )} */}
     </div>
   )
 }

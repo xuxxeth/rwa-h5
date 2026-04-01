@@ -25,15 +25,15 @@ export default function LivenessComplete() {
 
   return (
     <div>
-      <div className='px-4 h-[56px] flex flex-row items-center justify-left gap-2'>
+      {/* <div className='px-4 h-[56px] flex flex-row items-center justify-left gap-2'>
         <LazyImage src='/images/logo_dark_v2.svg' />
-        {/* <LazyImage className='w-[145px] h-6' src='/images/logo_white_text.png' /> */}
-      </div>
+        <LazyImage className='w-[145px] h-6' src='/images/logo_white_text.png' />
+      </div> */}
       <div className='p-8'>
         <LazyImage src={`/images/icons/identity/${icon}`} className='w-[195px] h-[192px] m-auto' />
       </div>
-      <div className='text-xl text-center text-white'>{t(`${langPrefix}.${title}`)}</div>
-      <div className='mt-4 text-base text-center text-white'>{t(`${langPrefix}.${subTitle}`)}</div>
+      <div className='text-xl text-center text-white font-medium'>{t(`${langPrefix}.${title}`)}</div>
+      <div className='mt-4 text-base text-center text-white font-normal'>{t(`${langPrefix}.${subTitle}`)}</div>
     </div>
   )
 }
