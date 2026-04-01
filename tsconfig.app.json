@@ -27,5 +27,5 @@
       "@/*": ["./src/*"]
     },
   },
-  "include": ["src", "../ca-common-web/src/contract/trading"]
+  "include": ["./src/**/*", "../ca-common-web/src/contract/trading"]
 }
