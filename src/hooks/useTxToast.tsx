@@ -180,13 +180,11 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
           )}
         </div>
 
-        {/* 底部背景条 */}
-        <div className='absolute bottom-0 left-0 right-0 h-[3px] rounded-[10px] bg-gray-700' />
-        {/* 进度条 */}
+        {/* <div className='absolute bottom-0 left-0 right-0 h-[3px] rounded-[10px] bg-gray-700' />
         <div
           className='absolute bottom-0 left-0 h-[3px] bg-green-100 transition-all duration-300'
           style={{ width: `${Math.min(((txStep - stepsList[0].step) / stepsList.length) * 100, 100)}%` }}
-        />
+        /> */}
       </div>
     </div>
   )
