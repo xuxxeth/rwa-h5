@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import Section1 from "./new/Section1";
-import { XFooter } from "@/components/footer";
+import { XFooter } from "@/components/footer/index"
 
 const Section2 = lazy(() => import("./new3/Section2"));
 const Section3 = lazy(() => import("./new3/Section3"));
