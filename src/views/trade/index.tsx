@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { lazy, useCallback, useEffect, useMemo } from 'react'
 import { useRwas } from '@/hooks/useRwaBalances'
 import { useTokens } from '@/hooks/useTokens'
 import { SessionStatusBar } from './components/SessionStatusBar'
@@ -40,6 +40,7 @@ import { SymbolSelectDrawer } from '@/components/drawer/SymbolSelectDrawer'
 import { USDSelectDrawer } from '@/components/drawer/USDSelectDrawer'
 import { isTiko } from '@/service/client'
 import { MarketCloseTips } from './components/MarketCloseTips.tsx'
+const KycState = lazy(() => import("@/components/kyc-state"));
 
 
 export const TradePage = () => {
@@ -288,6 +289,7 @@ export const TradePage = () => {
   return (
     <div className='flex min-h-screen flex-col bg-gray-950'>
       <div className='flex flex-col gap-3 px-5 py-[10px]'>
+        <KycState />
         {/* 交易时段状态栏 */}
         <SessionStatusBar />
 
