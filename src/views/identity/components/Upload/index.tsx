@@ -201,7 +201,7 @@ function AddressUpload({
 
   return (
     <div>
-      <div className='flex flex-row gap-5 my-5'>
+      <div className='w-full flex flex-row gap-5'>
         <UploadCard
           fileType='addressCertificates'
           onUploaded={onAddrUploaded}
@@ -209,7 +209,7 @@ function AddressUpload({
           s3Key={keys}
           mode={mode}
         />
-        <div className='flex flex-col flex-1 justify-center'>
+        {/* <div className='flex flex-col flex-1 justify-center'>
           <div>
             <Text text='validAddrInc' className='mb-5' />
             <ul className='list-disc pl-3.5'>
@@ -220,9 +220,9 @@ function AddressUpload({
               ))}
             </ul>
           </div>
-        </div>
+        </div> */}
       </div>
-      <div className='flex flex-row gap-5 mt-5'>
+      {/* <div className='flex flex-row gap-5 mt-5'>
         <div className='flex-1'>
           <Text text='addrEnsure' className='text-sm mb-5' />
           <ul className='list-disc pl-3.5'>
@@ -243,7 +243,7 @@ function AddressUpload({
             ))}
           </ul>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
@@ -279,9 +279,9 @@ function PassportUpload({
           mode={mode}
           step={step}
         />
-        <div className='flex-1 flex flex-row items-center justify-center'>
+        {/* <div className='flex-1 flex flex-row items-center justify-center'>
           <Text text='passportTips' className='text-sm' />
-        </div>
+        </div> */}
       </div>
     </div>
   )
@@ -337,7 +337,7 @@ function ExtraInfoUpload({
 
   return (
     <div className='pb-2'>
-      <div className='grid grid-cols-2 gap-x-6 gap-y-6'>
+      <div className='grid grid-cols-1 gap-y-5'>
         {atLeastOneKey.map((s3Key, index) => {
           return (
             <div className='relative' key={index}>
@@ -364,10 +364,8 @@ function ExtraInfoUpload({
             </div>
           )
         })}
-        {mode === 'edit' && atLeastOneKey.length < 4 && (
-          <UploadCardAdd onClick={onAdd} mode={mode} />
-        )}
       </div>
+      {mode === 'edit' && atLeastOneKey.length < 4 && <UploadCardAdd onClick={onAdd} mode={mode} />}
     </div>
   )
 }
