@@ -41,11 +41,7 @@ const langPrefix = 'identity.upload'
 export function Text(props: { text: string; className?: string }) {
   const { t } = useTranslation()
   const { text, className } = props
-  return (
-    <div className={cn('text-sm text-[#9DA3AF]', className)}>
-      {t(`${langPrefix}.${text}`)}
-    </div>
-  )
+  return <div className={cn('text-sm/4.5 font-normal text-[#9DA3AF]', className)}>{t(`${langPrefix}.${text}`)}</div>
 }
 
 // 2M
@@ -143,7 +139,7 @@ export function UploadCardAdd(props: { onClick: () => void; mode?: 'edit' | 'vie
       disabled={props.mode === 'view'}
       onClick={props.onClick}
       className={cn(
-        'w-full h-[262px] flex flex-row items-center justify-center rounded-lg border border-[#383A40] border-dashed',
+        'w-full flex h-11 flex-row items-center justify-center rounded-lg bg-gray-900 mt-2',
         props.mode === 'view' ? 'cursor-not-allowed disabled' : 'cursor-pointer'
       )}
     >
@@ -151,6 +147,7 @@ export function UploadCardAdd(props: { onClick: () => void; mode?: 'edit' | 'vie
         src='/images/icons/identity/add.png'
         className={cn('w-6 h-6 cursor-pointer', { 'cursor-not-allowed': props.mode === 'view' })}
       />
+      <Text text='add' className='text-white ml-2' />
     </button>
   )
 }
@@ -276,7 +273,7 @@ export function UploadCard(props: {
       <div
         {...getRootProps({
           className: cn(
-            'dropzone flex-1 border border-[#383A40] border-dashed cursor-pointer h-[262px] rounded-lg disabled:cursor-not-allowed bg-[#1A1B1E] relative text-[#9DA3AF]',
+            'dropzone flex-1 border border-[#383A40] border-dashed cursor-pointer h-[160px] rounded-lg disabled:cursor-not-allowed bg-[#1A1B1E] relative text-[#9DA3AF]',
             mode === 'view' ? 'disabled cursor-not-allowed' : 'hover:border-[rgba(26,133,255,1)]',
             isSomethingError ? 'border-[#CA3F64]' : ''
           ),
@@ -332,7 +329,7 @@ export function UploadCard(props: {
               )}
               <div className='flex flex-row gap-1'>
                 <Text text='clickUpload' className='text-sm text-[#009DFF]' />
-                <Text text='dragUpload' className='text-sm' />
+                {/* <Text text='dragUpload' className='text-sm' /> */}
               </div>
             </>
           )}

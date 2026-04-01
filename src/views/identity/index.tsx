@@ -168,7 +168,7 @@ function Identity({ account }: { account: string }) {
 
     return [
       {
-        match: () => true || 
+        match: () =>  
           overallStatus === KYC_OVERALL_STATUS.VERIFYING &&
           verifyType === KYC_VERIFY_TYPE.AML &&
           status === KYC_STATUS.DECLINED,

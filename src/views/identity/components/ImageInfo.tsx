@@ -43,7 +43,7 @@ export const TitleWithTip = ({
       }
       title={title}
     >
-      <div className='px-6 py-5 text-[16px]'>
+      <div className='px-6 py-5 text-[16px] font-normal'>
         {tip}
       </div>
     </H5Dialog>
@@ -246,8 +246,8 @@ const ImageInfo = memo(
       <>
         {rejectReason && <WarningInfo text={rejectReason} />}
         <form onSubmit={handleSubmit(onSubmit)} className='w-full mt-2'>
-          <SectionBox className='pb-5'>
-            <div className='mb-5'>
+          <SectionBox className='px-6 py-5 mb-0'>
+            <div className='mb-4'>
               <TitleWithTip title={t('identity.upload.uploadId')} tip={t('identity.upload.passportTips')} />
             </div>
 
@@ -268,11 +268,10 @@ const ImageInfo = memo(
               }}
             />
           </SectionBox>
-          <SectionBox className='pb-5'>
+          <SectionBox className='px-6 py-5 mb-0'>
             {/* 上传地址证明 */}
-            <div className=' flex items-center mb-5'>
-              
-              <div className='mb-5'>
+            <div className=' flex items-center mb-4'>
+              <div>
                 <TitleWithTip title={t('identity.upload.uploadAddr')} tip={
                   <div>
                     <Text text='validAddrInc' className='mb-1 text-white text-[16px]' />
@@ -302,7 +301,6 @@ const ImageInfo = memo(
                   </div>
                 } />
               </div>
-              
             </div>
             <Upload
               type='address'

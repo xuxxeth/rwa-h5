@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { XFooter } from '@/components/footer'
+import { XFooter } from '@/components/footer/index'
 import { MainLayout } from '@/layouts/main'
 import ContentLayout from '@/layouts/content'
 import { useAccount, useChainId } from 'ca-common-web'

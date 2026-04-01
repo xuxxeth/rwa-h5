@@ -337,7 +337,8 @@
       "large": "The file is too large, please re-upload.",
       "typeInvalid": "The file type is not supported, please re-upload.",
       "fail": "File upload failed, please try again.",
-      "livenessFail": "The image does not meet the requirements. please re-upload."
+      "livenessFail": "The image does not meet the requirements. please re-upload.",
+      "add": "Add"
     },
     "face": {
       "rg": "Facial Verification",
