@@ -29,7 +29,7 @@ export function VerifySucceeded() {
       title='ok'
       detail='okTip'
       btnText='m'
-      btnOnClick={() => router.push('/markets')}
+      btnOnClick={() => router.push('/trade')}
       extra={extra}
     />
   )
@@ -85,8 +85,12 @@ function VerifyStatus(props: {
     <VerifyStatusWrapper>
       <LazyImage src={getIconFromType(props.type)} className='w-[120px] h-[90px] pt-5' />
       <div>
-        <div className='text-2xl mb-2 text-center'>{t(`${langPrefix}.${props.title}`)}</div>
-        <div className='text-base text-[#909090] text-center'>{t(`${langPrefix}.${props.detail}`)}</div>
+        <div className='mb-2 text-center text-base font-normal'>
+          {t(`${langPrefix}.${props.title}`)}
+        </div>
+        <div className='text-sm text-gray-400 text-center'>
+          {t(`${langPrefix}.${props.detail}`)}
+        </div>
       </div>
       <Button
         onClick={() => {
@@ -116,7 +120,7 @@ function VerifyStatusWrapper(props: { children: ReactNode }) {
 function getIconFromType(type: VerifyType) {
   switch (type) {
     case 'succeeded':
-      return '/images/icons/identity/success.png'
+      return '/images/icons/identity/success.svg'
     case 'failed':
       return '/images/icons/identity/fail.png'
     case 'verifying':
@@ -163,7 +167,7 @@ function useIsTokenQualified() {
 function TradePrepare() {
   const { t } = useTranslation()
   return (
-    <div className='flex flex-col gap-4 text-base text-[#1A85FF]'>
+    <div className='flex flex-col gap-4 text-sm text-blue-50'>
       <a
         href='https://tiko.gitbook.io/tiko-docs/faq/how-to-prepare-for-trading-on-tiko'
         target='_blank'
@@ -210,23 +214,24 @@ function HotRwas() {
   return (
     <>
       <div className='text-2xl mt-5'>{t(`${langPrefix}.hot`)}</div>
-      <div className='grid grid-cols-3 gap-4 cursor-pointer font-medium'>
+      <div className='grid grid-cols-2 gap-4 cursor-pointer font-medium'>
         {rwaWithPriceAndUp.map(rwa => {
           return (
             <div
               key={rwa.symbol}
-              className='flex flex-row items-center p-3 bg-[#1C1C1C] rounded-lg'
+              className='bg-gray-900 rounded-lg px-3 py-2.5'
               onClick={() => {
-               
                 router.push('/trade/' + rwa.symbol)
               }}
             >
-              <LazyImage src={rwa.icon} className='w-[42px] h-[42px] mr-3 rounded-lg' />
-              <div className='flex flex-col gap-1 mr-3 w-[68px]'>
-                <div className='text-base'>{rwa.symbol}</div>
-                <div className='text-sm text-60 whitespace-nowrap'>{rwa.name}</div>
+              <div className='flex flex-row items-center'>
+                <LazyImage src={rwa.icon} className='w-[42px] h-[42px] mr-3 rounded-lg' />
+                <div className='flex flex-col gap-1 mr-3 w-[68px]'>
+                  <div className='text-base'>{rwa.symbol}</div>
+                  <div className='text-sm text-60 whitespace-nowrap'>{rwa.name}</div>
+                </div>
               </div>
-              <div className='flex flex-col gap-1 mr-3'>
+              <div className='flex flex-row gap-1 mt-2'>
                 <div className='text-base'>
                   {rwa.price ? textPrefix(toFixed(rwa.price, rwa.precision), '$') : '--'}
                 </div>
@@ -236,7 +241,7 @@ function HotRwas() {
                   </button>
                 </div>
               </div>
-              <LazyImage src='/images/icons/identity/arrow.png' className='w-4 h-[9px]' />
+              {/* <LazyImage src='/images/icons/identity/arrow.png' className='w-4 h-[9px]' /> */}
             </div>
           )
         })}
@@ -252,7 +257,7 @@ export function Verifying(props: { refresh: () => Promise<ApiResponse<IKycDetail
     <VerifyStatus
       type='verifying'
       title='verifying'
-      detail= {retryCount > 0 && retryCount < 3 ? 'verifyingWait' : 'verifyingTip'} 
+      detail={retryCount > 0 && retryCount < 3 ? 'verifyingWait' : 'verifyingTip'}
       btnText='m'
       btnOnClick={() => router.push('/markets')}
     />
@@ -262,13 +267,11 @@ export function Verifying(props: { refresh: () => Promise<ApiResponse<IKycDetail
 function Button({ onClick, text }: { onClick: () => void; text: string }) {
   const { t } = useTranslation()
   return (
-    <div>
-      <button
-        onClick={onClick}
-        className='w-[402px] h-[46px] border rounded-lg cursor-pointer border-white bg-transparent text-white tex-base font-bold'
-      >
-        {t(`${langPrefix}.${text}`)}
-      </button>
-    </div>
+    <button
+      onClick={onClick}
+      className='w-full h-[46px] bg-green-50 rounded-lg cursor-pointer text-white tex-base font-bold'
+    >
+      {t(`${langPrefix}.${text}`)}
+    </button>
   )
 }

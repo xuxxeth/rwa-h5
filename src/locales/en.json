@@ -368,7 +368,7 @@
       "res": "Verification Result",
       "ok": "Verification completed",
       "okTip": "Your account has successfully passed identity verification, and you can now start using trading features.",
-      "m": "Explore Markets",
+      "m": "Go to Trade",
       "f": "Your identity verification was not approved.",
       "vf": "Verification Failed",
       "fTip": "Facial verification failed. Please complete it yourself in good lighting with your face clearly visible, then try again.",
