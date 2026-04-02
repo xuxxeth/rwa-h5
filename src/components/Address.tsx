@@ -6,7 +6,7 @@ export const Address = ({ address, className = '' }: { address: string; classNam
     return (
       <div className={`flex items-center gap-[4px] ${className}`}>
         <span>{shortenAddress(address)}</span>
-        <Copy content={address} />
+        <Copy content={address}  className="text-white"/>
       </div>
     )
 
