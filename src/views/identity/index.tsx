@@ -32,6 +32,7 @@ import { ReviewInfo } from './components/ReviewInfo'
 import { useKycStore } from '@/stores/kycStore'
 import { usePendingStep } from '@/hooks/usePendingStep'
 import { useTranslation, useI18nLanguage } from '@/hooks/useTranslation'
+import { useRouter } from '@/hooks/useRouter'
 
 import LivenessComplete from './LivenessComplete'
 
@@ -94,6 +95,7 @@ function IdentityEntry() {
 
 function Identity({ account }: { account: string }) {
   const { i18n } = useTranslation()
+  const router = useRouter()
 
   const [kycDetail, setKycDetail] = useState<IKycDetail | undefined>(undefined)
   const expireStatus = useKycExpired()
@@ -109,15 +111,13 @@ function Identity({ account }: { account: string }) {
   const livenessCompleteDetail = useLivenessCompleteDetail()
 
   // kyc 认证结果页面默认不刷新 kycDetail
-  const [isRefreshKycDetailEnabled, setIsRefreshKycDetailEnabled] = useState(
-    !livenessCompleteDetail.isOk
-  )
+  const [isRefreshKycDetailEnabled] = useState(!livenessCompleteDetail.isOk)
 
   useEffect(() => {
     // 如果认证成功， 3秒后刷新 kycDetail
     if (livenessCompleteDetail.isOk) {
       setTimeout(() => {
-        setIsRefreshKycDetailEnabled(true)
+        router.push('/identity')
       }, 3 * 1000)
     }
   }, [livenessCompleteDetail])
