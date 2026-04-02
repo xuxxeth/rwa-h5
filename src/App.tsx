@@ -98,7 +98,7 @@ function App() {
       <div className="h-[52px]" />
       <RoutesWrapper />
       {createPortal(
-        <Toaster position='top-right' />,
+        <Toaster position='top-center' />,
         document.getElementById('toast-root')!
       )}
       

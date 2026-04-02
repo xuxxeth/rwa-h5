@@ -364,7 +364,7 @@ export const TradePage = () => {
             <Button
               variant={buttonVariant}
               size='lg'
-              className='w-full'
+              className='w-full !text-white'
               loading={order.loading}
               disabled={uiState.disabled || isMarketCloseDisabled || order.loading}
               onClick={() => {
