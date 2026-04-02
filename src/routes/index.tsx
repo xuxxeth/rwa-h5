@@ -13,21 +13,22 @@ const routes: RouteObject[] = [
     path: '/',
     element: <Navigate to={'/trade'} replace />,
   },
-
   {
     path: '/trade/:symbol?',
     element: <MarketTrading />,
   },
-
   {
     path: '/orders',
     element: <Orders />,
   },
   {
+    path: '/identity/liveness-complete',
+    element: <Identity />
+  },
+  {
     path: '/identity',
     element: <Identity />,
   },
-
   {
     path: '/com',
     element: <Components />,

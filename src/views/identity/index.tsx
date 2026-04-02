@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, type ReactNode, useRef } from 'react'
+import { useEffect, useState, useMemo, type ReactNode, useRef, lazy } from 'react'
 import { MainLayout } from '@/layouts/main'
 import { BaseInfoWrap } from './components/BaseInfoWrap'
 import { IdentityLayout } from './components/IdentityLayout'
@@ -27,11 +27,25 @@ import { useSignatureValidStatus } from '@/hooks/useSignature'
 import SignatureVerify from '@/components/signature-verify'
 import { useKycExpired } from '@/hooks/useKycStatus'
 import { IDExpired } from './components/IDExpired'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useLocation } from 'react-router-dom'
 import { ReviewInfo } from './components/ReviewInfo'
 import { useKycStore } from '@/stores/kycStore'
 import { usePendingStep } from '@/hooks/usePendingStep'
 import { useTranslation, useI18nLanguage } from '@/hooks/useTranslation'
+
+import LivenessComplete from './LivenessComplete'
+
+function useLivenessCompleteDetail() {
+  const [searchParams] = useSearchParams()
+  const location = useLocation()
+  const success = searchParams.get('success') === 'true'
+  const isLivenessComplete = location.pathname === '/identity/liveness-complete'
+  return {
+    isLivenessComplete,
+    success,
+    isOk: isLivenessComplete && success,
+  }
+}
 
 function IdentityEntry() {
   const isWalletConnecting = useAppStore(state => state.isWalletConnecting)
@@ -92,6 +106,22 @@ function Identity({ account }: { account: string }) {
   const retryCount = useRef(0)
   const updateRetryCount = useKycStore(state => state.updateRetryCount)
 
+  const livenessCompleteDetail = useLivenessCompleteDetail()
+
+  // kyc 认证结果页面默认不刷新 kycDetail
+  const [isRefreshKycDetailEnabled, setIsRefreshKycDetailEnabled] = useState(
+    !livenessCompleteDetail.isOk
+  )
+
+  useEffect(() => {
+    // 如果认证成功， 3秒后刷新 kycDetail
+    if (livenessCompleteDetail.isOk) {
+      setTimeout(() => {
+        setIsRefreshKycDetailEnabled(true)
+      }, 3 * 1000)
+    }
+  }, [livenessCompleteDetail])
+
   const resetRetry = () => {
     setIsRetry(prev => (prev === true ? false : prev))
   }
@@ -100,7 +130,7 @@ function Identity({ account }: { account: string }) {
     try {
       if (init) {
         retryCount.current = 1
-      } 
+      }
       if (!init) {
         updateRetryCount(retryCount.current)
       }
@@ -142,8 +172,10 @@ function Identity({ account }: { account: string }) {
     if (pendingStep.step) {
       pendingStepRef.current = pendingStep.step
     }
-    refresh(true)
-  }, [account, pendingStep.step])
+    if (isRefreshKycDetailEnabled) {
+      refresh(true)
+    }
+  }, [account, pendingStep.step, isRefreshKycDetailEnabled])
 
   // 切换语言， 重新拉取认证详情
   useEffect(() => {
@@ -168,7 +200,7 @@ function Identity({ account }: { account: string }) {
 
     return [
       {
-        match: () =>  
+        match: () =>
           overallStatus === KYC_OVERALL_STATUS.VERIFYING &&
           verifyType === KYC_VERIFY_TYPE.AML &&
           status === KYC_STATUS.DECLINED,
@@ -181,7 +213,7 @@ function Identity({ account }: { account: string }) {
       },
       // 已过期/即将过期
       {
-        match: () => 
+        match: () =>
           overallStatus === KYC_OVERALL_STATUS.EXPIRED ||
           (overallStatus === KYC_OVERALL_STATUS.VERIFIED && expireStatus.expiring) ||
           (overallStatus === KYC_OVERALL_STATUS.VERIFYING &&
@@ -311,12 +343,20 @@ function Identity({ account }: { account: string }) {
           status === KYC_STATUS.REJECTED &&
           verifyType === KYC_VERIFY_TYPE.LIVENESS,
         render: () => (
-          <FaceRecognitionFailed
-            retry={() => {
-              setIsRetry(true)
-            }}
+          <FaceRecognition
+            status={status}
+            refresh={refresh}
+            onResetRetry={resetRetry}
+            isLivenessComplete={livenessCompleteDetail.isLivenessComplete}
           />
         ),
+        // render: () => (
+        //   <FaceRecognitionFailed
+        //     retry={() => {
+        //       setIsRetry(true)
+        //     }}
+        //   />
+        // ),
       },
       // 认证中 - AML verifying 和 review (人工审核中)
       {
@@ -365,13 +405,17 @@ function Identity({ account }: { account: string }) {
   if (matchedRule) {
     return <MainContentWrapper>{matchedRule.render()}</MainContentWrapper>
   }
+
+  if (livenessCompleteDetail.isOk) {
+    return <LivenessComplete />
+  }
   return null
 }
 
 function MainContentWrapper(props: { children: ReactNode }) {
   return (
     <div className=' min-h-screen bg-[#0E0E0E]'>
-      <MainLayout className="pb-11">
+      <MainLayout className='pb-11'>
         <IdentityLayout>{props.children}</IdentityLayout>
       </MainLayout>
       {/* <XFooter /> */}
