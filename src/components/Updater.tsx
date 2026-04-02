@@ -10,8 +10,6 @@ import storage from "@/utils/storage";
 import { KYC_UPLOAD_STORAGE_KEY } from "@/views/identity/components/Upload/shared";
 import { OrderReason } from "@/service/scan/types";
 import { lazy, memo, useEffect, useRef } from "react";
-const KycState = lazy(() => import("@/components/kyc-state"));
-const Compliance = lazy(() => import("@/components/compliance"));
 
 const NO_SHOW_PATH = ['/']
 
@@ -118,12 +116,7 @@ const Updater = memo(
       preAccount.current = account
     }, [account])
 
-    return (
-      <>
-        <KycState />
-        <Compliance />
-      </>
-    )
+    return null
   }
 )
 

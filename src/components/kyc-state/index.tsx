@@ -171,23 +171,25 @@ const KycState = () => {
     router.push('/identity?retry=true')
   }, [content])
 
-  return ReactDOM.createPortal(
+  return (
     <AnimatePresence>
       {show && !isNotShow && content.title && (
         <motion.div
-          initial={{ opacity: 0, x: 80 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 80 }}
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{
             duration: 0.5,
             ease: "easeOut",
           }}
-          className="fixed bottom-4 right-4 z-[99] w-[400px] min-h-[164px] border border-[#232427] bg-[#1A1B1E] rounded-[16px] p-4 flex flex-col justify-between"
+          className="w-full border border-[rgba(156,255,58,0.35)] bg-[rgba(156,255,58,0.1)] rounded-[8px] px-4 flex items-center justify-between"
+          onClick={handleGo}
         >
-          <div className="flex justify-between">
+          <div className="flex justify-between"
+            
+          >
             <div className="flex items-center gap-x-2 mt-1">
               <LazyImage src="/images/v2/icons/id.png" className="w-[21px] h-[14px]" />
-              <div className="text-[#FFB219] text-[14px] font-medium">{content.title}</div>
+              <div className=" text-white text-[14px] font-medium">{content.title}</div>
             </div>
             <button
               onClick={close}
@@ -196,16 +198,14 @@ const KycState = () => {
               <img src="/images/v2/icons/close_light.png" className="w-3 h-3" />
             </button>
           </div>
-          <div className="text-white text-[14px] font-normal leading-6 text-center my-5">
-            {content.content}
+          <div className=" flex items-center justify-center h-[42px] text-[#9CFF3A] text-[14px] font-medium">
+            {content.btnText}
+            <img src="/images/h5/icons/arrow-green.png" className="w-4 h-4" alt="" />
           </div>
-          <Button className="w-full h-[44px] bg-[#232427] text-white text-[14px] font-medium"
-            onClick={handleGo}
-          >{content.btnText}</Button>
+          
         </motion.div>
       )}
-    </AnimatePresence>,
-    document.body
+    </AnimatePresence>
   );
 };
 
