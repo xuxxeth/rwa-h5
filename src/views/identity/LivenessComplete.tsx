@@ -8,7 +8,13 @@ import { CircularProgress } from '@/components/loading'
 
 const langPrefix = 'identity.face'
 
-export default function LivenessComplete({ countdown = 5 }: { countdown?: number }) {
+export default function LivenessComplete({
+  countdown = 5,
+  redirect,
+}: {
+  countdown?: number
+  redirect: () => void
+}) {
   const { t, i18n } = useTranslation()
   const [searchParams] = useSearchParams()
   const success = searchParams.get('success') === 'true'
@@ -20,7 +26,11 @@ export default function LivenessComplete({ countdown = 5 }: { countdown?: number
 
   useEffect(() => {
     if (!success) return
-    if (timeLeft <= 0) return
+    if (timeLeft <= 0) {
+      if (redirect) {
+        redirect()
+      }
+    }
 
     const timer = setTimeout(() => {
       setTimeLeft(prev => prev - 1)

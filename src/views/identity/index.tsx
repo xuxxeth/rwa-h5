@@ -41,10 +41,11 @@ function useLivenessCompleteDetail() {
   const location = useLocation()
   const success = searchParams.get('success') === 'true'
   const isLivenessComplete = location.pathname === '/identity/liveness-complete'
+
   return {
     isLivenessComplete,
     success,
-    isOk: isLivenessComplete && success,
+    isLivenessSuccess: isLivenessComplete && success,
   }
 }
 
@@ -110,18 +111,6 @@ function Identity({ account }: { account: string }) {
 
   const livenessCompleteDetail = useLivenessCompleteDetail()
 
-  // kyc 认证结果页面默认不刷新 kycDetail
-  const [isRefreshKycDetailEnabled] = useState(!livenessCompleteDetail.isOk)
-
-  useEffect(() => {
-    // 如果认证成功， 3秒后刷新 kycDetail
-    if (livenessCompleteDetail.isOk) {
-      setTimeout(() => {
-        router.push('/identity')
-      }, 3 * 1000)
-    }
-  }, [livenessCompleteDetail])
-
   const resetRetry = () => {
     setIsRetry(prev => (prev === true ? false : prev))
   }
@@ -169,13 +158,15 @@ function Identity({ account }: { account: string }) {
   }
 
   useEffect(() => {
+    // 如果是 liveness Complete 识别成功页面，则不刷新 kycDetail
+    if (livenessCompleteDetail.isLivenessSuccess) {
+      return
+    }
     if (pendingStep.step) {
       pendingStepRef.current = pendingStep.step
     }
-    if (isRefreshKycDetailEnabled) {
-      refresh(true)
-    }
-  }, [account, pendingStep.step, isRefreshKycDetailEnabled])
+    refresh(true)
+  }, [account, pendingStep.step, livenessCompleteDetail.isLivenessSuccess])
 
   // 切换语言， 重新拉取认证详情
   useEffect(() => {
@@ -406,8 +397,8 @@ function Identity({ account }: { account: string }) {
     return <MainContentWrapper>{matchedRule.render()}</MainContentWrapper>
   }
 
-  if (livenessCompleteDetail.isOk) {
-    return <LivenessComplete countdown={5} />
+  if (livenessCompleteDetail.isLivenessSuccess) {
+    return <LivenessComplete countdown={3} redirect={() => router.push('/identity')} />
   }
   return null
 }
