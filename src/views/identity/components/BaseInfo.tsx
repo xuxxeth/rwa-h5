@@ -1,5 +1,5 @@
 import { CountrySelectH5 } from '@/components/country-select/h5'
-import { DatePicker, FormatStr } from '@/components/date-range-picker'
+import { DatePicker, DatePickerH5,  FormatStr } from '@/components/date-range-picker'
 import { DoctypeSelect } from '@/components/doctype-select'
 import { LazyImage } from '@/components/image/LazyImage'
 import { KycInput } from '@/components/input/KycInput'
@@ -452,8 +452,8 @@ const BaseInfo = memo(
                 <FormItemLabel title={t('kyc.t8')} hide />
                 <InputBox>
                   <div className='bg-[rgba(255,255,255,0.08)] rounded-[6px]'>
-                    <DatePicker
-                      captionLayout='dropdown'
+                    <DatePickerH5
+                      // captionLayout='dropdown'
                       minDate={dateOptions.minDate}
                       maxDate={dateOptions.maxDate}
                       activeColor='#FFFFFF'
