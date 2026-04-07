@@ -13,7 +13,7 @@ export default function LivenessComplete({
   redirect,
 }: {
   countdown?: number
-  redirect: () => void
+  redirect?: () => void
 }) {
   const { t, i18n } = useTranslation()
   const [searchParams] = useSearchParams()
