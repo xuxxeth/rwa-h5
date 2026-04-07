@@ -362,7 +362,8 @@
       "sub3": "Verification returned an abnormal result. Please resubmit your information on the website.",
       "getQr": "Get QR code",
       "go": "Verify Now",
-      "toast1": "QR code obtained successfully. Remaining number of retrievals: {{times}}"
+      "toast1": "QR code obtained successfully. Remaining number of retrievals: {{times}}",
+      "redirect": "seconds to redirect"
     },
     "result": {
       "res": "Verification Result",
@@ -373,7 +374,7 @@
       "vf": "Verification Failed",
       "fTip": "Facial verification failed. Please complete it yourself in good lighting with your face clearly visible, then try again.",
       "r": "The information you submitted did not pass our review, and you cannot access the platform services for now.",
-      "h": "Return to Home",
+      "h": "Return",
       "verifying": "Your documents are under review",
       "verifyingTip": "Your submitted documents are undergoing compliance review, which typically takes 1–3 business days. Please check this page later for updates.",
       "pre1": "How to prepare before trading",

@@ -407,7 +407,7 @@ function Identity({ account }: { account: string }) {
   }
 
   if (livenessCompleteDetail.isOk) {
-    return <LivenessComplete />
+    return <LivenessComplete countdown={5} />
   }
   return null
 }
