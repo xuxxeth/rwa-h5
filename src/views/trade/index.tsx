@@ -320,6 +320,7 @@ export const TradePage = () => {
             value={inputSize}
             onChange={handleSizeChange}
             tokenSymbol={inputToken?.symbol}
+            tokenLogo={inputToken?.icon}
             balance={action === 'sell' ? inputBalanceDisplay : undefined}
             showDropdown
             onTokenClick={handleTokenClick}
