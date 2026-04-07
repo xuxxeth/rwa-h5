@@ -66,7 +66,8 @@ export function VerifyFailed() {
       title='f'
       detail='r'
       btnText='h'
-      btnOnClick={() => router.push('/')}
+      btnOnClick={() => router.push('/trade')}
+      className='bg-white text-black text-base font-semibold'
     />
   )
 }
@@ -79,6 +80,7 @@ function VerifyStatus(props: {
   btnOnClick?: () => void
   extra?: ReactNode
   retryComponent?: ReactNode
+  className?: string
 }) {
   const { t } = useTranslation()
   return (
@@ -93,6 +95,7 @@ function VerifyStatus(props: {
         </div>
       </div>
       <Button
+        className={props.className}
         onClick={() => {
           if (props.btnOnClick) {
             props.btnOnClick()
@@ -122,9 +125,9 @@ function getIconFromType(type: VerifyType) {
     case 'succeeded':
       return '/images/icons/identity/success.svg'
     case 'failed':
-      return '/images/icons/identity/fail.png'
+      return '/images/icons/identity/fail.svg'
     case 'verifying':
-      return '/images/icons/identity/verifying.png'
+      return '/images/icons/identity/verifying.svg'
     default:
       throw new Error(`type ${type} is not supported`)
   }
@@ -258,18 +261,30 @@ export function Verifying(props: { refresh: () => Promise<ApiResponse<IKycDetail
       type='verifying'
       title='verifying'
       detail={retryCount > 0 && retryCount < 3 ? 'verifyingWait' : 'verifyingTip'}
-      btnText='m'
-      btnOnClick={() => router.push('/markets')}
+      btnText='h'
+      btnOnClick={() => router.push('/trade')}
+      className='bg-white text-black text-base font-semibold'
     />
   )
 }
 
-function Button({ onClick, text }: { onClick: () => void; text: string }) {
+function Button({
+  onClick,
+  text,
+  className,
+}: {
+  onClick: () => void
+  text: string
+  className?: string
+}) {
   const { t } = useTranslation()
   return (
     <button
       onClick={onClick}
-      className='w-full h-[46px] bg-green-50 rounded-lg cursor-pointer text-white tex-base font-bold'
+      className={cn(
+        'w-full h-[46px] bg-green-50 rounded-lg cursor-pointer text-white tex-base font-bold',
+        className
+      )}
     >
       {t(`${langPrefix}.${text}`)}
     </button>

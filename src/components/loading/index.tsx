@@ -13,7 +13,9 @@ const Loading = () => {
   return (
     <div className=' flex flex-col justify-center items-center'>
       <img src='/images/icons/loading-white.png' className='w-[32px] h-[32px] animate-spin' />
-      <div className=' text-white text-[14px] font-normal mt-2'>{ localLanguage ? localLanguage === 'zh' ? '加载中...' : 'Loading...' : ' ' }</div>
+      <div className=' text-white text-[14px] font-normal mt-2'>
+        {localLanguage ? (localLanguage === 'zh' ? '加载中...' : 'Loading...') : ' '}
+      </div>
     </div>
   )
 }
@@ -79,11 +81,13 @@ export function CircularProgress({
   size = 40,
   strokeWidth = 3,
   className = '',
+  children,
 }: {
   progress?: number
   size?: number
   strokeWidth?: number
   className?: string
+  children?: React.ReactNode
 }) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
@@ -120,9 +124,11 @@ export function CircularProgress({
         />
       </svg>
       {/* 进度文本 */}
-      <span className='absolute text-xs font-normal text-60'>
-        <span className='text-white'>{Math.round(progress)}</span>%
-      </span>
+      {children || (
+        <span className='absolute text-xs font-normal text-60'>
+          <span className='text-white'>{Math.round(progress)}</span>%
+        </span>
+      )}
     </div>
   )
 }
