@@ -113,9 +113,11 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
             style={{ cursor: isKycClickable ? 'pointer' : 'default' }}
           >
             <span className='text-[16px] font-medium text-white'>{t('verificationStatus')}</span>
-            <div className={'flex items-center gap-[4px]'}>
+            <div className={'flex items-center gap-[4px]'} onClick={() => router.push('/identity')}>
               {kycInfo.icon}
-              <span className={'text-[14px]'} style={{ color: kycInfo.color }}>{kycInfo.label}</span>
+              <span className={'text-[14px]'} style={{ color: kycInfo.color }}>
+                {kycInfo.label}
+              </span>
             </div>
           </div>
 
