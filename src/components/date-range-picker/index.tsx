@@ -19,6 +19,7 @@ import 'react-day-picker/dist/style.css'
 import { useTranslation } from '@/hooks/useTranslation'
 
 export const FormatStr = 'yyyy-MM-dd'
+export { DatePickerH5 } from './DatePickerH5'
 
 export function setStartOfDay(date: Date): Date {
   const newDate = new Date(date)
