@@ -48,7 +48,7 @@ export default function FaceRecognition({
       clickLockRef.current = true
 
       setIsLoading(true)
-      
+
       const { data } = await kycApi.getLivenessUrl(pendingStep.step || 1)
       if (data) {
         setIsExpired(data.expireTime ? data.expireTime < Date.now() : false)
@@ -140,15 +140,7 @@ export default function FaceRecognition({
     }
   }, [urlInfo])
 
-  // const showQrcode = !isMaxTimesReached && urlInfo && urlInfo.url
-
-  // if (isLivenessComplete) {
-  //   return (
-  //     <div>
-  //       <LivenessComplete />
-  //     </div>
-  //   )
-  // }
+  const showTip = !isLivenessComplete || (isLivenessComplete && (errorMsg || isMaxTimesReached))
 
   return (
     <div className='p-8 bg-[#0E0E0E] rounded-lg flex flex-col gap-5'>
@@ -158,12 +150,14 @@ export default function FaceRecognition({
         <>
           <div className='text-lg'>{t(`${faceLangPrefix}.rg`)}</div>
           <LazyImage src='/images/kyc/face.svg' className='w-[200px] h-[200px] m-auto' />
-
-          <div className='text-base text-60 px-5 py-3 rounded-sm bg-[#361604] flex items-center'>
-            <LazyImage src='/images/kyc/warning.png' className='w-5 h-5 mr-1' />
-            {errorMsg ? errorMsg : t(`${faceLangPrefix}.${isMaxTimesReached ? 'times' : 'tip'}`)}
-          </div>
         </>
+      )}
+
+      {showTip && (
+        <div className='text-base text-60 px-5 py-3 rounded-sm bg-[#361604] flex items-center'>
+          <LazyImage src='/images/kyc/warning.png' className='w-5 h-5 mr-1' />
+          {errorMsg ? errorMsg : t(`${faceLangPrefix}.${isMaxTimesReached ? 'times' : 'tip'}`)}
+        </div>
       )}
 
       <button
@@ -173,7 +167,7 @@ export default function FaceRecognition({
         disabled={isLoading}
         className='w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none px-6 py-2 bg-white text-base/5 font-semibold text-black m-auto border border-white rounded-lg cursor-pointer'
       >
-        {t(`${faceLangPrefix}.go`)}
+        {isLivenessComplete ? t(`${faceLangPrefix}.rv`) : t(`${faceLangPrefix}.go`)}
       </button>
       {/* {urlInfo === undefined && (
         <button
