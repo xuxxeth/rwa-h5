@@ -55,7 +55,7 @@ export default function LivenessComplete({
       <div className='text-xl text-center text-white font-medium'>
         {t(`${langPrefix}.${title}`)}
       </div>
-      {success && (
+      {success ? (
         <div className='flex flex-col items-center justify-center mt-8 gap-2'>
           <CircularProgress progress={(timeLeft / countdown) * 100} size={40} strokeWidth={4}>
             <span className='absolute text-base font-normal text-white'>{timeLeft}</span>
@@ -64,8 +64,11 @@ export default function LivenessComplete({
             {t('identity.face.redirect', { second: timeLeft })}
           </div>
         </div>
+      ) : (
+        <div className='mt-4 text-base text-center text-white font-normal'>
+          {t(`${langPrefix}.${subTitle}`)}
+        </div>
       )}
-      {/* <div className='mt-4 text-base text-center text-white font-normal'>{t(`${langPrefix}.${subTitle}`)}</div> */}
     </div>
   )
 }
@@ -90,13 +93,13 @@ function getIconAndText(success: boolean, failReason: number) {
       return {
         icon: 'liveness-fail.png',
         title: 'f2',
-        subTitle: 'sub2',
+        subTitle: 'ft',
       }
     case 3:
       return {
-        icon: 'liveness-warn.png',
+        icon: 'liveness-fail.png',
         title: 'f2',
-        subTitle: 'sub3',
+        subTitle: 'ft',
       }
   }
   return {
