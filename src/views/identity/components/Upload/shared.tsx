@@ -41,7 +41,11 @@ const langPrefix = 'identity.upload'
 export function Text(props: { text: string; className?: string }) {
   const { t } = useTranslation()
   const { text, className } = props
-  return <div className={cn('text-sm/4.5 font-normal text-[#9DA3AF]', className)}>{t(`${langPrefix}.${text}`)}</div>
+  return (
+    <div className={cn('text-sm/4.5 font-normal text-[#9DA3AF]', className)}>
+      {t(`${langPrefix}.${text}`)}
+    </div>
+  )
 }
 
 // 2M
@@ -268,6 +272,8 @@ export function UploadCard(props: {
   const isSomethingError =
     isFileTooLarge || isUploadFailed || isLivenessCheckFailed || isFileTypeInvalid
 
+  const isMobile = useMemo(() => /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent), [])
+
   return (
     <>
       <div
@@ -278,8 +284,8 @@ export function UploadCard(props: {
             isSomethingError ? 'border-[#CA3F64]' : ''
           ),
         })}
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
+        onMouseEnter={() => !isMobile && setIsHover(true)}
+        onMouseLeave={() => !isMobile && setIsHover(false)}
       >
         <input {...getInputProps()} />
         <div className='w-full h-full flex flex-col items-center justify-center gap-4'>
@@ -312,7 +318,7 @@ export function UploadCard(props: {
                   <LazyImage src='/images/icons/identity/trash.png' />
                 </button>
               )}
-              {mode === 'edit' && isHover && (
+              {mode === 'edit' && !isMobile && isHover && (
                 <button
                   type='button'
                   className='absolute bg-[#0E0E0E] rounded-lg cursor-pointer left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-4'

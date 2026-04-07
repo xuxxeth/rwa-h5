@@ -93,6 +93,10 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     }
 
     const supported = chains.some(c => c.id === chainId)
+    
+    if (supported) {
+      storage.setItem(CONNECT_ACCOUNT, account)
+    }
 
     setStatus(supported ? WalletStatus.CONNECTED : WalletStatus.WRONG_NETWORK)
   }, [account, chainId, chains])
@@ -120,7 +124,6 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         break
 
       case WalletStatus.WRONG_NETWORK:
-        console.log('===>Enter WRONG_NETWORK')
         if (chains[0]) {
           handleSwitchChain(chains[0].id).then(res => {
             if (res) {
