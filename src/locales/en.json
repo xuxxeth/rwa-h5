@@ -191,6 +191,7 @@
     "seeMore": "This list only shows data from the past month. Please <1>view more</1> in Portfolio > Order",
     "rthOnly": "RTH Only",
     "preAfter": "Pre + After-hours",
+    "webHis": "To view historical orders, please visit the official website on the web. ",
     "orderTable": {
       "side": "Side",
       "type": "Type",

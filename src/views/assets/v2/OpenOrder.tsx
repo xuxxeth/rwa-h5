@@ -261,7 +261,6 @@ const openOrderTableConfig: ITableConfig<
       }
       return (
         <CancelOrderButton
-          refetch={refetch}
           className='max-w-[50px] text-ellipsis overflow-hidden'
           orderId={item.orderId}
           disabled={item.state === OrderState.PendingCancel}
@@ -272,10 +271,9 @@ const openOrderTableConfig: ITableConfig<
   },
 ]
 
-function CancelOrderButton(props: {
+export function CancelOrderButton(props: {
   className?: string
   orderId: string
-  refetch: () => void
   disabled: boolean
 }) {
   const { className, disabled } = props
