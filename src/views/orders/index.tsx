@@ -106,7 +106,7 @@ const OrdersPage = (props: { account: string; chainId: number }) => {
     <div className='flex flex-1 flex-col px-5'>
       {isLoading ? (
         <div className='flex flex-1 justify-center mt-10'>
-          <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
+          <span className='text-[14px] text-gray-400 font-normal'>{t('assets.loading')}...</span>
         </div>
       ) : orders.length === 0 ? (
         <>

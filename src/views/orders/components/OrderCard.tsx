@@ -65,16 +65,19 @@ function DataCell({
   value,
   align = 'left',
   valueClassName,
+  className,
 }: {
   label: string
   value: string
   align?: 'left' | 'center' | 'right'
   valueClassName?: string
+  className?: string
 }) {
   return (
     <div
       className={cn(
         'flex flex-col gap-1',
+        className,
         align === 'right' && 'items-end',
         align === 'center' && 'items-center'
       )}
@@ -96,9 +99,12 @@ interface OrderCardProps {
 }
 
 export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const rwa = useRwaByStockId(order.stockId)
   const statusConfig = STATUS_CONFIG[order.state] ?? STATUS_CONFIG[0]
+
+  const isZh = i18n.language.toLowerCase().startsWith('zh')
+  const currencyUnit = isZh ? `（${order.currency ?? 'USDT'}）` : ` (${order.currency ?? 'USDT'})`
 
   return (
     <div className='flex flex-col gap-5 border-b border-gray-875 py-5'>
@@ -140,9 +146,9 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
       </div>
 
       {/* Row 2: 委托价格 / 成交数量 / 成交均价 */}
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-row items-center gap-5'>
         <DataCell
-          label={`${t('portfolio.orderTable.orderPrice')}（${order.currency ?? 'USDT'}）`}
+          label={`${t('portfolio.orderTable.orderPrice')}${currencyUnit}`}
           value={
             order.orderType === 1
               ? '--'
@@ -150,6 +156,7 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
           }
         />
         <DataCell
+          className='flex-1'
           label={t('portfolio.orderTable.filledAmount')}
           value={`${order.settledSize ?? '--'}/${order.size ?? '--'}`}
         />
@@ -161,12 +168,13 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
       </div>
 
       {/* Row 3: 成交金额 / 状态 / 交易时段 */}
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-row items-center gap-6'>
         <DataCell
-          label={`${t('portfolio.orderTable.filledValue')}（${order.currency ?? 'USDT'}）`}
-          value={textSuffix(toFixed(order.settledAmount), order.currency ?? 'USDT')}
+          label={`${t('portfolio.orderTable.filledValue')}${currencyUnit}`}
+          value={toFixed(order.settledAmount)}
         />
         <DataCell
+          className='flex-1'
           label={t('portfolio.orderTable.status')}
           value={t(statusConfig.textKey)}
           valueClassName={statusConfig.className}
