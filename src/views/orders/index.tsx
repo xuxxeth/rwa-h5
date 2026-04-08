@@ -12,7 +12,6 @@ import { useToast } from '@/hooks/useToast'
 import NoRecord from '@/components/no-record'
 import { Copy } from '@/components/Copy.tsx'
 import { useOrderChanged } from '@/views/assets/v2/shared'
-import useDebounce from '@/hooks/useDebounce'
 
 const TIKO_ORDER_URL = 'https://www.tiko.cc/order'
 
@@ -45,34 +44,6 @@ export const OrdersPage = () => {
 
   const orders = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data])
 
-  /* ── 撤单 ── */
-  const handleCancel = useCallback(
-    async (orderId: string) => {
-      if (cancelingId) return
-      try {
-        setCancelingId(orderId)
-        const res = await cancelOrder(orderId, { wait: true, skipSimulate: true })
-        if (res.code === 9200) {
-          toastSuccess({ title: t('assets.order.cancelOrderSuccess') })
-          refetch()
-        } else {
-          // @ts-ignore
-          const errorMessage = res.data?.message
-          setTxError(
-            errorMessage ? t(`appErr.${errorMessage}`) : t('assets.order.cancelOrderFailed')
-          )
-        }
-      } catch {
-        toastError({ title: t('assets.order.cancelOrderFailed') })
-      } finally {
-        setCancelingId(null)
-      }
-    },
-    [cancelingId, cancelOrder, refetch, t, setTxError, toastSuccess, toastError]
-  )
-
-  const debouncedCancelOrder = useDebounce(handleCancel, 500)
-
   /* ── 无限滚动 ── */
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
@@ -91,15 +62,17 @@ export const OrdersPage = () => {
           // <div className="flex flex-1 flex-col items-center justify-center gap-2.5 py-4">
           //   <span className="text-[14px] text-gray-400">{t('noRecord')}</span>
           // </div>
-          <NoRecord />
+          <div className='mb-10'>
+            <NoRecord />
+          </div>
         ) : (
           <>
             {orders.map(order => (
               <OrderCard
                 key={order.orderId}
                 order={order}
-                onCancel={debouncedCancelOrder}
-                canceling={cancelingId === order.orderId}
+                // onCancel={debouncedCancelOrder}
+                // canceling={cancelingId === order.orderId}
               />
             ))}
 
@@ -122,21 +95,16 @@ export const OrdersPage = () => {
                   <span className='text-[14px] text-gray-400 font-normal'>
                     {t('assets.noMoreData')}
                   </span>
-                  <div className='inline-block font-normal align-middle text-center text-[12px] text-gray-500'>
-                    {t('portfolio.webHistory', {
-                      defaultValue: '历史订单请前往web端官网查看，',
-                    })}
-                    {TIKO_ORDER_URL}
-                    <Copy
-                      className={'inline-block ml-[2px] !text-gray-500'}
-                      content={TIKO_ORDER_URL}
-                    />
-                  </div>
                 </>
               )}
             </div>
           </>
         )}
+        <div className='inline-block font-normal align-middle text-center text-[12px] text-gray-500'>
+          {t('portfolio.webHis')}
+          {TIKO_ORDER_URL}
+          <Copy className={'inline-block ml-[2px] !text-gray-500'} content={TIKO_ORDER_URL} />
+        </div>
       </div>
     </div>
   )
