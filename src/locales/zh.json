@@ -261,7 +261,7 @@
     },
     "loading": "載入中...",
     "scrollToLoadMore": "向下滾動以載入更多",
-    "noMoreData": "沒有更多資料",
+    "noMoreData": "已載入完畢",
     "noDataAvailable": "暫無資料"
   },
   "signatureVerify": "簽名驗證",
