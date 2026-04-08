@@ -29,6 +29,9 @@ export function H5Dialog({
   rightAction,
   hideDefaultClose = false,
 }: IH5DialogProps) {
+  const stopDrawerDrag = (event: React.SyntheticEvent) => {
+    event.stopPropagation()
+  }
   return (
     <Drawer onOpenChange={open => onOpenChange?.(open)} onClose={() => onClose?.()}>
       <DrawerTrigger asChild>
@@ -45,6 +48,8 @@ export function H5Dialog({
                     type='button'
                     aria-label='Close dialog'
                     data-vaul-no-drag
+                    onPointerDown={stopDrawerDrag}
+                    onTouchStart={stopDrawerDrag}
                     className='cursor-pointer'
                   >
                     <img
