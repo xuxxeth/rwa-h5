@@ -1,5 +1,5 @@
 import { memo, useCallback, useState } from "react";
-import { BaseInfo, type IBaseInfo } from "./BaseInfo";
+import { BaseInfo, type BaseInfoFormData, type IBaseInfo } from "./BaseInfo";
 import { NavigatorH5 } from "@/components/navigator";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ImageInfo } from "./ImageInfo";
@@ -14,8 +14,10 @@ const BaseInfoWrap = memo(
     const { t } = useTranslation()
     const [title, setTitle] = useState(t('kyc.t2'))
     const [step, setStep] = useState(1)
+    const [baseInfoSnapshot, setBaseInfoSnapshot] = useState<Partial<BaseInfoFormData>>({})
 
-    const handleNext = useCallback(() => {
+    const handleNext = useCallback((data: BaseInfoFormData) => {
+      setBaseInfoSnapshot(data)
       setTitle('图片信息')
       setStep(2)
       requestAnimationFrame(() => {
@@ -51,6 +53,7 @@ const BaseInfoWrap = memo(
             refresh={refresh}
             userInfo={userInfo}
             rejectReason={rejectReason}
+            baseInfoSnapshot={baseInfoSnapshot}
           />
         </div>
         
