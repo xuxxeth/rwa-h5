@@ -118,16 +118,26 @@ export function useCalcFee(
   const minActionFeePerOrder = marketInfo?.minActionFeePerOrder || '0.01'
   const maxActionFeePerOrder = marketInfo?.maxActionFeePerOrder || '8.3'
   
-  const platformFee = calculatePlatformFee(orderValue, feeRate)
-  const brokerageFee = calculateBrokerageFee(quantity, commissionRate, minCommissionPerOrder)
-  const tradingActivityFee = isBuy ? '0' : calculateTradingActivityFee(quantity, actionFeeRate, minActionFeePerOrder, maxActionFeePerOrder)
-  
-  const estimatedFee = !quantity || Number(quantity) === 0 ? '0.00' : calculateEstimatedFee(orderValue, quantity, isBuy, feeRate, commissionRate, minCommissionPerOrder, actionFeeRate, minActionFeePerOrder, maxActionFeePerOrder)
-  
-  const value = new BigNumber(orderValue || 0);
-  const fee = new BigNumber(estimatedFee || 0);
+  const value = new BigNumber(orderValue || 0)
+  const qty = new BigNumber(quantity || 0)
+  const hasValidInputs = value.isFinite() && qty.isFinite() && value.isGreaterThan(0) && qty.isGreaterThan(0)
 
-  const allOrderValue = isBuy ? value.plus(fee) : value.minus(fee);
+  const platformFee = hasValidInputs ? calculatePlatformFee(orderValue, feeRate) : '0.00'
+  const brokerageFee = hasValidInputs ? calculateBrokerageFee(quantity, commissionRate, minCommissionPerOrder) : '0.00'
+  const tradingActivityFee = hasValidInputs
+    ? (isBuy ? '0.00' : calculateTradingActivityFee(quantity, actionFeeRate, minActionFeePerOrder, maxActionFeePerOrder))
+    : '0.00'
+
+  const estimatedFee = hasValidInputs
+    ? calculateEstimatedFee(orderValue, quantity, isBuy, feeRate, commissionRate, minCommissionPerOrder, actionFeeRate, minActionFeePerOrder, maxActionFeePerOrder)
+    : '0.00'
+
+  const fee = new BigNumber(estimatedFee || 0)
+  const rawAllOrderValue = isBuy ? value.plus(fee) : value.minus(fee)
+  const allOrderValue = rawAllOrderValue.isFinite() && rawAllOrderValue.isGreaterThan(0)
+    ? rawAllOrderValue
+    : new BigNumber(0)
+
   return {
     platformFee,
     brokerageFee,
