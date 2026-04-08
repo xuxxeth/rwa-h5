@@ -9,6 +9,8 @@ import type { IOpenOrder, OrderType, SessionType } from '@/service/scan/types'
 import { OrderSide, OrderState } from '@/service/scan/types'
 import { Address } from '@/components/Address.tsx'
 
+import { CancelOrderButton } from '@/views/assets/v2/OpenOrder'
+
 /* ── 状态映射 ── */
 const STATUS_CONFIG: Record<number, { textKey: string; className: string }> = {
   [OrderState.PendingSubmit]: { textKey: 'assets.order.state.open', className: 'text-white' },
@@ -77,7 +79,9 @@ function DataCell({
       )}
     >
       <span className='text-[12px] font-normal leading-[1em] text-gray-400'>{label}</span>
-      <span className={cn('text-[12px] font-normal leading-[1.25em] text-white', valueClassName)}>{value}</span>
+      <span className={cn('text-[12px] font-normal leading-[1.25em] text-white', valueClassName)}>
+        {value}
+      </span>
     </div>
   )
 }
@@ -94,11 +98,6 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
   const { t } = useTranslation()
   const rwa = useRwaByStockId(order.stockId)
   const statusConfig = STATUS_CONFIG[order.state] ?? STATUS_CONFIG[0]
-  const canCancel =
-    order.state !== OrderState.PendingCancel &&
-    order.state !== OrderState.Cancelled &&
-    order.state !== OrderState.Filled &&
-    order.state !== OrderState.Failed
 
   return (
     <div className='flex flex-col gap-5 border-b border-gray-875 py-5'>
@@ -124,22 +123,11 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
 
         {/* Right: Cancel + time */}
         <div className='flex flex-col items-end justify-center gap-1'>
-          {canCancel || canceling ? (
-            <button
-              disabled={canceling}
-              className={cn(
-                'text-[14px] font-medium leading-[1.25em] text-brand',
-                canceling && 'opacity-50'
-              )}
-              onClick={() => onCancel?.(order.orderId)}
-            >
-              {canceling ? t('assets.order.cancelOrdering') : t('assets.order.cancelOrder')}
-            </button>
-          ) : (
-            <span className='text-[14px] leading-[1.25em] text-gray-500'>
-              {t('assets.order.cancelOrder')}
-            </span>
-          )}
+          <CancelOrderButton
+            className='text-[14px] font-medium leading-[1.25em] text-brand'
+            orderId={order.orderId}
+            disabled={order.state === 8}
+          />
           <span className='text-[12px] font-normal leading-[1.25em] text-gray-400'>
             {formatTimestamp(order.txTime)}
           </span>
