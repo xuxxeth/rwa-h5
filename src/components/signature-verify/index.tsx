@@ -34,20 +34,20 @@ export default function SignatureVerify(props: {
   }
 
   return (
-    <div className={cn('flex flex-col items-center justify-center', className)}>
+    <div className={cn('flex flex-col gap-4 items-center justify-center', className)}>
       <div>
-        <LazyImage className='w-[65px]' src='/images/v2/portfolio/security.png' alt='' />
+        <LazyImage className='h-[72px]' src='/images/v2/portfolio/security.png' alt='' />
       </div>
-      <div className={cn('text-sm mt-2 font-medium text-white', titleClassName)}>
+      <div className={cn('text-sm font-medium text-white', titleClassName)}>
         {t('signatureVerify')}
       </div>
       {isTitleSameLine ? (
-        <div className={cn('text-gray-400 font-normal mt-2 text-center', descClassName)}>
+        <div className={cn('text-gray-400 font-normal text-center', descClassName)}>
           {t(desc)}
           {subDesc && t(subDesc)}
         </div>
       ) : (
-        <div className='mt-2 text-xs text-base text-gray-400 font-normal text-center'>
+        <div className='text-xs text-base text-gray-400 font-normal text-center'>
           <div className={cn('w-[450px] m-auto', descClassName)}>{t(desc)}</div>
           {subDesc && <div className={cn('w-[350px] m-auto', subDescClassName)}>{t(subDesc)}</div>}
         </div>
@@ -56,7 +56,7 @@ export default function SignatureVerify(props: {
         disabled={signing}
         onClick={handleSignatureVerify}
         className={cn(
-          'cursor-pointer bg-white rounded-[8px] text-sm/4.5 py-2 px-6 mt-2  font-semibold text-black',
+          'cursor-pointer w-full bg-white rounded-[8px] text-sm/4.5 py-2 px-6 mt-6 font-semibold text-black',
           buttonClassName
         )}
       >
