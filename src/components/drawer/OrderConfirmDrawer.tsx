@@ -234,9 +234,18 @@ export const OrderConfirmDrawer = memo(
               {t('Confirm')}
             </Button>
 
-            <div className="flex items-center gap-1">
-              <CheckBox onChange={(e) => setInnerShow(e)} />
-              <span className="relative top-[1px] text-[14px] font-normal text-gray-400">
+            <div
+              className="flex cursor-pointer items-center gap-1"
+              onClick={() => setInnerShow((prev) => !prev)}
+            >
+              <div
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <CheckBox checked={innerShow} onChange={(e) => setInnerShow(e)} />
+              </div>
+              <span className="relative top-[-1px] text-[14px] font-normal text-gray-400">
                 {t('v2.tx.t35')}
               </span>
             </div>
