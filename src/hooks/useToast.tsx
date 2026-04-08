@@ -52,7 +52,7 @@ export function ToastItem({
   const { t: $t } = useTranslation()
   return (
     <div
-      className='relative flex w-[375px] items-center justify-between gap-3 overflow-hidden rounded-[8px] bg-gray-800 p-3 text-white'
+      className='relative flex w-[320px] items-center justify-between gap-3 overflow-hidden rounded-[8px] bg-gray-800 p-3 text-white'
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >

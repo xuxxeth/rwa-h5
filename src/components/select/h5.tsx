@@ -1,6 +1,5 @@
 
 
-import { Select as SelectCom, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { memo, useEffect, useState } from "react";
 import { H5Dialog } from "../dialog/H5Dialog";
@@ -34,6 +33,12 @@ const SelectH5 = memo(
     const [curretnValue, setCurrentValue] = useState('')
     const [currentItem, setCurrentItem] = useState<ItemProps | null>(null)
     const [open, setOpen] = useState(false)
+
+    const handleSelect = (item: ItemProps) => {
+      setCurrentValue(item.value)
+      setCurrentItem(item)
+      onChange?.(item)
+    }
     
     useEffect(() => {
       if (defaultValue) {
@@ -60,7 +65,7 @@ const SelectH5 = memo(
             )}
             style={{borderColor: open ? activeColor ? activeColor : '' : ''}}
           >
-            <div className="flex items-center gap-2 w-[70px] text-white">
+            <div className="flex items-center gap-2 w-[280px] text-white">
               {currentItem ? (
                 <span className=" font-normal text-[14px]">{currentItem?.label}</span>
               ) : (
@@ -76,11 +81,15 @@ const SelectH5 = memo(
       >
         <div className="px-6 pt-3">
           {data.map(item => (
-            <div key={item.value} className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
-              onClick={() => {
-                setCurrentValue(item.value)
-                setCurrentItem(item)
-                onChange && onChange(item)
+            <button
+              type="button"
+              key={item.value}
+              data-vaul-no-drag
+              className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
+              onClick={() => handleSelect(item)}
+              onTouchEnd={(e) => {
+                e.preventDefault()
+                handleSelect(item)
               }}
             >
               <div className="flex items-center justify-between gap-2 text-white text-[14px] w-full">
@@ -94,7 +103,7 @@ const SelectH5 = memo(
                 </span>
               </div>
               
-            </div>
+            </button>
           ))}
         </div>
       </H5Dialog>
@@ -104,7 +113,6 @@ const SelectH5 = memo(
 )
 
 export { SelectH5 }
-
 
 
 

@@ -204,7 +204,15 @@ export const SymbolSelectDrawer = memo(
     })
 
     return (
-      <Drawer open={open} onOpenChange={onOpenChange} title={t('Select a token')}>
+      <Drawer open={open} onOpenChange={(open) => {
+        
+        onOpenChange(open)
+        setTimeout(() => {
+          if (!open) {
+            setSearchTerm('')
+          }
+        }, 800)
+      }} title={t('Select a token')}>
         <div className="flex flex-col gap-4 bg-[#1A1B1E] pt-4">
           {/* ── Search ── */}
           <div className="px-5">
