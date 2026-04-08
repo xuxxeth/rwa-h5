@@ -169,11 +169,26 @@ function useIsTokenQualified() {
 
 function TradePrepare() {
   const { t } = useTranslation()
+
+  const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const opened = window.open(url, '_blank', 'noopener,noreferrer')
+    if (!opened) {
+      window.location.href = url
+    }
+  }
+
   return (
     <div className='flex flex-col gap-4 text-sm text-blue-50'>
       <a
         href='https://tiko.gitbook.io/tiko-docs/faq/how-to-prepare-for-trading-on-tiko'
         target='_blank'
+        rel='noopener noreferrer'
+        onClick={openExternal(
+          'https://tiko.gitbook.io/tiko-docs/faq/how-to-prepare-for-trading-on-tiko'
+        )}
         className='flex flex-row items-center gap-1.5'
       >
         {t(`${langPrefix}.pre1`)} <LazyImage src='/images/icons/identity/arrow-narrow.svg' />
@@ -181,6 +196,10 @@ function TradePrepare() {
       <a
         href='https://tiko.gitbook.io/tiko-docs/faq/how-to-buy-my-first-u.s.-stock-on-tiko-step-by-step'
         target='_blank'
+        rel='noopener noreferrer'
+        onClick={openExternal(
+          'https://tiko.gitbook.io/tiko-docs/faq/how-to-buy-my-first-u.s.-stock-on-tiko-step-by-step'
+        )}
         className='flex flex-row items-center gap-1.5'
       >
         {t(`${langPrefix}.pre2`)} <LazyImage src='/images/icons/identity/arrow-narrow.svg' />
