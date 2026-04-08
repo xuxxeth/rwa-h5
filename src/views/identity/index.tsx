@@ -85,7 +85,7 @@ function IdentityEntry() {
         desc='identity.signd'
         subDescClassName='w-[750px] text-lg'
         subDesc='identity.signSubd'
-        className='mt-24'
+        className='mt-24 px-5'
         refreshIsSignatureValid={refreshIsSignatureValid}
       />
     )
