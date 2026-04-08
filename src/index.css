@@ -102,8 +102,8 @@ body {
   display: flex;
 } */
 [data-sonner-toaster] {
-  min-width: 356px !important;
-  width: 500px !important;
+  min-width: 320px !important;
+  width: 320px !important;
 }
 [data-sonner-toaster][data-y-position='top'] {
   top: 80px !important;

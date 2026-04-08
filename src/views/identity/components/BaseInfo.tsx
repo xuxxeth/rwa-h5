@@ -343,7 +343,7 @@ const BaseInfo = memo(
                       },
                       pattern: {
                         value: /^[a-zA-Z\u4e00-\u9fa5\s]+$/,
-                        message: t('kyc.t64'),
+                        message: t('kyc.t641'),
                       },
                       onChange: (e) => {
                         setValue('firstName', e.target.value)
@@ -369,7 +369,7 @@ const BaseInfo = memo(
                       },
                       pattern: {
                         value: /^[a-zA-Z\u4e00-\u9fa5\s]+$/,
-                        message: t('kyc.t64'),
+                        message: t('kyc.t641'),
                       },
                       onChange: e => {
                         // 实时限制输入长度
@@ -392,14 +392,14 @@ const BaseInfo = memo(
                       error={errors.fullName?.message}
                       value={fullName}
                       {...register('fullName', {
-                        required: t('kyc.t54', { num: 30 }),
+                        required: t('kyc.t54', { num: 60 }),
                         maxLength: {
-                          value: 30,
-                          message: t('kyc.t54', { num: 30 }),
+                          value: 60,
+                          message: t('kyc.t54', { num: 60 }),
                         },
                         pattern: {
                           value: /^[a-zA-Z\u4e00-\u9fa5·\s_-]+$/,
-                          message: t('kyc.t64'),
+                          message: t('kyc.t641'),
                         },
                         validate: value => {
                           if (!firstName || !lastName) return true
