@@ -175,8 +175,11 @@ export function DatePickerH5({
         <DrawerClose asChild>
           <button
             type='button'
-            className='text-[#009DFF] text-[14px] font-normal'
-            onClick={() => {
+            data-vaul-no-drag
+            onPointerDown={stopDrawerDrag}
+            onTouchStart={stopDrawerDrag}
+            className='px-3 py-2 text-[#009DFF] text-[14px] font-normal'
+            onClick={event => {
               const picked = new Date(
                 Number(value.year),
                 Number(value.month) - 1,
