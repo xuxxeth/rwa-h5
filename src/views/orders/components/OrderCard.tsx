@@ -149,7 +149,7 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
       <div className='flex flex-row items-center'>
         <DataCell
           className='flex-[1.5]'
-          label={`${t('portfolio.orderTable.orderPrice')}${currencyUnit}`}
+          label={`${t('portfolio.orderTable.orderPrice')}`}
           value={
             order.orderType === 1
               ? '--'
