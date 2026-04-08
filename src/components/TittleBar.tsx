@@ -24,24 +24,19 @@ export const TittleBar = ({ title, onBack, right, className }: TittleBarProps) =
   }
 
   return (
-    <div
-      className={cn(
-        'relative flex items-center px-4 py-[14px] bg-gray-975',
-        className,
-      )}
-    >
+    <div className={cn('relative flex items-center py-[14px] bg-gray-975', className)}>
       {/* 返回按钮 */}
-      <button className="flex items-center justify-center" onClick={handleBack}>
+      <button className='flex items-center px-4 justify-center' onClick={handleBack}>
         <ArrowLeft size={20} />
       </button>
 
       {/* 标题居中 */}
-      <span className="absolute left-1/2 -translate-x-1/2 text-[16px] font-medium text-white">
+      <span className='absolute left-1/2 -translate-x-1/2 text-[16px] font-medium text-white'>
         {title}
       </span>
 
       {/* 右侧插槽 */}
-      {right && <div className="ml-auto">{right}</div>}
+      {right && <div className='ml-auto'>{right}</div>}
     </div>
   )
 }
