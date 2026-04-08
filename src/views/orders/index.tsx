@@ -86,6 +86,7 @@ const OrdersPage = (props: { account: string; chainId: number }) => {
     data,
     fetchNextPage,
     hasNextPage,
+    isFetching,
     isFetchingNextPage,
     isLoading,
     isFetchedAfterMount,
@@ -103,6 +104,25 @@ const OrdersPage = (props: { account: string; chainId: number }) => {
 
   /* ── 无限滚动 ── */
   const loadMoreRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetching && !isFetchingNextPage) {
+        // 当滚动到加载更多区域且有下一页数据时，触发加载
+        fetchNextPage()
+      }
+    })
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current)
+      }
+    }
+  }, [hasNextPage, isFetching, isFetchingNextPage, fetchNextPage])
 
   return (
     <div className='flex flex-1 flex-col px-5'>

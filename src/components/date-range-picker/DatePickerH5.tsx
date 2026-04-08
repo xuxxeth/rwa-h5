@@ -178,7 +178,7 @@ export function DatePickerH5({
             data-vaul-no-drag
             onPointerDown={stopDrawerDrag}
             onTouchStart={stopDrawerDrag}
-            className='px-3 py-2 text-[#009DFF] text-[14px] font-normal'
+            className="text-[#009DFF] text-[14px] font-normal relative before:content-[''] before:absolute before:-inset-2 before:bg-transparent"
             onClick={event => {
               const picked = new Date(
                 Number(value.year),
