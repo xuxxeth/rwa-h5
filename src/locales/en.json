@@ -274,7 +274,7 @@
     "noDataAvailable": "No Data Available"
   },
   "signatureVerify": "Signature Verification",
-  "signatureVerifyDescTop": "To protect your personal information,",
+  "signatureVerifyDescTop": "To ensure the security of your personal information,",
   "signatureVerifyDescBottom": "please sign with your wallet to view order and trade history.",
   "gotoSignature": "Sign Now",
   "Coming Soon": "Coming Soon",

@@ -8,6 +8,7 @@ import { LazyImage } from '@/components/image/LazyImage'
 import type { IOpenOrder, OrderType, SessionType } from '@/service/scan/types'
 import { OrderSide, OrderState } from '@/service/scan/types'
 import { Address } from '@/components/Address.tsx'
+import { textPrefix, truncate, isGreater, divide } from '@/utils'
 
 import { CancelOrderButton } from '@/views/assets/v2/OpenOrder'
 
@@ -123,11 +124,15 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
 
         {/* Right: Cancel + time */}
         <div className='flex flex-col items-end justify-center gap-1'>
-          <CancelOrderButton
-            className='text-[14px] font-medium leading-[1.25em] text-brand'
-            orderId={order.orderId}
-            disabled={order.state === 8}
-          />
+          {order.orderType == 1 ? (
+            <div className='text-gray-400'>--</div>
+          ) : (
+            <CancelOrderButton
+              className='text-[14px] font-medium leading-[1.25em] text-brand'
+              orderId={order.orderId}
+              disabled={order.state === 8}
+            />
+          )}
           <span className='text-[12px] font-normal leading-[1.25em] text-gray-400'>
             {formatTimestamp(order.txTime)}
           </span>
@@ -138,19 +143,19 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
       <div className='flex items-center justify-between'>
         <DataCell
           label={`${t('portfolio.orderTable.orderPrice')}（${order.currency ?? 'USDT'}）`}
-          value={order.orderType === 1 ? t('market') : toFixed(order.price)}
+          value={
+            order.orderType === 1
+              ? '--'
+              : textPrefix(truncate(order.price, isGreater(order.price, 1) ? 2 : 4), '$')
+          }
         />
         <DataCell
           label={t('portfolio.orderTable.filledAmount')}
-          value={`${toFixed(order.settledSize, 0)}/${toFixed(order.size, 0)}`}
+          value={`${order.settledSize ?? '--'}/${order.size ?? '--'}`}
         />
         <DataCell
           label={t('portfolio.orderTable.avgPrice')}
-          value={
-            Number(order.settledSize) > 0
-              ? toFixed(String(Number(order.settledAmount) / Number(order.settledSize)))
-              : '--'
-          }
+          value={textPrefix(toFixed(divide(order.settledAmount, order.settledSize)), '$')}
           align='right'
         />
       </div>

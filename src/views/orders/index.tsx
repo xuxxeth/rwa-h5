@@ -5,25 +5,80 @@ import { OrderCard } from './components/OrderCard'
 import { infiniteOpenOrderOptions } from '@/queries'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import { useSignatureValidStatus } from '@/hooks/useSignature'
-import { useTradeUtils } from '@/hooks/useTrading'
-import { useTradeStore } from '@/stores/tradeStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { useToast } from '@/hooks/useToast'
 import NoRecord from '@/components/no-record'
 import { Copy } from '@/components/Copy.tsx'
 import { useOrderChanged } from '@/views/assets/v2/shared'
+import { WalletNotConnectedSmallVersion } from '@/components/wallet-not-connected'
+import SignatureVerify from '@/components/signature-verify'
+import { useAppStore } from '@/stores/appStore'
+import { cn } from '@/utils'
 
 const TIKO_ORDER_URL = 'https://www.tiko.cc/order'
 
-export const OrdersPage = () => {
+const OedersPageEntry = () => {
+  const isWalletConnecting = useAppStore(state => state.isWalletConnecting)
+
+  const { account, chainId } = useActiveWeb3()
+  const [isSignatureValid, refreshIsSignatureValid] = useSignatureValidStatus()
+
+  const walltedConnected = account && chainId
+
+  const initialConnectingFinished = useRef(false)
+
+  useEffect(() => {
+    if (!isWalletConnecting) {
+      initialConnectingFinished.current = true
+    }
+  }, [isWalletConnecting])
+
+  if (!walltedConnected && isWalletConnecting && !initialConnectingFinished.current) {
+    return null
+  }
+
+  if (!account || !chainId) {
+    return (
+      <OrdersWrapper>
+        <WalletNotConnectedSmallVersion />
+      </OrdersWrapper>
+    )
+  }
+
+  if (!isSignatureValid) {
+    return (
+      <OrdersWrapper>
+        <SignatureVerify
+          desc='signatureVerifyDescTop'
+          subDesc='signatureVerifyDescBottom'
+          className='mt-9'
+          refreshIsSignatureValid={refreshIsSignatureValid}
+        />
+      </OrdersWrapper>
+    )
+  }
+
+  return (
+    <OrdersWrapper>
+      <OrdersPage account={account} chainId={chainId} />
+    </OrdersWrapper>
+  )
+}
+
+function OrdersWrapper(props: { children: React.ReactNode }) {
+  const { t } = useTranslation()
+  return (
+    <div className='flex min-h-main flex-col bg-gray-950'>
+      {/* TittleBar */}
+      <TittleBar className='sticky top-navbar z-[5]' title={t('assets.order.openOrders')} />
+      {props.children}
+    </div>
+  )
+}
+
+const OrdersPage = (props: { account: string; chainId: number }) => {
   const { t } = useTranslation()
   const { account, chainId } = useActiveWeb3()
   const [isSignatureValid] = useSignatureValidStatus()
-  const { cancelOrder } = useTradeUtils()
-  const setTxError = useTradeStore(s => s.setTxError)
-  const { toastSuccess, toastError } = useToast()
-
-  const [cancelingId, setCancelingId] = useState<string | null>(null)
 
   const {
     data,
@@ -48,66 +103,62 @@ export const OrdersPage = () => {
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className='flex min-h-main flex-col bg-gray-950'>
-      {/* TittleBar */}
-      <TittleBar className='sticky top-navbar z-[5]' title={t('assets.order.openOrders')} />
-
-      {/* 订单列表 */}
-      <div className='flex flex-1 flex-col px-5'>
-        {isLoading ? (
-          <div className='flex flex-1 items-center justify-center'>
-            <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
-          </div>
-        ) : orders.length === 0 ? (
-          // <div className="flex flex-1 flex-col items-center justify-center gap-2.5 py-4">
-          //   <span className="text-[14px] text-gray-400">{t('noRecord')}</span>
-          // </div>
-          <div className='mb-10'>
-            <NoRecord />
-          </div>
-        ) : (
-          <>
-            {orders.map(order => (
-              <OrderCard
-                key={order.orderId}
-                order={order}
-                // onCancel={debouncedCancelOrder}
-                // canceling={cancelingId === order.orderId}
-              />
-            ))}
-
-            {/* 加载更多 / 底部状态 */}
-            <div
-              ref={loadMoreRef}
-              className='flex flex-col items-center justify-center gap-2.5 py-4'
-            >
-              {isFetchingNextPage ? (
-                <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
-              ) : hasNextPage ? (
-                <button
-                  className='text-[14px] font-normal text-gray-400'
-                  onClick={() => fetchNextPage()}
-                >
-                  {t('assets.scrollToLoadMore')}
-                </button>
-              ) : (
-                <>
-                  <span className='text-[14px] text-gray-400 font-normal'>
-                    {t('assets.noMoreData')}
-                  </span>
-                </>
-              )}
-            </div>
-          </>
-        )}
-        <div className='inline-block font-normal align-middle text-center text-[12px] text-gray-500'>
-          {t('portfolio.webHis')}
-          {TIKO_ORDER_URL}
-          <Copy className={'inline-block ml-[2px] !text-gray-500'} content={TIKO_ORDER_URL} />
+    <div className='flex flex-1 flex-col px-5'>
+      {isLoading ? (
+        <div className='flex flex-1 justify-center mt-10'>
+          <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
         </div>
-      </div>
+      ) : orders.length === 0 ? (
+        <>
+          <NoRecord />
+          <SeeMoreOnWeb className='mt-10' />
+        </>
+      ) : (
+        <>
+          {orders.map(order => (
+            <OrderCard key={order.orderId} order={order} />
+          ))}
+
+          {/* 加载更多 / 底部状态 */}
+          <div ref={loadMoreRef} className='flex flex-col items-center justify-center gap-2.5 py-4'>
+            {isFetchingNextPage ? (
+              <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
+            ) : hasNextPage ? (
+              <button
+                className='text-[14px] font-normal text-gray-400'
+                onClick={() => fetchNextPage()}
+              >
+                {t('assets.scrollToLoadMore')}
+              </button>
+            ) : (
+              <>
+                <span className='text-[14px] text-gray-400 font-normal'>
+                  {t('assets.noMoreData')}
+                </span>
+              </>
+            )}
+          </div>
+          <SeeMoreOnWeb />
+        </>
+      )}
     </div>
   )
 }
 
-export default OrdersPage
+function SeeMoreOnWeb(props: { className?: string }) {
+  const { t } = useTranslation()
+  return (
+    <div
+      className={cn(
+        'inline-block font-normal mb-10 align-middle text-center text-[12px] text-gray-500',
+        props.className
+      )}
+    >
+      {t('portfolio.webHis')}
+      {TIKO_ORDER_URL}
+      <Copy className={'inline-block ml-[2px] !text-gray-500'} content={TIKO_ORDER_URL} />
+    </div>
+  )
+}
+
+export default OedersPageEntry
