@@ -40,6 +40,8 @@ function IconWithTooltip({
       if (isControlled) {
         controlledOnOpenChange?.(nextOpen)
       } else {
+        // Mobile-only behavior: block hover/focus auto-open, allow close only.
+        if (nextOpen) return
         setInternalOpen(nextOpen)
       }
     },
@@ -47,8 +49,12 @@ function IconWithTooltip({
   )
 
   const handleTriggerClick = useCallback(() => {
-    handleOpenChange(!isOpen)
-  }, [isOpen, handleOpenChange])
+    if (isControlled) {
+      controlledOnOpenChange?.(!isOpen)
+      return
+    }
+    setInternalOpen(prev => !prev)
+  }, [isControlled, controlledOnOpenChange, isOpen])
 
   // Close tooltip when tapping outside
   useEffect(() => {
