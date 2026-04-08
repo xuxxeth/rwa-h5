@@ -76,7 +76,7 @@ function DataCell({
   return (
     <div
       className={cn(
-        'flex flex-col gap-1',
+        'flex flex-col gap-1 flex-1',
         className,
         align === 'right' && 'items-end',
         align === 'center' && 'items-center'
@@ -146,8 +146,9 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
       </div>
 
       {/* Row 2: 委托价格 / 成交数量 / 成交均价 */}
-      <div className='flex flex-row items-center gap-5'>
+      <div className='flex flex-row items-center'>
         <DataCell
+          className='flex-[1.5]'
           label={`${t('portfolio.orderTable.orderPrice')}${currencyUnit}`}
           value={
             order.orderType === 1
@@ -156,7 +157,6 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
           }
         />
         <DataCell
-          className='flex-1'
           label={t('portfolio.orderTable.filledAmount')}
           value={`${order.settledSize ?? '--'}/${order.size ?? '--'}`}
         />
@@ -168,13 +168,13 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
       </div>
 
       {/* Row 3: 成交金额 / 状态 / 交易时段 */}
-      <div className='flex flex-row items-center gap-6'>
+      <div className='flex flex-row items-center'>
         <DataCell
+          className='flex-[1.5]'
           label={`${t('portfolio.orderTable.filledValue')}${currencyUnit}`}
           value={toFixed(order.settledAmount)}
         />
         <DataCell
-          className='flex-1'
           label={t('portfolio.orderTable.status')}
           value={t(statusConfig.textKey)}
           valueClassName={statusConfig.className}

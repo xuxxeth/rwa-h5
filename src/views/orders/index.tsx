@@ -39,7 +39,9 @@ const OedersPageEntry = () => {
   if (!account || !chainId) {
     return (
       <OrdersWrapper>
-        <WalletNotConnectedSmallVersion />
+        <div className='px-5'>
+          <WalletNotConnectedSmallVersion />
+        </div>
       </OrdersWrapper>
     )
   }
@@ -50,7 +52,7 @@ const OedersPageEntry = () => {
         <SignatureVerify
           desc='signatureVerifyDescTop'
           subDesc='signatureVerifyDescBottom'
-          className='mt-9'
+          className='mt-9 px-5'
           refreshIsSignatureValid={refreshIsSignatureValid}
         />
       </OrdersWrapper>
