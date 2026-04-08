@@ -120,16 +120,31 @@ const CountrySelectH5 = memo(
             </div>
             
           </div>
-          <div className="h-[60vh] overflow-y-auto px-6">
+          <div
+            data-vaul-no-drag
+            className="h-[60vh] overflow-y-auto overscroll-contain px-6"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
             {countryList
               .filter(ct1 => i18n.language === 'en' ? ct1.enName.toLowerCase().includes(searchText.toLowerCase()) : ct1.zhName.toLowerCase().includes(searchText.toLowerCase())
                 
               )
               .map(ct2 => (
-                <div key={ct2.code} className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
+                <button
+                  type="button"
+                  key={ct2.code}
+                  data-vaul-no-drag
+                  className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
                   onClick={() => {
+                    setCurrentCode(ct2.code)
                     setCurrentCountry(ct2)
-                    onChange && onChange(ct2)
+                    onChange?.(ct2)
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault()
+                    setCurrentCode(ct2.code)
+                    setCurrentCountry(ct2)
+                    onChange?.(ct2)
                   }}
                 >
                   <div className="flex items-center justify-between w-full gap-2 text-white text-[16px]">
@@ -143,7 +158,7 @@ const CountrySelectH5 = memo(
                       <Check className="h-4 w-4 text-[#009DFF]" />
                     </span>
                   </div>
-                </div>
+                </button>
               ))}
           </div>
         </div>
@@ -155,6 +170,4 @@ const CountrySelectH5 = memo(
 )
 
 export { CountrySelectH5 }
-
-
 

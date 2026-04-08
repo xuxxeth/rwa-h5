@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerClose,
@@ -42,11 +41,18 @@ export function H5Dialog({
             {rightAction ||
               (!hideDefaultClose && (
                 <DrawerClose asChild>
-                  <img
-                    src='/images/v2/icons/close_light.png'
-                    className='w-3 h-3 cursor-pointer'
-                    alt=''
-                  />
+                  <button
+                    type='button'
+                    aria-label='Close dialog'
+                    data-vaul-no-drag
+                    className='cursor-pointer'
+                  >
+                    <img
+                      src='/images/v2/icons/close_light.png'
+                      className='w-3 h-3'
+                      alt=''
+                    />
+                  </button>
                 </DrawerClose>
               ))}
           </DrawerHeader>
