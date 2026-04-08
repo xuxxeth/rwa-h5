@@ -9,19 +9,19 @@ import { useTradeUtils } from '@/hooks/useTrading'
 import { useTradeStore } from '@/stores/tradeStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useToast } from '@/hooks/useToast'
-import CopyButton from '@/components/button/copyButton'
 import NoRecord from '@/components/no-record'
 import { Copy } from '@/components/Copy.tsx'
 import { useOrderChanged } from '@/views/assets/v2/shared'
+import useDebounce from '@/hooks/useDebounce'
 
-const TIKO_LITE_TRADE_URL = 'https://www.tiko.cc/lite-trade'
+const TIKO_ORDER_URL = 'https://www.tiko.cc/order'
 
 export const OrdersPage = () => {
   const { t } = useTranslation()
   const { account, chainId } = useActiveWeb3()
   const [isSignatureValid] = useSignatureValidStatus()
   const { cancelOrder } = useTradeUtils()
-  const setTxError = useTradeStore((s) => s.setTxError)
+  const setTxError = useTradeStore(s => s.setTxError)
   const { toastSuccess, toastError } = useToast()
 
   const [cancelingId, setCancelingId] = useState<string | null>(null)
@@ -34,9 +34,7 @@ export const OrdersPage = () => {
     isLoading,
     isFetchedAfterMount,
     refetch,
-  } = useInfiniteQuery(
-    infiniteOpenOrderOptions(account ?? '', chainId ?? 0, isSignatureValid),
-  )
+  } = useInfiniteQuery(infiniteOpenOrderOptions(account ?? '', chainId ?? 0, isSignatureValid))
 
   // WS 订单状态变更时自动刷新，与 OpenOrderTable 保持一致
   const orderChanged = useOrderChanged()
@@ -45,10 +43,7 @@ export const OrdersPage = () => {
     refetch()
   }, [orderChanged])
 
-  const orders = useMemo(
-    () => data?.pages.flatMap((p) => p.data) ?? [],
-    [data],
-  )
+  const orders = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data])
 
   /* ── 撤单 ── */
   const handleCancel = useCallback(
@@ -58,15 +53,13 @@ export const OrdersPage = () => {
         setCancelingId(orderId)
         const res = await cancelOrder(orderId, { wait: true, skipSimulate: true })
         if (res.code === 9200) {
-          toastSuccess({ title: t('assets.order.state.cancelOrderSuccess') })
+          toastSuccess({ title: t('assets.order.cancelOrderSuccess') })
           refetch()
         } else {
           // @ts-ignore
           const errorMessage = res.data?.message
           setTxError(
-            errorMessage
-              ? t(`appErr.${errorMessage}`)
-              : t('assets.order.cancelOrderFailed'),
+            errorMessage ? t(`appErr.${errorMessage}`) : t('assets.order.cancelOrderFailed')
           )
         }
       } catch {
@@ -75,8 +68,10 @@ export const OrdersPage = () => {
         setCancelingId(null)
       }
     },
-    [cancelingId, cancelOrder, refetch, t, setTxError, toastSuccess, toastError],
+    [cancelingId, cancelOrder, refetch, t, setTxError, toastSuccess, toastError]
   )
+
+  const debouncedCancelOrder = useDebounce(handleCancel, 500)
 
   /* ── 无限滚动 ── */
   const loadMoreRef = useRef<HTMLDivElement>(null)
@@ -103,7 +98,7 @@ export const OrdersPage = () => {
               <OrderCard
                 key={order.orderId}
                 order={order}
-                onCancel={handleCancel}
+                onCancel={debouncedCancelOrder}
                 canceling={cancelingId === order.orderId}
               />
             ))}
@@ -116,20 +111,25 @@ export const OrdersPage = () => {
               {isFetchingNextPage ? (
                 <span className='text-[14px] text-gray-400'>{t('assets.loading')}...</span>
               ) : hasNextPage ? (
-                <button className='text-[14px] text-gray-400' onClick={() => fetchNextPage()}>
+                <button
+                  className='text-[14px] font-normal text-gray-400'
+                  onClick={() => fetchNextPage()}
+                >
                   {t('assets.scrollToLoadMore')}
                 </button>
               ) : (
                 <>
-                  <span className='text-[14px] text-gray-400'>{t('assets.noMoreData')}</span>
-                  <div className='inline-block align-middle text-center text-[12px] text-gray-500'>
+                  <span className='text-[14px] text-gray-400 font-normal'>
+                    {t('assets.noMoreData')}
+                  </span>
+                  <div className='inline-block font-normal align-middle text-center text-[12px] text-gray-500'>
                     {t('portfolio.webHistory', {
                       defaultValue: '历史订单请前往web端官网查看，',
                     })}
-                    {TIKO_LITE_TRADE_URL}
+                    {TIKO_ORDER_URL}
                     <Copy
                       className={'inline-block ml-[2px] !text-gray-500'}
-                      content={TIKO_LITE_TRADE_URL}
+                      content={TIKO_ORDER_URL}
                     />
                   </div>
                 </>
