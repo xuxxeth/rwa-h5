@@ -142,7 +142,7 @@ export interface IBaseInfo {
   userInfo?: IKycSubmitData
   refresh?: () => Promise<ApiResponse<IKycDetail>>
   onResetRetry?: () => void
-  next?: () => void
+  next?: (data: BaseInfoFormData) => void
 }
 
 const BaseInfo = memo(
@@ -272,7 +272,7 @@ const BaseInfo = memo(
         // ]
       }
       console.log(params)
-      next?.()
+      next?.(data)
     }
     const dobRef = useRef(dob)
     const dobInitRef = useRef(false)

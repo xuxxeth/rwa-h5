@@ -122,7 +122,7 @@ export const TradePage = () => {
   const marketTradeState = useBaseStore(state => state.marketTradeState)
   const tradeType = useTradeStore(state => state.tradeType)
   const sessionType = useTradeStore(state => state.sessionType)
-  const isMarketCloseDisabled = marketTradeState === MARKET_STATUS.CLOSE && tradeType === TradeType.MARKET
+  const isMarketCloseDisabled = marketTradeState !== MARKET_STATUS.OPEN && tradeType === TradeType.MARKET
   // ── Effective price (with slippage for market orders) ──
   const effectivePrice = useEffectivePrice({
     tradeType,

@@ -1,5 +1,6 @@
 import ChevronDown from '@/components/icons/set/ChevronDown'
 import { cn } from '@/lib/utils'
+import { normalizeInput } from '@/components/v2/input/NumberInput'
 
 interface AmountInputProps {
   /** label text */
@@ -22,7 +23,7 @@ interface AmountInputProps {
   /** input placeholder */
   placeholder?: string
   /** regex for input validation */
-  regex?: RegExp
+  regex?: string | RegExp
   /** whether balance is insufficient */
   isInsufficient?: boolean
 }
@@ -38,15 +39,18 @@ export const AmountInput = ({
   onTokenClick,
   readOnly = false,
   placeholder = '0',
-  regex,
+  regex = '^(?:\\d+|\\d+\\.\\d{0,2})$',
   isInsufficient = false,
 }: AmountInputProps) => {
   const logoSrc = tokenLogo || (tokenSymbol === 'USDT' ? '/images/tokens/usdt.png' : '/images/tokens/AMZN.png')
+  const inputRegex = regex instanceof RegExp ? regex : RegExp(regex)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value
-    if (regex && !regex.test(val)) return
-    onChange(val)
+    const normalized = normalizeInput(e.target.value)
+
+    if (normalized === '' || inputRegex.test(normalized)) {
+      onChange(normalized)
+    }
   }
 
   return (

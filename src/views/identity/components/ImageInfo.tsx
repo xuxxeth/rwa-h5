@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { usePersistentForm } from '@/hooks/usePersistentForm'
 import { useTranslation } from '@/hooks/useTranslation'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { Upload } from './Upload'
 
 import storage from '@/utils/storage'
@@ -66,11 +66,13 @@ const ImageInfo = memo(
     userInfo,
     refresh,
     onResetRetry,
+    baseInfoSnapshot,
   }: {
     rejectReason?: string
     userInfo?: IKycSubmitData
     refresh?: () => Promise<ApiResponse<IKycDetail>>
     onResetRetry?: () => void
+    baseInfoSnapshot?: Partial<BaseInfoFormData>
   }) => {
     const { t } = useTranslation()
     const { account } = useActiveWeb3()
@@ -92,24 +94,6 @@ const ImageInfo = memo(
       addressCertification: '',
       incomeCertifications: [],
     })
-    const {
-      watch: baseWatch,
-    } = usePersistentForm<BaseInfoFormData>('kycBaseInfo', {
-      
-    })
-    const firstName = baseWatch('firstName')
-    const lastName = baseWatch('lastName')
-    const fullName = baseWatch('fullName')
-    const email = baseWatch('email')
-    const no = baseWatch('no')
-    const type = baseWatch('type')
-    const issueCountry = baseWatch('issueCountry')
-    const gendar = baseWatch('gendar')
-    const dob = baseWatch('dob')
-    const useCertificateAddress = baseWatch('useCertificateAddress')
-    const residentAddress = baseWatch('residentAddress')
-    const employment = baseWatch('employment')
-    const description = baseWatch('description')
     const idCardFront = watch('idCardFront')
     const idCardBack = watch('idCardBack')
     const idCard = watch('idCard')
@@ -117,13 +101,44 @@ const ImageInfo = memo(
     const addressCertification = watch('addressCertification')
     const incomeCertifications = watch('incomeCertifications')
 
-    const source = baseWatch('source')
-
     const preAccount = useRef<string | undefined>(undefined)
 
     const [submiting, setSubmiting] = useState(false)
 
+    const getBaseInfoSnapshot = useCallback((): Partial<BaseInfoFormData> => {
+      if (baseInfoSnapshot && Object.keys(baseInfoSnapshot).length > 0) {
+        return baseInfoSnapshot
+      }
+      const cachedBaseInfo = storage.getItem('kycBaseInfo')
+      return cachedBaseInfo && typeof cachedBaseInfo === 'object' ? cachedBaseInfo : {}
+    }, [baseInfoSnapshot])
+
+    const baseInfoForView = getBaseInfoSnapshot()
+    const baseDocType = Number(baseInfoForView.type ?? 1)
+
     const onSubmit = useCallback(async (data: FormData) => {
+      const baseInfo = getBaseInfoSnapshot()
+
+      const firstName = baseInfo.firstName || ''
+      const lastName = baseInfo.lastName || ''
+      const fullName = baseInfo.fullName || ''
+      const email = baseInfo.email || ''
+      const no = baseInfo.no || ''
+      const type = Number(baseInfo.type ?? 1)
+      const issueCountry = baseInfo.issueCountry || 'CHN'
+      const gendar = Number(baseInfo.gendar ?? 1)
+      const dob = baseInfo.dob || ''
+      const useCertificateAddress = Boolean(baseInfo.useCertificateAddress)
+      const residentAddress = baseInfo.residentAddress || ''
+      const employment = Number(baseInfo.employment ?? 1)
+      const description = baseInfo.description || ''
+      const source = Number(baseInfo.source ?? 1)
+
+      if (!firstName || !fullName || !email || !dob || !no) {
+        toastError({ title: 'Please complete basic information first' })
+        return
+      }
+
       // if (type === 0) {
       //   // 身份证，正反面都要传
       //   if (!data.idCardFront) {
@@ -215,20 +230,12 @@ const ImageInfo = memo(
         setSubmiting(false)
       }
     }, [
-      firstName,
-      lastName,
-      fullName,
-      gendar,
-      dob,
-      email,
-      type,
-      issueCountry,
-      no,
-      residentAddress,
-      description,
-      source,
-      employment,
-      useCertificateAddress
+      getBaseInfoSnapshot,
+      t,
+      toastError,
+      refresh,
+      clear,
+      submiting
     ])
     useEffect(() => {
       if (account && preAccount.current && account !== preAccount.current) {
@@ -254,7 +261,7 @@ const ImageInfo = memo(
             {/* 上传证件 */}
             <Upload
               type={'passport'}
-              keys={type === 1 ? passport : [idCardFront || '', idCardBack || '', idCard || '']}
+              keys={baseDocType === 1 ? passport : [idCardFront || '', idCardBack || '', idCard || '']}
 
               onChanged={keys => {
                 setValue('passport', keys as string)
