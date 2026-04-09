@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { TittleBar } from '@/components/TittleBar'
 import { OrderCard } from './components/OrderCard'
@@ -8,11 +8,12 @@ import { useSignatureValidStatus } from '@/hooks/useSignature'
 import { useTranslation } from '@/hooks/useTranslation'
 import NoRecord from '@/components/no-record'
 import { Copy } from '@/components/Copy.tsx'
-import { useOrderChanged } from '@/views/assets/v2/shared'
+import { useOrderChanged, useOrderChangedV2 } from '@/views/assets/v2/shared'
 import { WalletNotConnectedSmallVersion } from '@/components/wallet-not-connected'
 import SignatureVerify from '@/components/signature-verify'
 import { useAppStore } from '@/stores/appStore'
 import { cn } from '@/utils'
+import { useRouter } from '@/hooks/useRouter'
 
 const TIKO_ORDER_URL = 'https://www.tiko.cc/order'
 
@@ -68,18 +69,23 @@ const OedersPageEntry = () => {
 
 function OrdersWrapper(props: { children: React.ReactNode }) {
   const { t } = useTranslation()
+  const router = useRouter()
+
   return (
     <div className='flex min-h-main flex-col bg-gray-950'>
       {/* TittleBar */}
-      <TittleBar className='sticky top-navbar z-[5]' title={t('assets.order.openOrders')} />
+      <TittleBar
+        onBack={() => router.push('/trade')}
+        className='sticky top-navbar z-[5]'
+        title={t('assets.order.openOrders')}
+      />
       {props.children}
     </div>
   )
 }
 
-const OrdersPage = (props: { account: string; chainId: number }) => {
+const OrdersPage = ({ account, chainId }: { account: string; chainId: number }) => {
   const { t } = useTranslation()
-  const { account, chainId } = useActiveWeb3()
   const [isSignatureValid] = useSignatureValidStatus()
 
   const {
@@ -91,14 +97,10 @@ const OrdersPage = (props: { account: string; chainId: number }) => {
     isLoading,
     isFetchedAfterMount,
     refetch,
-  } = useInfiniteQuery(infiniteOpenOrderOptions(account ?? '', chainId ?? 0, isSignatureValid))
+  } = useInfiniteQuery(infiniteOpenOrderOptions(account, chainId, isSignatureValid))
 
-  // WS 订单状态变更时自动刷新，与 OpenOrderTable 保持一致
-  const orderChanged = useOrderChanged()
-  useEffect(() => {
-    if (!isFetchedAfterMount || isLoading || !orderChanged) return
-    refetch()
-  }, [orderChanged])
+  const isRefetchEnabled = isFetchedAfterMount && !isLoading
+  useOrderChangedV2(refetch, isRefetchEnabled)
 
   const orders = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data])
 

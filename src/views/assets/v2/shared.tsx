@@ -13,7 +13,49 @@ import { ScrollLoadMore, type OrderChanged, checkOrderChangedEqual } from '../Sh
 import { useWssStore } from '@/stores/wssStore'
 import { WalletNotConnectedSmallVersion } from '@/components/wallet-not-connected'
 import { useRouter } from '@/hooks/useRouter'
-import { ta } from 'date-fns/locale'
+
+export function useOrderChangedV2(refetch: () => Promise<any>, isRefetchEnable: boolean) {
+  const newOrder = useWssStore(state => state.newOrder)
+  const refetchTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([])
+  const lastOrderChangedEventTimeRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      refetchTimersRef.current.forEach(clearTimeout)
+      refetchTimersRef.current = []
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isRefetchEnable) return
+    if (!newOrder) return
+
+    const rawEventTime = newOrder.E
+    const parsedTs = Number(rawEventTime)
+    const ts = Number.isFinite(parsedTs) && parsedTs > 0 ? parsedTs : Date.now()
+
+    if (ts === lastOrderChangedEventTimeRef.current) return
+    lastOrderChangedEventTimeRef.current = ts
+
+    refetchTimersRef.current.forEach(clearTimeout)
+    refetchTimersRef.current = []
+
+    const delays = [200, 900, 1700, 2800]
+
+    delays.forEach((delay, index) => {
+      refetchTimersRef.current.push(
+        setTimeout(() => {
+          refetch()
+        }, delay)
+      )
+    })
+
+    return () => {
+      refetchTimersRef.current.forEach(clearTimeout)
+      refetchTimersRef.current = []
+    }
+  }, [newOrder, isRefetchEnable, refetch])
+}
 
 export function useOrderChanged() {
   const [orderChanged, _setOrderChanged] = useState<OrderChanged | null>(null)
@@ -195,7 +237,10 @@ export function OrderTable<
   PAGE_LIMIT: number
   api: (filter: F) => Promise<{ data: T[] }>
   filter: F
-  tableConfig: ITableConfig<T, { rwaTokens: IRwa[]; refetch: () => void, onTokenClick?: (rwa: IRwa) => void }>
+  tableConfig: ITableConfig<
+    T,
+    { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
+  >
   dataMode: 'pagination' | 'scroll'
   scrollId: (item: T) => string
   type: 'open' | 'history' | 'trade'
@@ -259,12 +304,19 @@ function WithTableHeader<T extends { orderId: string }>({
   dataMode,
 }: {
   children: React.ReactNode
-  tableConfig: ITableConfig<T, { rwaTokens: IRwa[]; refetch: () => void, onTokenClick?: (rwa: IRwa) => void }>
+  tableConfig: ITableConfig<
+    T,
+    { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
+  >
   dataMode: 'pagination' | 'scroll'
 }) {
   return (
     <>
-      <TableHeader<'', T, { rwaTokens: IRwa[]; refetch: () => void, onTokenClick?: (rwa: IRwa) => void }>
+      <TableHeader<
+        '',
+        T,
+        { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
+      >
         lngPrefix='portfolio.orderTable'
         config={tableConfig}
         sort={null}
@@ -295,7 +347,10 @@ export function OrderContentByScroll<
   account: string
   filter: F
   api: (filter: F) => Promise<{ data: T[] }>
-  tableConfig: ITableConfig<T, { rwaTokens: IRwa[]; refetch: () => void, onTokenClick?: (rwa: IRwa) => void }>
+  tableConfig: ITableConfig<
+    T,
+    { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
+  >
   isSignatureValid: boolean
   refreshIsSignatureValid: (_isValid: boolean) => void
   scrollId: (item: T) => string
@@ -354,14 +409,14 @@ export function OrderContentByScroll<
     }
   }, [hasNextPage, isFetching, isFetchingNextPage, fetchNextPage])
 
-  const onTokenClick = (rwa: IRwa) => { 
+  const onTokenClick = (rwa: IRwa) => {
     console.log('rwa', rwa)
     router.push(`/trade/${rwa.symbol}`)
   }
 
   return (
     <div className='flex-1 overflow-auto scrollbar-hide cursor-pointer'>
-      <TableBody<T, { rwaTokens: IRwa[]; refetch: () => void, onTokenClick?: (rwa: IRwa) => void }>
+      <TableBody<T, { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }>
         data={allOrders}
         config={tableConfig}
         extra={{ rwaTokens, refetch, onTokenClick }}
@@ -400,7 +455,10 @@ export function OrderContentByPagination<
   api: (filter: F) => Promise<{ data: T[] }>
   scrollId: (item: T) => string
   filter: F
-  tableConfig: ITableConfig<T, { rwaTokens: IRwa[]; refetch: () => void, onTokenClick?: (rwa: IRwa) => void }>
+  tableConfig: ITableConfig<
+    T,
+    { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
+  >
 }) {
   const router = useRouter()
   const rwaTokens = useRwaTokens()
@@ -436,7 +494,7 @@ export function OrderContentByPagination<
 
   return (
     <>
-      <TableBody<T, { rwaTokens: IRwa[]; refetch: () => void, onTokenClick?: (rwa: IRwa) => void }>
+      <TableBody<T, { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }>
         data={data}
         isLoading={isLoading}
         config={tableConfig}
