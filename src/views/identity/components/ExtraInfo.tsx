@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/useToast"
 import { kycApi } from "@/service/kyc/api"
 import { RESPONSE_CODE } from "@/config/constants"
 import { ErrorBox, InputBox, retryRefresh, SectionBox, SectionTitle } from "./BaseInfo"
-import { LazyImage } from "@/components/image/LazyImage"
 import { KycInput } from "@/components/input/KycInput"
 import { KycTextarea } from "@/components/input/KycTextarea"
 import { useFieldArray } from "react-hook-form"
@@ -146,6 +145,7 @@ const ExtraInfo = memo(
                             className=""
                             placeholder={t('kyc.t4')}
                             value={extraList[index].name}
+                            regex="^[a-zA-Z\u4e00-\u9fa5]{1,30}$"
                             error={errors.extraList?.[index]?.name?.message}
                             {
                               ...register(`extraList.${index}.name`, {

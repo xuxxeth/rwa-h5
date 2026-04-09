@@ -127,20 +127,21 @@ export const TradeSummary = ({
         items={[
           {
             label: t('v2.tx.t32'),
-            value: `${brokerageFee} ${feeSymbol}`,
+            value: <><div className='max-w-[140px] truncate'>{brokerageFee} </div> {feeSymbol}</>,
           },
           {
             label: t('v2.tx.t33'),
-            value: `${tradingActivityFee} ${feeSymbol}`,
+            value: <><div className='max-w-[140px] truncate'>{tradingActivityFee} </div> {feeSymbol}</>,
             visible: !isBuy as boolean,
           },
           {
             label: t('v2.tx.t34'),
-            value: `${platformFee} ${feeSymbol}`,
+            value: <><div className='max-w-[140px] truncate'>{platformFee} </div> {feeSymbol}</>,
           },
           {
             label: t('Network Fee'),
-            value: `${networkFeeInNative} BNB`,
+            // value: `${networkFeeInNative} BNB`,
+            value: <><div className='max-w-[140px] truncate'>{networkFeeInNative}</div> BNB</>,
           },
         ]}
       />

@@ -9,7 +9,15 @@ interface KycInputProps extends React.ComponentProps<"input"> {
 
 const KycInput = React.forwardRef<HTMLInputElement, KycInputProps>(
   ({ className, type, error, value, regex, ...props }, ref) => {
-    const inputRegex = RegExp(regex || ".*")
+    const normalizedRegex = React.useMemo(() => {
+      if (!regex) return ".*"
+      const trimmed = regex.trim()
+      if (trimmed.startsWith("/") && trimmed.endsWith("/") && trimmed.length > 2) {
+        return trimmed.slice(1, -1)
+      }
+      return trimmed
+    }, [regex])
+    const inputRegex = RegExp(normalizedRegex)
 
     const handleBeforeInput = (e: React.InputEvent<HTMLInputElement>) => {
       if (!regex) {
@@ -72,7 +80,7 @@ const KycInput = React.forwardRef<HTMLInputElement, KycInputProps>(
           error ? "border-[#CA3F64]" : "focus:border-[#FFFFFF]"
         )}
         ref={ref}
-        pattern={regex}
+        pattern={normalizedRegex}
         {...props}
         {...(value !== undefined ? { value } : {})}
         onBeforeInput={handleBeforeInput}

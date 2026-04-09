@@ -58,17 +58,23 @@ export const EstimatedFeeAccordion = ({
                   className='text-gray-400 transition-transform duration-200 group-data-[state=open]:rotate-180'
                 />
               </div>
-              <span className='text-[14px] font-normal text-white'>
-                {estimatedFee} {feeSymbol}
-              </span>
+              <div className='text-[14px] text-white flex items-center'>
+                <div className=' max-w-[140px] truncate'>
+                  {estimatedFee}
+                </div>
+                  {feeSymbol}
+              </div>
             </>
           ) : (
             <>
               <span className='text-[14px] text-gray-400'>{feeLabel}</span>
               <div className='flex items-center gap-1'>
-                <span className='text-[14px] text-white'>
-                  {estimatedFee} {feeSymbol}
-                </span>
+                <div className='text-[14px] text-white flex items-center'>
+                  <div className=' max-w-[140px] truncate'>
+                    {estimatedFee}
+                  </div>
+                   {feeSymbol}
+                </div>
                 <ChevronDown
                   size={20}
                   className='text-white transition-transform duration-200 group-data-[state=open]:rotate-180'
@@ -106,14 +112,14 @@ export const EstimatedFeeAccordion = ({
                   >
                     {item.label}
                   </div>
-                  <span
+                  <div
                     className={cn(
                       isConfirm ? 'text-[14px] font-normal' : 'text-[12px]',
-                      'text-white',
+                      'text-white flex items-center',
                     )}
                   >
                     {item.value}
-                  </span>
+                  </div>
                 </div>
               ))}
           </div>

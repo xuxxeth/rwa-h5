@@ -190,6 +190,7 @@ function Identity({ account }: { account: string }) {
     const { overallStatus, riskLevel, status, verifyType } = kycDetail
 
     return [
+      
       {
         match: () =>
           overallStatus === KYC_OVERALL_STATUS.VERIFYING &&

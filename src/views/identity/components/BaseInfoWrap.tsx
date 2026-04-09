@@ -12,13 +12,11 @@ const BaseInfoWrap = memo(
     onResetRetry,
   }: IBaseInfo) => {
     const { t } = useTranslation()
-    const [title, setTitle] = useState(t('kyc.t2'))
     const [step, setStep] = useState(1)
     const [baseInfoSnapshot, setBaseInfoSnapshot] = useState<Partial<BaseInfoFormData>>({})
 
     const handleNext = useCallback((data: BaseInfoFormData) => {
       setBaseInfoSnapshot(data)
-      setTitle('图片信息')
       setStep(2)
       requestAnimationFrame(() => {
         window.scrollTo({ top: 0, behavior: "instant" });
@@ -26,13 +24,12 @@ const BaseInfoWrap = memo(
     }, [])
 
     const handleBack = useCallback(() => {
-      setTitle(t('kyc.t2'))
       setStep(1)
     }, [t])
 
     return (
       <>
-        <NavigatorH5 showBack={step === 2} title={title} onBack={handleBack} />
+        <NavigatorH5 showBack={step === 2} title={step === 1 ? t('kyc.t2') : t('kyc.t69')} onBack={handleBack} />
         <div style={{
           display: step === 1 ? 'block' : 'none'
         }}>
