@@ -78,14 +78,14 @@ function IdentityEntry() {
   if (!isSignatureValid) {
     return (
       <SignatureVerify
-        isTitleSameLine={lang === 'zh'}
+        isTitleSameLine={false}
         buttonClassName='mt-4 text-base'
         titleClassName='text-2xl'
         descClassName='w-[550px] text-lg'
         desc='identity.signd'
-        subDescClassName='w-[750px] text-lg'
+        subDescClassName='text-lg'
         subDesc='identity.signSubd'
-        className='mt-24 px-5'
+        className='mt-14 px-5'
         refreshIsSignatureValid={refreshIsSignatureValid}
       />
     )
