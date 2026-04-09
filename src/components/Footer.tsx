@@ -6,6 +6,9 @@ import nvdaLogo from '@/assets/trade/nvda-logo.png'
 import nflxLogo from '@/assets/trade/nflx-logo.png'
 import metaLogo from '@/assets/trade/meta-logo.png'
 import coinLogo from '@/assets/trade/coin-logo.png'
+import { useMemo } from 'react'
+import { useTranslation } from '@/hooks/useTranslation'
+import { i } from 'node_modules/framer-motion/dist/types.d-BJcRxCew'
 
 const assetLogos = [
   { src: googlLogo, alt: 'GOOGL' },
@@ -17,18 +20,23 @@ const assetLogos = [
   { src: coinLogo, alt: 'COIN' },
 ]
 
-const features = [
-  { label: 'Compliant' },
-  { label: 'Secure' },
-  { label: 'Transparent' },
-]
+
 
 export const Footer = () => {
+  const { t, i18n } = useTranslation()
+  const features = useMemo(() => {
+    return [
+      { label: t('home.t21') },
+      { label: t('home.t22') },
+      { label: t('home.t23') },
+    ]
+  }, [t, i18n.language])
+
   return (
     <div className="flex flex-col items-center gap-4 py-4">
       {/* 可交易资产展示 */}
       <div className="flex flex-col items-center gap-2">
-        <span className="text-[12px] text-gray-400">Tradable Real-World Assets</span>
+        <span className="text-[12px] text-gray-400">{t('home.t20')}</span>
         <div className="flex items-center">
           {assetLogos.map((logo, index) => (
             <img

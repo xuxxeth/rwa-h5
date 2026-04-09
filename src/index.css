@@ -517,6 +517,13 @@ body {
     [data-sonner-toaster] [data-sonner-toast] {
         left: auto !important;
         right: 0;
-        width: calc(100% - var(--mobile-offset-left) * 3) !important;
+        width: 320px !important;
+    }
+}
+@media (max-width: 600px) {
+    [data-sonner-toaster][data-x-position=center] {
+        left: auto !important;
+        right: var(--mobile-offset-right);
+        transform: none;
     }
 }
