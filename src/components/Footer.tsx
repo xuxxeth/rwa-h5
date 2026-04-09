@@ -8,7 +8,6 @@ import metaLogo from '@/assets/trade/meta-logo.png'
 import coinLogo from '@/assets/trade/coin-logo.png'
 import { useMemo } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
-import { i } from 'node_modules/framer-motion/dist/types.d-BJcRxCew'
 
 const assetLogos = [
   { src: googlLogo, alt: 'GOOGL' },
