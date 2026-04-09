@@ -29,11 +29,27 @@ export function H5Dialog({
   rightAction,
   hideDefaultClose = false,
 }: IH5DialogProps) {
+  const [open, setOpen] = React.useState(false)
+
+  const handleOpenChange = React.useCallback((nextOpen: boolean) => {
+    setOpen(nextOpen)
+    onOpenChange?.(nextOpen)
+    if (!nextOpen) {
+      onClose?.()
+    }
+  }, [onClose, onOpenChange])
+
+  const handleClose = React.useCallback((event?: React.SyntheticEvent) => {
+    event?.stopPropagation()
+    handleOpenChange(false)
+  }, [handleOpenChange])
+
   const stopDrawerDrag = (event: React.SyntheticEvent) => {
     event.stopPropagation()
   }
+
   return (
-    <Drawer onOpenChange={open => onOpenChange?.(open)} onClose={() => onClose?.()}>
+    <Drawer open={open} onOpenChange={handleOpenChange} onClose={() => handleClose()}>
       <DrawerTrigger asChild>
         <div className=' cursor-pointer'>{trigger}</div>
       </DrawerTrigger>
@@ -50,6 +66,8 @@ export function H5Dialog({
                     data-vaul-no-drag
                     onPointerDown={stopDrawerDrag}
                     onTouchStart={stopDrawerDrag}
+                    onClick={handleClose}
+                    onTouchEnd={handleClose}
                     className='cursor-pointer'
                   >
                     <img

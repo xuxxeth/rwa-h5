@@ -2,7 +2,7 @@
 
 import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { Check } from "lucide-react";
 import { kycApi } from "@/service/kyc/api";
 import { RESPONSE_CODE } from "@/config/constants";
@@ -41,6 +41,10 @@ const CountrySelectH5 = memo(
     const [currentCountry, setCurrentCountry] = useState<ISupportedCountry>({code: '', zhName: '', enName: ''})
     const [open, setOpen] = useState(false)
     const [searchText, setSearchText] = useState('')
+
+    const stopDrawerDrag = (event: SyntheticEvent) => {
+      event.stopPropagation()
+    }
 
     useEffect(() => {
       if (defaultValue && countryList.length > 0) {
@@ -107,14 +111,18 @@ const CountrySelectH5 = memo(
         }
       >
         <div className="border-none p-0">
-          <div className="sticky top-0 z-50 py-3 px-6">
-            <div className=" relative">
+          <div data-vaul-no-drag className="sticky top-0 z-50 py-3 px-6">
+            <div data-vaul-no-drag className=" relative">
               <LazyImage src="/images/v2/icons/search.png" className="w-3 h-3 absolute left-2 top-[13px]" />
               <input 
                 type="text"
+                data-vaul-no-drag
                 placeholder={t('kyc.t4')}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
+                onPointerDown={stopDrawerDrag}
+                onTouchStart={stopDrawerDrag}
+                onClick={stopDrawerDrag}
                 className="text-[14px] w-full px-3 pl-6 py-2 rounded-[6px] bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0)] text-white placeholder-[#9DA3AF] focus:outline-none focus:border-white"
               />
             </div>
@@ -134,14 +142,13 @@ const CountrySelectH5 = memo(
                   type="button"
                   key={ct2.code}
                   data-vaul-no-drag
-                  className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
+                  className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
                   onClick={() => {
                     setCurrentCode(ct2.code)
                     setCurrentCountry(ct2)
                     onChange?.(ct2)
                   }}
                   onTouchEnd={(e) => {
-                    e.preventDefault()
                     setCurrentCode(ct2.code)
                     setCurrentCountry(ct2)
                     onChange?.(ct2)
@@ -170,4 +177,3 @@ const CountrySelectH5 = memo(
 )
 
 export { CountrySelectH5 }
-

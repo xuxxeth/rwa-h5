@@ -38,7 +38,6 @@ import { useShowDialog } from '@/components/dialog/DialogController'
 import { OrderConfirmDrawer } from '@/components/drawer/OrderConfirmDrawer'
 import { SymbolSelectDrawer } from '@/components/drawer/SymbolSelectDrawer'
 import { USDSelectDrawer } from '@/components/drawer/USDSelectDrawer'
-import { isTiko } from '@/service/client'
 import { MarketCloseTips } from './components/MarketCloseTips.tsx'
 const KycState = lazy(() => import("@/components/kyc-state"));
 

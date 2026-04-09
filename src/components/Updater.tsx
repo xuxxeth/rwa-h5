@@ -139,8 +139,8 @@ const Updater = memo(
         }
         
       }
-      freshTokenBalances()
-    }, [newOrder, freshTokenBalances, t, router.location.pathname, setTxSuccess, toastSuccess])
+      refreshTokenBalanceByStockIdWithRetry(newOrder.si)
+    }, [newOrder, refreshTokenBalanceByStockIdWithRetry, t, router.location.pathname, setTxSuccess, toastSuccess])
 
     useEffect(() => {
       return () => {
