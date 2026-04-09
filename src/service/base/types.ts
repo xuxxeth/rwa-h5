@@ -47,7 +47,7 @@ export interface IStock {
 
 // token信息
 export interface IToken {
-  "chainId": 1,
+  "chainId": number,
   "address": string,
   "symbol": string,
   "name": string,

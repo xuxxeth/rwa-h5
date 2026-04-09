@@ -9,7 +9,9 @@ import { useWssStore } from "@/stores/wssStore";
 import storage from "@/utils/storage";
 import { KYC_UPLOAD_STORAGE_KEY } from "@/views/identity/components/Upload/shared";
 import { OrderReason } from "@/service/scan/types";
-import { lazy, memo, useEffect, useRef } from "react";
+import { lazy, memo, useCallback, useEffect, useRef } from "react";
+import { useGetTokenBalances } from "@/hooks/useTokenBalances";
+
 
 const NO_SHOW_PATH = ['/']
 
@@ -29,7 +31,40 @@ const Updater = memo(
     const newOrder = useWssStore(state => state.newOrder)
     const setTxSuccess = useTradeStore(state => state.setTxSuccess)
     const freshTokenBalances = useBaseStore(state => state.freshTokenBalances)
+    const { getTokensDataByStockId } = useGetTokenBalances()
+    
     const lastHandledOrderKeyRef = useRef("")
+        const tokenBalanceRetryTimeoutRef = useRef<number | null>(null)
+    const tokenBalanceRetryRunIdRef = useRef(0)
+
+    const clearTokenBalanceRetryTimers = useCallback(() => {
+      if (tokenBalanceRetryTimeoutRef.current != null) {
+        window.clearTimeout(tokenBalanceRetryTimeoutRef.current)
+        tokenBalanceRetryTimeoutRef.current = null
+      }
+      tokenBalanceRetryRunIdRef.current += 1
+    }, [])
+
+    const refreshTokenBalanceByStockIdWithRetry = useCallback((stockId?: number) => {
+      if (!stockId) return
+      clearTokenBalanceRetryTimers()
+      const runId = tokenBalanceRetryRunIdRef.current
+      const runSerial = async () => {
+        for (let i = 0; i < 3; i += 1) {
+          if (tokenBalanceRetryRunIdRef.current !== runId) return
+          await getTokensDataByStockId([stockId])
+          if (i < 2) {
+            await new Promise<void>((resolve) => {
+              tokenBalanceRetryTimeoutRef.current = window.setTimeout(() => {
+                tokenBalanceRetryTimeoutRef.current = null
+                resolve()
+              }, 3000)
+            })
+          }
+        }
+      }
+      void runSerial()
+    }, [clearTokenBalanceRetryTimers, getTokensDataByStockId])
 
     useEffect(() => {
       if (!newOrder || (newOrder.x !== "NEW" && newOrder.x !== "CANCELLED" && newOrder.x !== "FILLED" && newOrder.x !== "PARTIALLY_FILLED")) {
@@ -106,6 +141,12 @@ const Updater = memo(
       }
       freshTokenBalances()
     }, [newOrder, freshTokenBalances, t, router.location.pathname, setTxSuccess, toastSuccess])
+
+    useEffect(() => {
+      return () => {
+        clearTokenBalanceRetryTimers()
+      }
+    }, [clearTokenBalanceRetryTimers])
 
     const preAccount = useRef<string | undefined>(undefined)
     useEffect(() => {

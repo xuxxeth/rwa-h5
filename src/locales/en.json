@@ -8,6 +8,7 @@
   "pageError": "Page failed to load. Please try again",
   "Loading": "Loading...",
   "Connect Wallet": "Connect Wallet",
+  "NO Injected Wallet": "The current environment does not support wallet connection. Please access via a desktop browser or open within a crypto wallet app.",
   "wallet": "Wallet",
   "addr": "Wallet Address",
   "Detected": "Detected",

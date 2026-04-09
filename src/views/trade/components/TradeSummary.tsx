@@ -67,13 +67,15 @@ export const TradeSummary = ({
     if (!isRateReversed) {
       return {
         rateFrom: `1 ${symbol}`,
-        rateTo: `${limitPrice} ${usdSymbol}`,
+        // rateTo: `${limitPrice} ${usdSymbol}`,
+        rateTo: <><div className='max-w-[240px] truncate'>{limitPrice} </div> {usdSymbol}</>
       }
     }
     const inversePrice = toFixed(divide('1', limitPrice), decimals)
     return {
       rateFrom: `1 ${usdSymbol}`,
-      rateTo: `${inversePrice} ${symbol}`,
+      // rateTo: `${inversePrice} ${symbol}`,
+      rateTo: <><div className='max-w-[240px] truncate'>{inversePrice} </div> {symbol}</>
     }
   }, [isRateReversed, limitPrice, symbol, usdSymbol, decimals])
 
@@ -92,7 +94,7 @@ export const TradeSummary = ({
           className={'cursor-pointer text-brand'}
           onClick={() => setIsRateReversed((prev) => !prev)}
         />
-        <span className="text-[14px] text-gray-400">{rateTo}</span>
+        <div className="text-[14px] text-gray-400 flex items-center">{rateTo}</div>
       </div>
 
       {/* 滑点 (仅市价单显示) */}
