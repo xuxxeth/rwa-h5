@@ -8,7 +8,7 @@
   "pageError": "頁面載入失敗，請重試",
   "Loading": "載入中...",
   "Connect Wallet": "連接錢包",
-  "NO Injected Wallet": "當前環境不支援錢包連接，請使用電腦瀏覽器訪問或在加密錢包 App 內打開。",
+  "noInjectedWallet": "當前環境不支援錢包連接，請使用電腦瀏覽器訪問或在加密錢包 App 內打開。",
   "wallet": "錢包",
   "addr": "錢包地址",
   "Detected": "已檢測",

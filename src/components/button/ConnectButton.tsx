@@ -235,7 +235,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
           onClick={() => {
             const injectedWallet = wallets.find(w => w.detected)
             if (!injectedWallet) {
-              toastError({ title: 'NO Injected Wallet' })
+              toastError({ title: t('noInjectedWallet') })
               return
             }
             connectWallet(injectedWallet)
