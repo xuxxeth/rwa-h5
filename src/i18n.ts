@@ -4,9 +4,6 @@ import { initReactI18next } from 'react-i18next'
 import en from './locales/en.json'
 import zh from './locales/zh.json'
 
-import homeEn from './locales/home/en.json'
-import homeZh from './locales/home/zh.json'
-
 export const languages: Record<string, string> = {
   en: 'English',
   zh: '繁体中文',
@@ -15,8 +12,8 @@ export const languages: Record<string, string> = {
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
     resources: {
-      en: { translation: en, home: homeEn },
-      zh: { translation: zh, home: homeZh },
+      en: { translation: en },
+      zh: { translation: zh },
     },
     lng: 'en', // 默认语言
     fallbackLng: 'en',
