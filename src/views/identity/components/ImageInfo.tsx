@@ -387,7 +387,7 @@ export function UploadTip({ className }: { className?: string }) {
           )}
         >
           <div className='flex-1 flex flex-col items-center justify-center'>
-            <LazyImage className='h-[45px]' src='/images/h5/identity/correct.svg' />
+            <LazyImage className='h-[45px]' src='/images/h5/identity/correct-o.svg' />
           </div>
           <div
             className={cn(
@@ -400,7 +400,7 @@ export function UploadTip({ className }: { className?: string }) {
         </div>
         <div className='w-[104px] h-[104px] bg-[#EF44441A] flex flex-col justify-between rounded-[8px] pb-3'>
           <div className='flex-1 flex flex-col items-center justify-center'>
-            <LazyImage className='h-[62px]' src='/images/h5/identity/wrong1.svg' />
+            <LazyImage className='h-[62px]' src='/images/h5/identity/wrong-o-1.svg' />
           </div>
           <div className='text-center text-[10px]/[13px] text-white'>
             {t(`${langPrefix}.orientation2`)}
@@ -408,7 +408,7 @@ export function UploadTip({ className }: { className?: string }) {
         </div>
         <div className='w-[104px] h-[104px] bg-[#EF44441A] flex flex-col justify-between rounded-[8px] pb-3'>
           <div className='flex-1 flex flex-col items-center justify-center'>
-            <LazyImage className='h-[45px]' src='/images/h5/identity/wrong2.svg' />
+            <LazyImage className='h-[45px]' src='/images/h5/identity/wrong-o-2.svg' />
           </div>
           <div className='text-center text-[10px]/[13px] text-white'>
             {t(`${langPrefix}.orientation2`)}
