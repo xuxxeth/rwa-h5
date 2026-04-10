@@ -4,6 +4,10 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { SessionType } from '@/hooks/useCaCommon'
 import { useTradingStartTime } from '@/hooks/useMarketState'
 import CheckBlue from '@/components/icons/set/CheckBlue'
+import { useTradeStore } from '@/stores/tradeStore'
+import { useSupportRegular } from '@/hooks/useSupportRegular'
+import { MARKET_STATUS } from '@/config/constants'
+import { cn } from '@/utils/tw'
 
 /* ────────────────────────── types ────────────────────────── */
 
@@ -18,6 +22,7 @@ interface SessionOption {
   code: SessionType
   label: string
   timeLabel: string
+  disabled?: boolean
 }
 
 /* ────────────────────────── sub-components ───────────────── */
@@ -35,10 +40,17 @@ const SessionRow = memo(
   }) => (
     <div
       className="flex cursor-pointer items-center justify-between gap-1 bg-gray-900 px-5 py-5 active:bg-gray-850"
-      onClick={onClick}
+      onClick={() => {
+        if (!session.disabled) {
+          onClick()
+        }
+      }}
     >
       {/* Session label */}
-      <span className="text-[16px] font-normal text-white">{session.label}</span>
+      <span className={cn(
+        "text-[16px] font-normal text-white",
+        session.disabled ? 'text-gray-400' : 'text-white'
+      )}>{session.label}</span>
 
       {/* Time label + check */}
       <div className="flex items-center gap-2">
@@ -58,6 +70,12 @@ export const SessionSelectDrawer = memo(
   ({ open, onOpenChange, value, onChange }: SessionSelectDrawerProps) => {
     const { t } = useTranslation()
     const tradingTime = useTradingStartTime()
+    const { isSupportRegular } = useSupportRegular()
+    const inputToken = useTradeStore(state => state.inputToken)
+    const isRegular = useMemo(() => {
+      return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
+    }, [inputToken, tradingTime])
+
 
     const sessionTypeList = useMemo<SessionOption[]>(
       () => [
@@ -74,10 +92,12 @@ export const SessionSelectDrawer = memo(
           timeLabel: tradingTime
             ? `ET ${tradingTime.preOpenTime.H}:${tradingTime.preOpenTime.M} ~ ${tradingTime.openTime.H}:${tradingTime.openTime.M} + ET ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} ~ ${tradingTime.afterCloseTime.H}:${tradingTime.afterCloseTime.M}`
             : '--:--',
+          disabled: isRegular
         },
       ],
-      [t, tradingTime],
+      [t, tradingTime, isRegular],
     )
+
 
     return (
       <Drawer open={open} onOpenChange={onOpenChange} title={t('v3.t18')}>
