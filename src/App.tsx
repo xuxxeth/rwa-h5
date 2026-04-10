@@ -5,11 +5,11 @@ import { useEffect, useMemo } from 'react'
 import storage from './utils/storage'
 import { useTranslation } from './hooks/useTranslation'
 
-import { Toaster } from "./components/ui/sonner";
-import { useBaseStore } from "./stores/baseStore";
-import { useTokenBalances } from "./hooks/useTokenBalances";
-import { useActiveWeb3 } from "./hooks/useActiveWe3";
-import { ScrollToTop } from "./components/ScrollToTop";
+import { Toaster } from './components/ui/sonner'
+import { useBaseStore } from './stores/baseStore'
+import { useTokenBalances } from './hooks/useTokenBalances'
+import { useActiveWeb3 } from './hooks/useActiveWe3'
+import { ScrollToTop } from './components/ScrollToTop'
 import { useWssAuth, useWssOn } from './hooks/useWssOn'
 import { useMarketState } from './hooks/useMarketState'
 import { Menus } from './components/menu'
@@ -33,7 +33,7 @@ export function RoutesWrapper() {
   return useRoutes(routes)
 }
 
-const HOME_MENUS_PATH = ['/']
+const HOME_MENUS_PATH = ['/home']
 const NO_MENUS_PATH = ['/kyc/liveness-complete']
 
 function App() {
@@ -42,8 +42,14 @@ function App() {
   const { account, chainId } = useActiveWeb3()
   const initBaseStore = useBaseStore(state => state.init)
   const refreshByLanguage = useBaseStore(state => state.refreshByLanguage)
-  const isHomeMenus = useMemo(() => HOME_MENUS_PATH.includes(router.location.pathname), [router.location.pathname])
-  const isNoMenus = useMemo(() => NO_MENUS_PATH.includes(router.location.pathname), [router.location.pathname])
+  const isHomeMenus = useMemo(
+    () => HOME_MENUS_PATH.includes(router.location.pathname),
+    [router.location.pathname]
+  )
+  const isNoMenus = useMemo(
+    () => NO_MENUS_PATH.includes(router.location.pathname),
+    [router.location.pathname]
+  )
 
   useEffect(() => {
     const lng = storage.getItem('CA_LANGUAGE') || 'en'
@@ -73,7 +79,7 @@ function App() {
 
   useEffect(() => {
     wsService.init({})
-    
+
     // 监听语言变化，重新获取 rwa 列表，因为 rwa 列表中的公司名称是根据语言返回的
     const handleLangChange = (lng: string) => {
       refreshByLanguage()
@@ -90,18 +96,16 @@ function App() {
     <>
       <GoogleAnalytics />
       <ScrollToTop />
-      {/* {
-        !isNoMenus && (isHomeMenus ? <HomeMenus /> : <Menus />)
-      } */}
-      <Header />
-      {/* Header 占位，高度与 Header 一致 */}
-      <div className="h-[52px]" />
-      <RoutesWrapper />
-      {createPortal(
-        <Toaster position='top-center' />,
-        document.getElementById('toast-root')!
+      {!isHomeMenus && (
+        <>
+          <Header />
+          {/* Header 占位，高度与 Header 一致 */}
+          <div className='h-[52px]' />
+        </>
       )}
-      
+      <RoutesWrapper />
+      {createPortal(<Toaster position='top-center' />, document.getElementById('toast-root')!)}
+
       <Updater />
       <Settings />
     </>

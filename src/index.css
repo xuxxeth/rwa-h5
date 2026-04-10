@@ -91,6 +91,7 @@ body {
   font-family: 'Google Sans Flex';
   font-size: 14px;
   line-height: 1.2;
+  overflow-x: hidden;
 }
 /* [data-sonner-toaster] {
   width: 100% !important;
