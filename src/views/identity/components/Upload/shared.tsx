@@ -48,8 +48,8 @@ export function Text(props: { text: string; className?: string }) {
   )
 }
 
-// 2M
-const MAX_FILE_SIZE = 1024 * 1024 * 2
+// 8M
+const MAX_FILE_SIZE = 1024 * 1024 * 8 
 
 export class LivenessCheckError extends Error {
   constructor(message: string | null) {
