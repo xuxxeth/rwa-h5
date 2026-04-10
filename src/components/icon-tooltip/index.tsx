@@ -129,7 +129,7 @@ export function TooltipWithBorder({
   return (
     <IconWithTooltip tooltip={tooltip}>
       <div className={cn(
-        'border-b border-dashed border-[#9DA3AF] text-[#9DA3AF] text-[12px]',
+        'border-b border-dashed border-[#9DA3AF] text-[#9DA3AF] text-[14px]',
         className
       )}>
         { text || children }
