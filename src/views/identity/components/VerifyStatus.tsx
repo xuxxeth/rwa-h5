@@ -279,7 +279,7 @@ export function Verifying(props: { refresh: () => Promise<ApiResponse<IKycDetail
     <VerifyStatus
       type='verifying'
       title='verifying'
-      detail={retryCount > 0 && retryCount < 3 ? 'verifyingWait' : 'verifyingTip'}
+      detail={retryCount > 0 && retryCount < 6 ? 'verifyingWait' : 'verifyingTip'}
       btnText='h'
       btnOnClick={() => router.push('/trade')}
       className='bg-white text-black text-base font-semibold'
