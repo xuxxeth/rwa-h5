@@ -1,4 +1,4 @@
-import { memo, useId, useMemo, useState } from 'react'
+import { memo, useEffect, useId, useMemo, useState } from 'react'
 import { Drawer } from '@/components/drawer'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useRwas } from '@/hooks/useRwaBalances'
@@ -184,12 +184,19 @@ export const SymbolSelectDrawer = memo(
       () =>
         rwaList
           .filter((rwa) => rwa.state < 2)
-          .map((rwa) => ({
-            ...rwa,
-            ...tokenWithBalance[symbolToLower(rwa.symbol)],
-            ...tokenWithPrice[symbolToLower(rwa.symbol)],
-          }))
-          .sort((a, b) => Number(b.balance ?? '0') - Number(a.balance ?? '0')),
+          .map((rwa) => {
+            const balanceInfo = tokenWithBalance[symbolToLower(rwa.symbol)]
+            const priceInfo = tokenWithPrice[symbolToLower(rwa.symbol)]
+            return {
+              ...rwa,
+              ...balanceInfo,
+              ...priceInfo,
+              value: multiply(balanceInfo?.balance ?? '0', priceInfo?.price ?? '0')
+            }
+          })
+          .sort((a, b) => a.weight - b.weight)
+          .sort((a, b) => Number(b.value ?? '0') - Number(a.value ?? '0')
+      ),
       [rwaList, tokenWithBalance, tokenWithPrice],
     )
 
@@ -218,9 +225,11 @@ export const SymbolSelectDrawer = memo(
             return sort.order === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
           }
           case 'change': {
-            const upA = Number(a.up) || 0
-            const upB = Number(b.up) || 0
-            return sort.order === 'asc' ? upA - upB : upB - upA
+            const upA = marketTradeState === MARKET_STATUS.OPEN ? Number(a.up) : Number(a.closeUp) || 0
+            const upB = marketTradeState === MARKET_STATUS.OPEN ? Number(b.up) : Number(b.closeUp) || 0
+            return sort.order === 'asc'
+              ? upA - upB
+              : upB - upA
           }
           case 'marketCap': {
             const totalA = Number(a.balance ?? '0') || 0
@@ -277,6 +286,8 @@ export const SymbolSelectDrawer = memo(
         setTimeout(() => {
           if (!open) {
             setSearchTerm('')
+            // @ts-ignore
+            onSortChange(null)
           }
         }, 800)
       }} title={t('Select a token')}>

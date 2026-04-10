@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { memo, useEffect, useState } from "react";
 import { H5Dialog } from "../dialog/H5Dialog";
 import { Check } from "lucide-react";
+import { H5DialogIOS } from "../dialog/H5DialogIOS";
 
 export type ItemProps = {
   value: string,
@@ -51,7 +52,7 @@ const SelectH5 = memo(
     }, [defaultValue, data]) 
 
     return (
-      <H5Dialog 
+      <H5DialogIOS 
         onOpenChange={open => {
           setOpen(open)
         }}
@@ -86,9 +87,14 @@ const SelectH5 = memo(
               key={item.value}
               data-vaul-no-drag
               className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
-              onClick={() => handleSelect(item)}
+              onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                handleSelect(item)
+              } }
               onTouchEnd={(e) => {
                 e.preventDefault()
+                e.stopPropagation()
                 handleSelect(item)
               }}
             >
@@ -106,7 +112,7 @@ const SelectH5 = memo(
             </button>
           ))}
         </div>
-      </H5Dialog>
+      </H5DialogIOS>
     )
     
   }

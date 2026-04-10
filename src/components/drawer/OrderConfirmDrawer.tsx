@@ -142,12 +142,7 @@ export const OrderConfirmDrawer = memo(
             {isMarketOrder && (
               <Row label={t('v3.t2')} value={`${slippage}%`} />
             )}
-            {!isMarketOrder && (
-              <Row
-                label={t('Expires in')}
-                value={t('assets.order.intraday')}
-              />
-            )}
+            
             <Row
               label={
                 <TooltipWithBorder tooltip={t('v2.tx.t311')}>

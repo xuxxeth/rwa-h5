@@ -65,7 +65,7 @@ export const SessionStatusBar = memo(() => {
   const { countdown } = tradingTime
 
   return (
-    <div className="flex items-center justify-center rounded-[8px] border border-gray-850 bg-gray-900 px-5 py-3">
+    <div className="flex items-center justify-center rounded-[8px] border border-gray-850 bg-gray-900 px-5 py-3 font-normal">
       <div className="flex items-center gap-2">
         <Icon size={18} />
         <span className="text-[12px] text-white">{t1} | {t2}</span>

@@ -28,8 +28,8 @@ export const Drawer = ({ open, onOpenChange, title, children, className }: Drawe
           )}
         >
           {/* 无障碍 */}
-          <DialogPrimitive.Title className='sr-only'>{title}</DialogPrimitive.Title>
-          <DialogPrimitive.Description className='sr-only'>{title}</DialogPrimitive.Description>
+          <DialogPrimitive.Title className='sr-only font-normal'>{title}</DialogPrimitive.Title>
+          <DialogPrimitive.Description className='sr-only font-normal'>{title}</DialogPrimitive.Description>
 
           {/* 标题栏 */}
           <div className='flex items-center justify-between px-5 py-3'>

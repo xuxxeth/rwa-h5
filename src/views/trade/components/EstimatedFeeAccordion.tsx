@@ -58,7 +58,7 @@ export const EstimatedFeeAccordion = ({
                   className='text-gray-400 transition-transform duration-200 group-data-[state=open]:rotate-180'
                 />
               </div>
-              <div className='text-[14px] text-white flex items-center'>
+              <div className='text-[14px] text-white flex items-center font-normal'>
                 <div className=' max-w-[140px] truncate'>
                   {estimatedFee}
                 </div>

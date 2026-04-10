@@ -16,7 +16,7 @@ export const OrderTypeSelector = () => {
   const updateTradeType = useTradeStore(state => state.updateTradeType)
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between font-normal">
       <div className="flex items-center gap-1">
         <button
           className={`rounded-[8px] px-4 py-1 text-[14px] ${

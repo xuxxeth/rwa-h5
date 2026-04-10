@@ -285,7 +285,7 @@ export const TradePage = () => {
     : undefined
 
   return (
-    <div className='flex min-h-screen flex-col bg-gray-950'>
+    <div className='flex min-h-screen flex-col bg-gray-950 font-normal'>
       <div className='flex flex-col gap-3 px-5 py-[10px]'>
         <KycState />
         {/* 交易时段状态栏 */}

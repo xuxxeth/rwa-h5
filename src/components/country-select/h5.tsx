@@ -1,6 +1,5 @@
 
 
-import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { memo, useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { Check } from "lucide-react";
@@ -9,7 +8,7 @@ import { RESPONSE_CODE } from "@/config/constants";
 import type { ISupportedCountry } from "@/service/kyc/types";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LazyImage } from "../image/LazyImage";
-import { H5Dialog } from "../dialog/H5Dialog";
+import { H5DialogIOS } from "../dialog/H5DialogIOS";
 
 export type ICountryCode = {
   code: string,
@@ -80,7 +79,7 @@ const CountrySelectH5 = memo(
     }, [i18n])
 
     return (
-      <H5Dialog
+      <H5DialogIOS
         onOpenChange={open => {
           setOpen(open)
         }}
@@ -170,7 +169,7 @@ const CountrySelectH5 = memo(
           </div>
         </div>
         
-      </H5Dialog>
+      </H5DialogIOS>
     )
     
   }
