@@ -39,12 +39,24 @@ const SessionTypeSelect = memo(
       label: t('v3.t16'),
     })
 
+    const [drawerOpen, setDrawerOpen] = useState(false)
+    const isRegular = useMemo(() => {
+      return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
+    }, [inputToken, tradingTime])
     const isOpenOrClose =
       marketTradeState === MARKET_STATUS.OPEN || marketTradeState === MARKET_STATUS.CLOSE
 
     useEffect(() => {
       // - 盘前/盘后时段，两个选项都支持选，默认为盘前+盘后（Extended Hour）
       // - 盘中/闭市时段，组件禁选，固定为盘中
+      if (isRegular) {
+        setTypeItem({
+          code: SessionType.DEFAULT,
+          label: t('v3.t16'),
+        })
+        updateSessionType(SessionType.DEFAULT)
+        return
+      }
       if (marketTradeState === MARKET_STATUS.CLOSE || marketTradeState === MARKET_STATUS.OPEN) {
         setTypeItem({ code: SessionType.DEFAULT, label: t('v3.t16') })
         updateSessionType(SessionType.DEFAULT)
@@ -52,12 +64,8 @@ const SessionTypeSelect = memo(
         setTypeItem({ code: SessionType.PRE_MARKET_AND_AFTER_HOURS, label: t('v3.t17') })
         updateSessionType(SessionType.PRE_MARKET_AND_AFTER_HOURS)
       }
-    }, [marketTradeState, t])
+    }, [marketTradeState, t, isRegular,])
 
-    const [drawerOpen, setDrawerOpen] = useState(false)
-    const isRegular = useMemo(() => {
-      return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
-    }, [inputToken, tradingTime])
 
     const sessionTypeList = useMemo(() => {
       return [
@@ -70,7 +78,7 @@ const SessionTypeSelect = memo(
         {
           code: SessionType.DEFAULT,
           label: t('v3.t16'),
-          timeLabel: tradingTime ? `${tradingTime.openTime.H}:${tradingTime.openTime.M} ~  ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} (${t('v3.t31')})` : '--:--'
+          timeLabel: tradingTime ? `${tradingTime.openTime.H}:${tradingTime.openTime.M} ~  ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} (${t('v3.t31')})` : '--:--',
         }
       ]
     }, [t, tradingTime, isRegular])

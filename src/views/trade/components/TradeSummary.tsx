@@ -87,7 +87,7 @@ export const TradeSummary = ({
   return (
     <div className="flex flex-col gap-2">
       {/* 兑换比例 */}
-      <div className="flex items-center gap-1">
+      {/* <div className="flex items-center gap-1">
         <span className="text-[14px] text-gray-400">{rateFrom}</span>
         <SwapArrow
           size={14}
@@ -95,7 +95,7 @@ export const TradeSummary = ({
           onClick={() => setIsRateReversed((prev) => !prev)}
         />
         <div className="text-[14px] text-gray-400 flex items-center">{rateTo}</div>
-      </div>
+      </div> */}
 
       {/* 滑点 (仅市价单显示) */}
       {tradeType === TradeType.MARKET && (
