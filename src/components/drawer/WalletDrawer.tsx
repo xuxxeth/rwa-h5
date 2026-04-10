@@ -49,7 +49,7 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
   const handleDisconnect = useCallback(async () => {
     await handleDisConnect()
     onOpenChange(false)
-    toastError({ title: t('walletDisconnect'), duration: 3000000000000 })
+    toastError({ title: t('walletDisconnect') })
   }, [handleDisConnect, onOpenChange, toastError, t])
 
   const handleKycClick = useCallback(() => {

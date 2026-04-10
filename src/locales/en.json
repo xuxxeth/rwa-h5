@@ -536,6 +536,7 @@
   "kyc": {
     "t1": "Please log in with your frequently used wallet address and complete KYC. The verification information will be bound to this address and cannot be changed. It is used solely for identity verification.",
     "t2": "Basic Information",
+    "t69": "Image Information",
     "t3": "First Name",
     "t4": "Please enter",
     "t5": "Last Name",
