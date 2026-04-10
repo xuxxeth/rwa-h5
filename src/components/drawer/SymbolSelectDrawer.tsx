@@ -120,7 +120,11 @@ const TokenRow = memo(
       onClick={() => onClick?.(token)}
     >
       {/* Name section – fixed 140px */}
-      <div className="flex w-[124px] shrink-0 items-center gap-2">
+      <div className={cn(
+        "flex w-[124px] shrink-0 items-center gap-2",
+          account ? 'w-[124px]' : 'flex-1'
+        )
+      }>
         <LazyImage src={token.icon} className="h-8 w-8 shrink-0 rounded-full" />
         <div className="flex min-w-0 flex-col justify-center">
           <div className="flex items-center gap-1">
@@ -310,7 +314,10 @@ export const SymbolSelectDrawer = memo(
             {/* Column headers */}
             <div className="flex items-center gap-1 px-5 text-[14px] font-normal text-[#9DA3AF]">
               <div
-                className="flex w-[124px] shrink-0 cursor-pointer items-center gap-1"
+                className={cn(
+                  "flex w-[124px] shrink-0 cursor-pointer items-center gap-1",
+                  account ? 'w-[124px]' : 'flex-1'
+                )}
                 onClick={() => onSortChange('name')}
               >
                 {t('Name')}

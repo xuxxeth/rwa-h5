@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 import { useTradeStore } from '@/stores/tradeStore'
@@ -9,6 +9,8 @@ import IconWithTooltip from '../icon-tooltip'
 import { useBaseStore } from '@/stores/baseStore'
 import { MARKET_STATUS } from '@/config/constants'
 import { SessionSelectDrawer } from '@/components/drawer/SessionSelectDrawer'
+import { useTradingStartTime } from '@/hooks/useMarketState'
+import { useSupportRegular } from '@/hooks/useSupportRegular'
 
 export type ISessionTypeItem = {
   code: string
@@ -27,6 +29,9 @@ export type SessionTypeSelectProps = {
 const SessionTypeSelect = memo(
   ({ className, orderValue, from }: SessionTypeSelectProps) => {
     const { t } = useTranslation()
+    const { isSupportRegular } = useSupportRegular()
+    const inputToken = useTradeStore(state => state.inputToken)
+    const tradingTime = useTradingStartTime()
     const marketTradeState = useBaseStore((state) => state.marketTradeState)
     const updateSessionType = useTradeStore((state) => state.updateSessionType)
     const [typeItem, setTypeItem] = useState<{ code: SessionType; label: string }>({
@@ -50,6 +55,25 @@ const SessionTypeSelect = memo(
     }, [marketTradeState, t])
 
     const [drawerOpen, setDrawerOpen] = useState(false)
+    const isRegular = useMemo(() => {
+      return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
+    }, [inputToken, tradingTime])
+
+    const sessionTypeList = useMemo(() => {
+      return [
+        {
+          code: SessionType.PRE_MARKET_AND_AFTER_HOURS,
+          label: t('v3.t17'),
+          timeLabel: tradingTime ? `${tradingTime.preOpenTime.H}:${tradingTime.preOpenTime.M} ~ ${tradingTime.openTime.H}:${tradingTime.openTime.M} (${t('v3.t31')}) + ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} ~ ${tradingTime.afterCloseTime.H}:${tradingTime.afterCloseTime.M} (${t('v3.t31')})` : '--:--',
+          disabled: isRegular
+        },
+        {
+          code: SessionType.DEFAULT,
+          label: t('v3.t16'),
+          timeLabel: tradingTime ? `${tradingTime.openTime.H}:${tradingTime.openTime.M} ~  ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} (${t('v3.t31')})` : '--:--'
+        }
+      ]
+    }, [t, tradingTime, isRegular])
 
     return (
       <>
@@ -70,11 +94,11 @@ const SessionTypeSelect = memo(
                 <div>
                   <div>
                     <span className='font-semibold'>{t('v3.t16') ?? ' '}：</span>
-                    <span>{t('v3.t19')}</span>
+                    <span>{t('v3.t19', {duration: sessionTypeList[1]?.timeLabel})}</span>
                   </div>
                   <div className='mt-2'>
                     <span className='font-semibold'>{t('v3.t17') ?? ' '}：</span>
-                    <span> {t('v3.t20')}</span>
+                    <span>{t('v3.t20', {duration: sessionTypeList[0]?.timeLabel})}</span>
                   </div>
                 </div>
               }

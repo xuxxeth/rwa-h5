@@ -26,7 +26,7 @@ export const TittleBar = ({ title, onBack, right, className }: TittleBarProps) =
   return (
     <div className={cn('relative flex items-center py-[14px] bg-gray-975', className)}>
       {/* 返回按钮 */}
-      <button className='flex items-center px-4 justify-center' onClick={handleBack}>
+      <button className='flex items-center px-4 justify-center outline-0' onClick={handleBack}>
         <ArrowLeft size={20} />
       </button>
 
