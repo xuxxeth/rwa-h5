@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/useToast'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import { useSignatureValidStatus } from '@/hooks/useSignature'
 import { PRIVACY_SERVICE } from '@/config/privacyService'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 
 const Compliance = () => {
   const { t } = useTranslation()
@@ -63,12 +64,23 @@ const Compliance = () => {
   return (
     <>
       {show && (
-        <div className=' fixed z-[99] top-0 left-0 bottom-0 right-0 bg-[rgba(0,0,0,0.1)] backdrop-blur-[20px] flex justify-center pt-[45px] [@media(min-height:900px)]:pt-[90px]  items-start text-white font-normal'>
-          <div className='flex flex-col rounded-[16px] w-[420px] border border-[#232427] max-h-[calc(100vh-90px)] [@media(min-height:900px)]:max-h-[calc(100vh-180px)] bg-[#131416]'>
-            <div className='text-center flex-0 text-base/5 px-6 pt-4 pb-3'>
-              {t('compliance.t1')}
-            </div>
-            <div className='text-sm/4.5 flex-1 font-normal overflow-auto px-6 py-4 mr-1'>
+        <Drawer
+          open={show}
+          dismissible={false}
+          modal={true}
+          onOpenChange={open => {
+            if (open) {
+              setShow(true)
+            }
+          }}
+        >
+          <DrawerContent
+            className='border border-[#232427] bg-[#131416] text-white max-h-[90vh] rounded-t-[16px]'
+          >
+            <DrawerHeader className='justify-center border-b border-[#232427] px-6 pt-4 pb-3'>
+              <DrawerTitle className='text-base/5 text-center'>{t('compliance.t1')}</DrawerTitle>
+            </DrawerHeader>
+            <div className='text-sm/4.5 font-normal overflow-auto px-6 py-4 max-h-[calc(90vh-82px)]'>
               <div className='mb-5 text-base/5'>{t('compliance.t2')}</div>
               <div className='mb-5'>{t('compliance.t3')}</div>
               <div className='space-y-2 text-sm/4.5'>
@@ -129,8 +141,8 @@ const Compliance = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </DrawerContent>
+        </Drawer>
       )}
     </>
   )
