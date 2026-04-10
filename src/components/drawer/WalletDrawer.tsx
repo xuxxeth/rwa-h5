@@ -94,7 +94,7 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
         <div className='flex flex-col'>
           {/* Wallet Address Row */}
           <div className='flex items-center justify-between px-5 py-5'>
-            <span className='text-[16px] font-medium text-white'>{t('walletAddress')}</span>
+            <span className='text-[16px] font-medium text-white'>{t('assets.walletAddress')}</span>
             {/*<div className='flex items-center gap-2'>
               <span className='text-[16px] font-medium text-white'>
                 {shortenAddress(account || '', 4, 4)}
