@@ -132,7 +132,7 @@ const IDExpired = memo(
           }
           <div className="h-1"></div>
           {/* 上传证件 */}
-          <UploadTip className="mb-1"/>
+          <UploadTip className="mb-4"/>
           <Upload
             step={pendingStep.step}
             // type={type === 1 ? 'passport' : 'identity'}

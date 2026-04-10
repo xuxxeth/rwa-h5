@@ -14,9 +14,7 @@ import type { ApiResponse } from '@/service/client'
 import { WarningInfo } from './WarningInfo'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
-import {
-  Text,
-} from './Upload/shared'
+import { Text } from './Upload/shared'
 import { retryRefresh, SectionBox, SectionTitle, type BaseInfoFormData } from './BaseInfo'
 import { H5Dialog } from '@/components/dialog/H5Dialog'
 import { cn } from '@/utils'
@@ -25,35 +23,30 @@ import { LazyImage } from '@/components/image/LazyImage'
 export const TitleWithTip = ({
   title,
   tip,
-  required = true
+  required = true,
 }: {
   title: string
   tip?: string | React.ReactNode
   required?: boolean
 }) => {
   return (
-    <H5Dialog 
+    <H5Dialog
       trigger={
         <div className=' flex items-center gap-x-1'>
-          {
-            required && <span className='text-[#CA3F64] flex items-center'>*</span>
-          }
-          
+          {required && <span className='text-[#CA3F64] flex items-center'>*</span>}
+
           <SectionTitle>{title}</SectionTitle>
-          <img src="/images/h5/icons/info.png" className='w-[14px] h-[14px]' alt="" />
+          <img src='/images/h5/icons/info.png' className='w-[14px] h-[14px]' alt='' />
         </div>
       }
       title={title}
     >
-      <div className='px-6 py-5 text-[16px] font-normal'>
-        {tip}
-      </div>
+      <div className='px-6 py-5 text-[16px] font-normal'>{tip}</div>
     </H5Dialog>
   )
 }
 
 interface FormData {
-  
   idCardFront?: string
   idCardBack?: string
   idCard?: string
@@ -88,7 +81,6 @@ const ImageInfo = memo(
       clear,
       formState: { errors },
     } = usePersistentForm<FormData>('kycImageInfo', {
-      
       idCardFront: '',
       idCardBack: '',
       idCard: '',
@@ -118,127 +110,123 @@ const ImageInfo = memo(
     const baseInfoForView = getBaseInfoSnapshot()
     const baseDocType = Number(baseInfoForView.type ?? 1)
 
-    const onSubmit = useCallback(async (data: FormData) => {
-      const baseInfo = getBaseInfoSnapshot()
+    const onSubmit = useCallback(
+      async (data: FormData) => {
+        const baseInfo = getBaseInfoSnapshot()
 
-      const firstName = baseInfo.firstName || ''
-      const lastName = baseInfo.lastName || ''
-      const fullName = baseInfo.fullName || ''
-      const email = baseInfo.email || ''
-      const no = baseInfo.no || ''
-      const type = Number(baseInfo.type ?? 1)
-      const issueCountry = baseInfo.issueCountry || 'CHN'
-      const gendar = Number(baseInfo.gendar ?? 1)
-      const dob = baseInfo.dob || ''
-      const useCertificateAddress = Boolean(baseInfo.useCertificateAddress)
-      const residentAddress = baseInfo.residentAddress || ''
-      const employment = Number(baseInfo.employment ?? 1)
-      const description = baseInfo.description || ''
-      const source = Number(baseInfo.source ?? 1)
+        const firstName = baseInfo.firstName || ''
+        const lastName = baseInfo.lastName || ''
+        const fullName = baseInfo.fullName || ''
+        const email = baseInfo.email || ''
+        const no = baseInfo.no || ''
+        const type = Number(baseInfo.type ?? 1)
+        const issueCountry = baseInfo.issueCountry || 'CHN'
+        const gendar = Number(baseInfo.gendar ?? 1)
+        const dob = baseInfo.dob || ''
+        const useCertificateAddress = Boolean(baseInfo.useCertificateAddress)
+        const residentAddress = baseInfo.residentAddress || ''
+        const employment = Number(baseInfo.employment ?? 1)
+        const description = baseInfo.description || ''
+        const source = Number(baseInfo.source ?? 1)
 
-      if (!firstName || !fullName || !email || !dob || !no) {
-        toastError({ title: 'Please complete basic information first' })
-        return
-      }
-
-      // if (type === 0) {
-      //   // 身份证，正反面都要传
-      //   if (!data.idCardFront) {
-      //     toastError({ title: t('kyc.t56') })
-      //     return
-      //   }
-      //   if (!data.idCardBack) {
-      //     toastError({ title: t('kyc.t57') })
-      //     return
-      //   }
-      //   if (!data.idCard) {
-      //     toastError({ title: t('kyc.t59') })
-      //     return
-      //   }
-      // }
-      if (type === 1) {
-        // 只判断护照
-        if (!data.passport) {
-          toastError({ title: t('kyc.t58') })
+        if (!firstName || !fullName || !email || !dob || !no) {
+          toastError({ title: 'Please complete basic information first' })
           return
         }
-      }
-      // 无地址证明
-      if (!useCertificateAddress && !data.addressCertification) {
-        toastError({ title: t('kyc.t61') })
-        return
-      }
 
-      const params: IKycSubmitData = {
-        type: 1,
-        basicInfo: {
-          firstName: firstName,
-          lastName: lastName,
-          fullName: fullName,
-          gender:  gendar,
-          dob: dob,
-          email: email,
-        },
-        idInfo: {
-          type: type,
-          issueCountry: issueCountry,
-          no: no,
-          residentAddress: useCertificateAddress ? '' : residentAddress,
-          useCertificateAddress: useCertificateAddress,
-          files: {
-            idCardFront: type === 0 ? data.idCardFront || '' : '',
-            idCardBack: type === 0 ? data.idCardBack || '' : '',
-            idCard: type === 0 ? data.idCard || '' : '',
-            passport: type === 0 ? '' : data.passport || '',
-            addressCertification: data.addressCertification || '',
+        // if (type === 0) {
+        //   // 身份证，正反面都要传
+        //   if (!data.idCardFront) {
+        //     toastError({ title: t('kyc.t56') })
+        //     return
+        //   }
+        //   if (!data.idCardBack) {
+        //     toastError({ title: t('kyc.t57') })
+        //     return
+        //   }
+        //   if (!data.idCard) {
+        //     toastError({ title: t('kyc.t59') })
+        //     return
+        //   }
+        // }
+        if (type === 1) {
+          // 只判断护照
+          if (!data.passport) {
+            toastError({ title: t('kyc.t58') })
+            return
+          }
+        }
+        // 无地址证明
+        if (!useCertificateAddress && !data.addressCertification) {
+          toastError({ title: t('kyc.t61') })
+          return
+        }
+
+        const params: IKycSubmitData = {
+          type: 1,
+          basicInfo: {
+            firstName: firstName,
+            lastName: lastName,
+            fullName: fullName,
+            gender: gendar,
+            dob: dob,
+            email: email,
           },
-        },
-        workInfo: {
-          employment: employment ,
-          description: employment === 4 ? description : '',
-        },
-        incomeInfo: {
-          source: source || 1,
-        },
-        extraInfo: {
-          incomeCertifications: (data.incomeCertifications || []).filter(key => key),
-        },
-        // approvedProtocols: [
-        //   "AML-Policy-v3.0",
-        //   "Privacy-Agreement-v2.1"
-        // ]
-      }
+          idInfo: {
+            type: type,
+            issueCountry: issueCountry,
+            no: no,
+            residentAddress: useCertificateAddress ? '' : residentAddress,
+            useCertificateAddress: useCertificateAddress,
+            files: {
+              idCardFront: type === 0 ? data.idCardFront || '' : '',
+              idCardBack: type === 0 ? data.idCardBack || '' : '',
+              idCard: type === 0 ? data.idCard || '' : '',
+              passport: type === 0 ? '' : data.passport || '',
+              addressCertification: data.addressCertification || '',
+            },
+          },
+          workInfo: {
+            employment: employment,
+            description: employment === 4 ? description : '',
+          },
+          incomeInfo: {
+            source: source || 1,
+          },
+          extraInfo: {
+            incomeCertifications: (data.incomeCertifications || []).filter(key => key),
+          },
+          // approvedProtocols: [
+          //   "AML-Policy-v3.0",
+          //   "Privacy-Agreement-v2.1"
+          // ]
+        }
 
-      if (submiting) return
-      setSubmiting(true)
-      const res = await kycApi.submitKyc(params)
+        if (submiting) return
+        setSubmiting(true)
+        const res = await kycApi.submitKyc(params)
 
-      if (res?.code === RESPONSE_CODE.SUCCESS) {
-        if (refresh) {
-          const detailRes = await retryRefresh(refresh)
-          setSubmiting(false)
-          
-          if (detailRes.code === RESPONSE_CODE.SUCCESS && detailRes.data?.overallStatus) {
+        if (res?.code === RESPONSE_CODE.SUCCESS) {
+          if (refresh) {
+            const detailRes = await retryRefresh(refresh)
+            setSubmiting(false)
+
+            if (detailRes.code === RESPONSE_CODE.SUCCESS && detailRes.data?.overallStatus) {
+              // toastSuccess({ title: '提交成功' })
+              clear()
+            }
+          } else {
             // toastSuccess({ title: '提交成功' })
             clear()
+            setSubmiting(false)
           }
         } else {
-          // toastSuccess({ title: '提交成功' })
-          clear()
+          toastError({ title: res?.message || 'Error' })
           setSubmiting(false)
         }
-      } else {
-        toastError({ title: res?.message || 'Error' })
-        setSubmiting(false)
-      }
-    }, [
-      getBaseInfoSnapshot,
-      t,
-      toastError,
-      refresh,
-      clear,
-      submiting
-    ])
+      },
+      [getBaseInfoSnapshot, t, toastError, refresh, clear, submiting]
+    )
     useEffect(() => {
       if (account && preAccount.current && account !== preAccount.current) {
         clear()
@@ -256,16 +244,20 @@ const ImageInfo = memo(
         {rejectReason && <WarningInfo text={rejectReason} />}
         <form onSubmit={handleSubmit(onSubmit)} className='w-full mt-2'>
           <SectionBox className='px-6 py-5 mb-0'>
-            <div className='mb-1'>
-              <TitleWithTip title={t('identity.upload.uploadId')} tip={t('identity.upload.passportTips')} />
+            <div className='mb-4'>
+              <TitleWithTip
+                title={t('identity.upload.uploadId')}
+                tip={t('identity.upload.passportTips')}
+              />
               <UploadTip />
             </div>
 
             {/* 上传证件 */}
             <Upload
               type={'passport'}
-              keys={baseDocType === 1 ? passport : [idCardFront || '', idCardBack || '', idCard || '']}
-
+              keys={
+                baseDocType === 1 ? passport : [idCardFront || '', idCardBack || '', idCard || '']
+              }
               onChanged={keys => {
                 setValue('passport', keys as string)
                 // if (type === 1) {
@@ -282,34 +274,37 @@ const ImageInfo = memo(
             {/* 上传地址证明 */}
             <div className=' flex items-center mb-4'>
               <div>
-                <TitleWithTip title={t('identity.upload.uploadAddr')} tip={
-                  <div>
-                    <Text text='validAddrInc' className='mb-1 text-white text-[16px]' />
-                    <ul className='list-disc pl-3.5'>
-                      {['addr2', 'addr3', 'addr4', 'addr5', 'addr6', 'addr7'].map(item => (
-                        <li key={item}>
-                          <Text text={item} className='text-[16px] text-white' />
-                        </li>
-                      ))}
-                    </ul>
-                    <Text text='addrEnsure' className='text-white text-[16px] mb-1 mt-2' />
-                    <ul className='list-disc pl-3.5'>
-                      {['ensure1', 'ensure2', 'ensure3', 'ensure4', 'ensure5'].map(item => (
-                        <li key={item}>
-                          <Text text={item} className='text-[16px] text-white' />
-                        </li>
-                      ))}
-                    </ul>
-                    <Text text='addrNote' className='text-white text-[16px] mb-1 mt-2' />
-                    <ul className='list-disc pl-3.5'>
-                      {['note1', 'note2'].map(item => (
-                        <li key={item}>
-                          <Text text={item} className='text-[16px] text-white' />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                } />
+                <TitleWithTip
+                  title={t('identity.upload.uploadAddr')}
+                  tip={
+                    <div>
+                      <Text text='validAddrInc' className='mb-1 text-white text-[16px]' />
+                      <ul className='list-disc pl-3.5'>
+                        {['addr2', 'addr3', 'addr4', 'addr5', 'addr6', 'addr7'].map(item => (
+                          <li key={item}>
+                            <Text text={item} className='text-[16px] text-white' />
+                          </li>
+                        ))}
+                      </ul>
+                      <Text text='addrEnsure' className='text-white text-[16px] mb-1 mt-2' />
+                      <ul className='list-disc pl-3.5'>
+                        {['ensure1', 'ensure2', 'ensure3', 'ensure4', 'ensure5'].map(item => (
+                          <li key={item}>
+                            <Text text={item} className='text-[16px] text-white' />
+                          </li>
+                        ))}
+                      </ul>
+                      <Text text='addrNote' className='text-white text-[16px] mb-1 mt-2' />
+                      <ul className='list-disc pl-3.5'>
+                        {['note1', 'note2'].map(item => (
+                          <li key={item}>
+                            <Text text={item} className='text-[16px] text-white' />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  }
+                />
               </div>
             </div>
             <Upload
@@ -322,9 +317,13 @@ const ImageInfo = memo(
           </SectionBox>
           <SectionBox>
             <div className='mb-5'>
-              <TitleWithTip title={t('identity.upload.uploadIncome')} tip={t('identity.upload.extraTips')} required={false} />
+              <TitleWithTip
+                title={t('identity.upload.uploadIncome')}
+                tip={t('identity.upload.extraTips')}
+                required={false}
+              />
             </div>
-            
+
             <Upload
               type='extra'
               keys={incomeCertifications}
@@ -368,15 +367,53 @@ const ImageInfo = memo(
 )
 
 export function UploadTip({ className }: { className?: string }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const langPrefix = 'identity.upload'
+
+  const isZh = i18n.language.toLowerCase().startsWith('zh')
+
+  const orientation1Label = t(`${langPrefix}.orientation1`).trim()
+  const orientation1Text = isZh ? orientation1Label : orientation1Label.replace(/\s+/g, '\n')
+
   return (
     <div className={cn('mt-1 flex flex-col gap-1 text-gray-400 text-sm/4.5', className)}>
-      <div>{t('identity.upload.uploadReq1')}</div>
-      <div>{t('identity.upload.uploadReq2')}</div>
-      <div className='flex flex-row justify-between h-25 w-full'>
-        <LazyImage src='/images/h5/identity/correct.svg' />
-        <LazyImage src='/images/h5/identity/wrong1.svg' />
-        <LazyImage src='/images/h5/identity/wrong2.svg' />
+      <div>{t(`${langPrefix}.uploadReq1`)}</div>
+      <div>{t(`${langPrefix}.uploadReq2`)}</div>
+      <div className={cn('flex flex-row justify-between h-25 w-full')}>
+        <div
+          className={cn(
+            'w-[104px] h-[104px]  bg-[#22C55E1A] flex flex-col justify-between rounded-[8px]',
+            isZh ? 'pb-3' : 'pb-2'
+          )}
+        >
+          <div className='flex-1 flex flex-col items-center justify-center'>
+            <LazyImage className='h-12' src='/images/h5/identity/correct.svg' />
+          </div>
+          <div
+            className={cn(
+              'text-center text-[10px]/[13px] text-white',
+              !isZh && 'whitespace-pre-line'
+            )}
+          >
+            {orientation1Text}
+          </div>
+        </div>
+        <div className='w-[104px] h-[104px] bg-[#EF44441A] flex flex-col justify-between rounded-[8px] pb-3'>
+          <div className='flex-1 flex flex-col items-center justify-center'>
+            <LazyImage className='h-[62px]' src='/images/h5/identity/wrong1.svg' />
+          </div>
+          <div className='text-center text-[10px]/[13px] text-white'>
+            {t(`${langPrefix}.orientation2`)}
+          </div>
+        </div>
+        <div className='w-[104px] h-[104px] bg-[#EF44441A] flex flex-col justify-between rounded-[8px] pb-3'>
+          <div className='flex-1 flex flex-col items-center justify-center'>
+            <LazyImage className='h-[48px]' src='/images/h5/identity/wrong2.svg' />
+          </div>
+          <div className='text-center text-[10px]/[13px] text-white'>
+            {t(`${langPrefix}.orientation2`)}
+          </div>
+        </div>
       </div>
     </div>
   )
