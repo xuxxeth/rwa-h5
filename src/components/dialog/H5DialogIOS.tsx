@@ -41,6 +41,7 @@ export function H5DialogIOS({
 
   const handleClose = useCallback((event?: React.SyntheticEvent) => {
     event?.stopPropagation()
+    event?.preventDefault()
     handleOpenChange(false)
   }, [handleOpenChange])
 
@@ -62,8 +63,8 @@ export function H5DialogIOS({
             )}
           >
             <div>
-              <div className='px-6 py-4 text-center sm:text-left border-b border-solid border-[#41464F] flex justify-between items-center'>
-                <div className='text-[16px] font-normal leading-none tracking-tight'>
+              <div className='px-6 text-center sm:text-left border-b border-solid border-[#41464F] flex justify-between items-center'>
+                <div className='text-[16px] font-normal leading-none tracking-tight py-4'>
                   {title}
                 </div>
                 {rightAction ||
@@ -71,7 +72,7 @@ export function H5DialogIOS({
                     <button
                       type='button'
                       aria-label='Close dialog'
-                      className='cursor-pointer outline-none ring-0 focus:outline-none focus-visible:outline-none focus-visible:ring-0 active:outline-none'
+                      className='cursor-pointer outline-none ring-0 focus:outline-none focus-visible:outline-none focus-visible:ring-0 active:outline-none w-8 flex justify-end h-[34px] items-center'
                       style={{ WebkitTapHighlightColor: 'transparent' }}
                       onClick={handleClose}
                       onTouchEnd={handleClose}

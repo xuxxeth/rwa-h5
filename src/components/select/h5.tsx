@@ -86,7 +86,7 @@ const SelectH5 = memo(
               type="button"
               key={item.value}
               data-vaul-no-drag
-              className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px]"
+              className="data-[highlighted]:bg-[#1D1D1D] relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 h-[34px] font-normal"
               onClick={(e) => {
                 e.stopPropagation()
                 e.preventDefault()
@@ -98,7 +98,7 @@ const SelectH5 = memo(
                 handleSelect(item)
               }}
             >
-              <div className="flex items-center justify-between gap-2 text-white text-[14px] w-full">
+              <div className="flex items-center justify-between gap-2 text-white text-[14px] w-full font-normal">
                 <span>{item.label}</span>
                 
                 <span

@@ -61,7 +61,7 @@ export const Settings = () => {
               <SettingItem label={t('v2.hd.h4')}>
                 <div className='flex items-center gap-2'>
                   <img src='/images/tokens/bnb.png' alt='BNB' className='h-5 w-5 rounded-full' />
-                  <span className='text-[14px] text-white'>BNB</span>
+                  <span className='text-[14px] text-white font-normal'>BNB</span>
                 </div>
               </SettingItem>
             </div>

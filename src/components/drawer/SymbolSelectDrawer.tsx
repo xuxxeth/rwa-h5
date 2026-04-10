@@ -340,7 +340,7 @@ export const SymbolSelectDrawer = memo(
             </div>
 
             {/* Token list */}
-            <div className="scroll-box max-h-[60vh] overflow-y-auto">
+            <div className="scroll-box h-[60vh] overflow-y-auto">
               {sortedTokens.map((token, index) => (
                 <TokenRow
                   key={`${_id}-${index}`}

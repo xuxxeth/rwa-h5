@@ -32,7 +32,7 @@ export const Drawer = ({ open, onOpenChange, title, children, className }: Drawe
           <DialogPrimitive.Description className='sr-only font-normal'>{title}</DialogPrimitive.Description>
 
           {/* 标题栏 */}
-          <div className='flex items-center justify-between px-5 py-3'>
+          <div className='flex items-center justify-between px-5 py-3 font-normal'>
             <span className='text-[16px] text-white'>{title}</span>
             <DialogPrimitive.Close className='flex items-center justify-center text-white'>
               <CloseX size={20} />
