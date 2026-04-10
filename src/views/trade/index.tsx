@@ -40,6 +40,7 @@ import { SymbolSelectDrawer } from '@/components/drawer/SymbolSelectDrawer'
 import { USDSelectDrawer } from '@/components/drawer/USDSelectDrawer'
 import { MarketCloseTips } from './components/MarketCloseTips.tsx'
 const KycState = lazy(() => import("@/components/kyc-state"));
+import { cn } from '@/utils'
 
 
 export const TradePage = () => {
@@ -363,7 +364,7 @@ export const TradePage = () => {
             <Button
               variant={buttonVariant}
               size='lg'
-              className='w-full !text-white'
+              className={cn(`w-full !text-white`, isMarketCloseDisabled ? '!text-gray-500' : '')}
               loading={order.loading}
               disabled={uiState.disabled || isMarketCloseDisabled || order.loading}
               onClick={() => {
