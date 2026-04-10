@@ -19,6 +19,8 @@ import {
 } from './Upload/shared'
 import { retryRefresh, SectionBox, SectionTitle, type BaseInfoFormData } from './BaseInfo'
 import { H5Dialog } from '@/components/dialog/H5Dialog'
+import { cn } from '@/utils'
+import { LazyImage } from '@/components/image/LazyImage'
 
 export const TitleWithTip = ({
   title,
@@ -254,8 +256,9 @@ const ImageInfo = memo(
         {rejectReason && <WarningInfo text={rejectReason} />}
         <form onSubmit={handleSubmit(onSubmit)} className='w-full mt-2'>
           <SectionBox className='px-6 py-5 mb-0'>
-            <div className='mb-4'>
+            <div className='mb-1'>
               <TitleWithTip title={t('identity.upload.uploadId')} tip={t('identity.upload.passportTips')} />
+              <UploadTip />
             </div>
 
             {/* 上传证件 */}
@@ -363,5 +366,20 @@ const ImageInfo = memo(
     )
   }
 )
+
+export function UploadTip({ className }: { className?: string }) {
+  const { t } = useTranslation()
+  return (
+    <div className={cn('mt-1 flex flex-col gap-1 text-gray-400 text-sm/4.5', className)}>
+      <div>{t('identity.upload.uploadReq1')}</div>
+      <div>{t('identity.upload.uploadReq2')}</div>
+      <div className='flex flex-row justify-between h-25 w-full'>
+        <LazyImage src='/images/h5/identity/correct.svg' />
+        <LazyImage src='/images/h5/identity/wrong1.svg' />
+        <LazyImage src='/images/h5/identity/wrong2.svg' />
+      </div>
+    </div>
+  )
+}
 
 export { ImageInfo }

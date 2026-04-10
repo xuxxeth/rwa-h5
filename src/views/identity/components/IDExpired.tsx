@@ -11,6 +11,7 @@ import { retryRefresh, SectionBox, SectionTitle } from "./BaseInfo"
 import type { ApiResponse } from "@/service/client"
 import { usePendingStep } from "@/hooks/usePendingStep"
 import { WarningInfo } from "./WarningInfo"
+import { UploadTip } from './ImageInfo'
 
 interface FormData {
   idCardFront?: string
@@ -129,8 +130,9 @@ const IDExpired = memo(
               <WarningInfo text={reviewCommentToUser } />
             </div>
           }
-          <div className="h-5"></div>
+          <div className="h-1"></div>
           {/* 上传证件 */}
+          <UploadTip className="mb-1"/>
           <Upload
             step={pendingStep.step}
             // type={type === 1 ? 'passport' : 'identity'}
