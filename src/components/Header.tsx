@@ -22,7 +22,7 @@ export const Header = () => {
           size={55}
           className='cursor-pointer'
           onClick={() => {
-            router.push('/trade')
+            router.push('/home')
           }}
         />
       </div>

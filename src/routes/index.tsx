@@ -7,11 +7,17 @@ const Components = lazy(() => import('../views/components'))
 const MarketTrading = lazy(() => import('../views/trade'))
 const Identity = lazy(() => import('../views/identity'))
 const Orders = lazy(() => import('../views/orders'))
+const Home = lazy(() => import('../views/home'));
+
 // 路由表
 const routes: RouteObject[] = [
   {
     path: '/',
     element: <Navigate to={'/trade'} replace />,
+  },
+  {
+    path: '/home',
+    element: <Home />
   },
   {
     path: '/trade/:symbol?',
