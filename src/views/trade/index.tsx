@@ -383,6 +383,7 @@ export const TradePage = () => {
             toAmount={`${allOrderValue} ${outputToken?.symbol || ''}`}
             slippage={slippage}
             limitPrice={limitPrice}
+            latestPrice={realtimeData?.p}
             symbol={inputToken?.symbol || ''}
             usdSymbol={outputToken?.symbol || 'USDT'}
             estimatedFee={estimatedFee}

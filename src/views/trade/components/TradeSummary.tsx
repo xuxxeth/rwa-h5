@@ -7,10 +7,13 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { DEFAULT_SLIPPAGE } from '@/config/constants'
 import { TradeType } from '@/hooks/useCaCommon'
 import { EstimatedFeeAccordion } from './EstimatedFeeAccordion'
-import { divide, toFixed } from '@/utils'
+import { divide, toFixed, truncate } from '@/utils'
 import IconWithTooltip from '@/components/icon-tooltip'
 
+
 interface TradeSummaryProps {
+  /** 最新价格 */
+  latestPrice?: number
   /** 兑换来源数量，如 "1 AMZNt" */
   fromAmount: string
   /** 兑换目标数量，如 "300 USDT" */
@@ -40,6 +43,7 @@ interface TradeSummaryProps {
 }
 
 export const TradeSummary = ({
+  latestPrice,
   fromAmount,
   toAmount,
   slippage,
@@ -61,6 +65,8 @@ export const TradeSummary = ({
   // 兑换比例 toggle 状态
   const [isRateReversed, setIsRateReversed] = useState(false)
 
+  const latestPriceDisplay = latestPrice ? truncate(latestPrice, 2) : '--'
+
   // 正向：1 {symbol} = {limitPrice} {usdSymbol}
   // 反向：1 {usdSymbol} = {1/limitPrice} {symbol}
   const { rateFrom, rateTo } = useMemo(() => {
@@ -68,7 +74,7 @@ export const TradeSummary = ({
       return {
         rateFrom: `1 ${symbol}`,
         // rateTo: `${limitPrice} ${usdSymbol}`,
-        rateTo: <><div className='max-w-[240px] truncate'>{limitPrice} </div> {usdSymbol}</>
+        rateTo: <><div className='max-w-[240px] truncate'>{latestPriceDisplay} </div> {usdSymbol}</>
       }
     }
     const inversePrice = toFixed(divide('1', limitPrice), decimals)
@@ -87,7 +93,7 @@ export const TradeSummary = ({
   return (
     <div className="flex flex-col gap-2">
       {/* 兑换比例 */}
-      {/* <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1">
         <span className="text-[14px] text-gray-400">{rateFrom}</span>
         <SwapArrow
           size={14}
@@ -95,7 +101,7 @@ export const TradeSummary = ({
           onClick={() => setIsRateReversed((prev) => !prev)}
         />
         <div className="text-[14px] text-gray-400 flex items-center">{rateTo}</div>
-      </div> */}
+      </div>
 
       {/* 滑点 (仅市价单显示) */}
       {tradeType === TradeType.MARKET && (
