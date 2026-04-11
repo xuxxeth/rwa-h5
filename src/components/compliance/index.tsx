@@ -22,6 +22,26 @@ const Compliance = () => {
   const [aggree, setAggreee] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const normalizedUrl = url.replace(/\+/g, '%20')
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    const isWalletWebView = /MetaMask|OKX|Binance|Trust/i.test(navigator.userAgent)
+    const isPdf = /\.pdf(?:$|\?)/i.test(normalizedUrl)
+    const mobileTargetUrl = isWalletWebView && isPdf
+      ? `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(normalizedUrl)}`
+      : normalizedUrl
+    if (isMobile) {
+      window.location.href = mobileTargetUrl
+      return
+    }
+    const opened = window.open(normalizedUrl, '_blank', 'noopener,noreferrer')
+    if (!opened) {
+      window.location.href = normalizedUrl
+    }
+  }
+
   const getAgreementsAccepted = async () => {
     setLoading(true)
     const res = await kycApi.getAgreementsAccepted()
@@ -75,7 +95,8 @@ const Compliance = () => {
           }}
         >
           <DrawerContent
-            className='border border-[#232427] bg-[#131416] text-white max-h-[90vh] rounded-t-[16px]'
+            overlayClassName='z-[9998] bg-[rgba(0,0,0,0.5)] backdrop-blur-[12px]'
+            className='z-[9999] border border-[#232427] bg-[#131416] text-white max-h-[90vh] rounded-t-[16px]'
           >
             <DrawerHeader className='justify-center border-b border-[#232427] px-6 pt-4 pb-3'>
               <DrawerTitle className='text-base/5 text-center'>{t('compliance.t1')}</DrawerTitle>
@@ -126,7 +147,9 @@ const Compliance = () => {
                   <a
                     href={PRIVACY_SERVICE.userService.url}
                     target='_blank'
+                    rel='noopener noreferrer'
                     className='text-[rgba(26,133,255,1)]'
+                    onClick={openExternal(PRIVACY_SERVICE.userService.url)}
                   >
                     《{t('compliance.t15')}》
                   </a>
@@ -134,7 +157,9 @@ const Compliance = () => {
                   <a
                     href={PRIVACY_SERVICE.privacy.url}
                     target='_blank'
+                    rel='noopener noreferrer'
                     className='text-[rgba(26,133,255,1)]'
+                    onClick={openExternal(PRIVACY_SERVICE.privacy.url)}
                   >
                     《{t('compliance.t16')}》
                   </a>
