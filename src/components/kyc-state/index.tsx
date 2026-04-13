@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react"; // 关闭按钮图标（可换）
-import { Button } from "../ui/button";
 import { LazyImage } from "../image/LazyImage";
 import { KYC_OVERALL_STATUS, KYC_RISK_LEVEL, KYC_STATUS, KYC_VERIFY_TYPE, type IKycStatus } from "@/service/kyc/types";
 import { useFetchKycStatus, useKycExpired, useKycStatus } from "@/hooks/useKycStatus";
@@ -70,7 +67,7 @@ const KycState = () => {
       setContent({
         title: t('kyc.t48'),
         content: t('kyc.t49', { expire: desc }),
-        btnText: t('kyc.t50'),
+        btnText: t('kyc.t51'),
         btn: 'edit'
       })
       
@@ -82,7 +79,7 @@ const KycState = () => {
       setContent({
         title: t('kyc.t45'),
         content: t('kyc.t46', { expire: desc }),
-        btnText: t('kyc.t47'),
+        btnText: t('kyc.t51'),
         btn: 'edit'
       })
       setShow(true)
@@ -93,7 +90,7 @@ const KycState = () => {
       setContent({
         title: t('kyc.t25'),
         content: t('kyc.t32', {expire: formatSecondsToDateTime(Math.floor((kycDetail?.expireTime || 0) / 1000))}),
-        btnText: t('kyc.t33'),
+        btnText: t('kyc.t35'),
         btn: 'upload'
       })
       setShow(true)
@@ -113,7 +110,7 @@ const KycState = () => {
       setContent({
         title: t('kyc.t29'),
         content: t('kyc.t32', {expire: formatSecondsToDateTime(Math.floor((kycDetail?.expireTime || 0) / 1000))}),
-        btnText: t('kyc.t33'),
+        btnText: t('kyc.t37'),
         btn: 'upload'
       })
       setShow(true)
@@ -124,7 +121,7 @@ const KycState = () => {
       setContent({
         title: t('kyc.t29'),
         content: t('kyc.t30'),
-        btnText: t('kyc.t31'),
+        btnText: t('kyc.t37'),
         btn: 'edit'
       })
       setShow(true)
@@ -134,7 +131,7 @@ const KycState = () => {
       setContent({
         title: t('kyc.t29'),
         content: t('kyc.t34'),
-        btnText: t('kyc.t35'),
+        btnText: t('kyc.t37'),
         btn: 'edit'
       })
       setShow(true)

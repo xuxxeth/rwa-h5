@@ -232,11 +232,13 @@ const ExtraInfo = memo(
           }
           
         <div className="">
-          <Button className=" bg-[#1A1B1E] text-white w-full rounded-[8px] h-[48px] text-[14px]"
+          <Button
+            type="button"
+            className=" bg-[#1A1B1E] text-white w-full rounded-[8px] h-[48px] text-[14px]"
             onClick={() => append({ name: "", description: "", files: [] })}
           >
             <img src="/images/h5/icons/add.png" className="w-[18px] h-[18px]" alt="" />
-            新增补充资料
+            {t('v3.t30')}
             
           </Button>
         </div>  

@@ -190,19 +190,7 @@ function Identity({ account }: { account: string }) {
     const { overallStatus, riskLevel, status, verifyType } = kycDetail
 
     return [
-      
-      {
-        match: () =>
-          overallStatus === KYC_OVERALL_STATUS.VERIFYING &&
-          verifyType === KYC_VERIFY_TYPE.AML &&
-          status === KYC_STATUS.DECLINED,
-        render: () => (
-          <ExtraInfo
-            reviewCommentToUser={kycDetail?.userInfo?.reviewInfo?.reviewCommentToUser}
-            refresh={refresh}
-          />
-        ),
-      },
+
       // 已过期/即将过期
       {
         match: () =>
