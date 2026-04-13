@@ -83,14 +83,14 @@ export const SessionSelectDrawer = memo(
           code: SessionType.DEFAULT,
           label: t('v3.t16'),
           timeLabel: tradingTime
-            ? `ET ${tradingTime.openTime.H}:${tradingTime.openTime.M} ~ ${tradingTime.closeTime.H}:${tradingTime.closeTime.M}`
+            ? `${tradingTime.openTime.H}:${tradingTime.openTime.M} ~ ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} (${t('v3.t31')})`
             : '--:--',
         },
         {
           code: SessionType.PRE_MARKET_AND_AFTER_HOURS,
           label: t('v3.t17'),
           timeLabel: tradingTime
-            ? `ET ${tradingTime.preOpenTime.H}:${tradingTime.preOpenTime.M} ~ ${tradingTime.openTime.H}:${tradingTime.openTime.M} + ET ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} ~ ${tradingTime.afterCloseTime.H}:${tradingTime.afterCloseTime.M}`
+            ? `${tradingTime.preOpenTime.H}:${tradingTime.preOpenTime.M} ~ ${tradingTime.openTime.H}:${tradingTime.openTime.M} (${t('v3.t31')}) + ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} ~ ${tradingTime.afterCloseTime.H}:${tradingTime.afterCloseTime.M} (${t('v3.t31')})`
             : '--:--',
           disabled: isRegular
         },
