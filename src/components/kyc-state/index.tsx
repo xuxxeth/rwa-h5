@@ -25,6 +25,14 @@ const KycState = () => {
 
   useFetchKycStatus()
 
+  const kycStatus = useKycStore(state => state.kycStatus)
+
+  const notVerified = useMemo(() => {
+    const fail = kycStatus && kycStatus?.status === KYC_STATUS.NOTVERIFIED
+    return fail 
+
+  }, [kycStatus])
+
   // 1. ocr失败，填写信息与证件信息不一致
   const ocrFail = useMemo(() => {
     const fail = kycDetail && kycDetail.overallStatus === KYC_OVERALL_STATUS.VERIFYING &&
@@ -59,6 +67,11 @@ const KycState = () => {
     return fail 
 
   }, [kycDetail])
+  // 异常账户
+  const isIssue = useMemo(() => {
+    const issue = kycStatus && kycStatus?.status === KYC_OVERALL_STATUS.ISSUE
+    return issue
+  }, [kycStatus])
 
   
   // 显示后 10 秒自动隐藏
@@ -92,6 +105,26 @@ const KycState = () => {
         content: t('kyc.t32', {expire: formatSecondsToDateTime(Math.floor((kycDetail?.expireTime || 0) / 1000))}),
         btnText: t('kyc.t35'),
         btn: 'upload'
+      })
+      setShow(true)
+      return
+    }
+        if (notVerified) {
+      setContent({
+        title: t('kyc.t29'),
+        content: t('kyc.t36'),
+        btnText: t('kyc.t37'),
+        btn: 'edit'
+      })
+      setShow(true)
+      return
+    }
+    if (isIssue) {
+      setContent({
+        title: t('kyc.t70'),
+        content: t('kyc.t36'),
+        btnText: t('kyc.t35'),
+        btn: 'edit'
       })
       setShow(true)
       return
@@ -147,9 +180,10 @@ const KycState = () => {
       setShow(true)
       return
     }
+
     setShow(false)
     setContent(defaultContent)
-  }, [t, ocrFail, ocrIncome, amlDeclined, isNotShow, expired, expiring, desc, pendingStep]);
+  }, [t, ocrFail, ocrIncome, amlDeclined, isNotShow, expired, expiring, desc, pendingStep, notVerified, isIssue]);
 
   useEffect(() => {
     if (isNotShow) {
@@ -184,8 +218,8 @@ const KycState = () => {
           <div className="flex justify-between"
             
           >
-            <div className="flex items-center gap-x-2 mt-1">
-              <LazyImage src="/images/v2/icons/id.png" className="w-[21px] h-[14px]" />
+            <div className="flex items-center gap-x-1 mt-1">
+              <LazyImage src="/images/h5/icons/id.png" className="w-[18px] h-[16px]" />
               <div className=" text-white text-[14px] font-medium">{content.title}</div>
             </div>
             <button

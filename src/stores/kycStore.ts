@@ -36,7 +36,7 @@ export const useKycStore = create<KycStore>((set, get) => ({
       set({ kycStatus: data || { status: 0, expiresTime: 0, pendingSteps: [] }, isLoading: false })
 
       // 如果是认证中\已过期\驳回
-      if (data && (data.status === KYC_STATUS.VERIFYING || data.status === KYC_STATUS.EXPIRED || data.status === KYC_STATUS.DECLINED)) {
+      if (data && (data.status === KYC_STATUS.VERIFYING || data.status === KYC_STATUS.EXPIRED || data.status === KYC_STATUS.DECLINED || data.status === KYC_STATUS.NOTVERIFIED)) {
         const { data } = await kycApi.getKycDetail()
         set({ kycDetail: data })
       } else {

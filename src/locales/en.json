@@ -609,7 +609,8 @@
     "t65": "At least one of the document photo and description must be submitted.",
     "t66": "Only numeric and alphabetic characters are supported.",
     "t67": "Incorrect Date of Birth",
-    "t68": "Please enter a residential address outside of Mainland China."
+    "t68": "Please enter a residential address outside of Mainland China.",
+    "t70": "Identity verification issue"
   },
   "employment": {
     "t1": "Retired",

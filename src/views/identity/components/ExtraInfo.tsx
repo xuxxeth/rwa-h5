@@ -145,7 +145,7 @@ const ExtraInfo = memo(
                             className=""
                             placeholder={t('kyc.t4')}
                             value={extraList[index].name}
-                            regex="^[a-zA-Z\u4e00-\u9fa5]{1,30}$"
+                            regex="^[a-zA-Z0-9\u4e00-\u9fa5 ,，]{1,30}$"
                             error={errors.extraList?.[index]?.name?.message}
                             {
                               ...register(`extraList.${index}.name`, {
@@ -155,7 +155,7 @@ const ExtraInfo = memo(
                                   message: t('kyc.t54', { num: 30 }),
                                 },
                                 pattern: {
-                                  value: /^[a-zA-Z\u4e00-\u9fa5]+$/,
+                                  value: /^[a-zA-Z0-9\u4e00-\u9fa5 ,，]+$/,
                                   message: t('kyc.t64')
                                 },
                                 

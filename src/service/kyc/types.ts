@@ -30,7 +30,7 @@ export type PENDING_STEPS_LIST = PENDING_STEPS[]
 // -1 未签名 0 未认证, 1 认证中, 2 已通过, 3 已失败, 4 人工审核中, 5 已过期, 6-已拒绝, 7 - 已驳回
 export const KYC_STATUS = {
   DEFAULT: -1,
-  // NOTVERIFIED: 0, // 未认证
+  NOTVERIFIED: 0, // 未认证
   VERIFYING: 1, // 认证中
   VERIFIED: 2, // 已通过
   // FAIL: 3, // 已失败

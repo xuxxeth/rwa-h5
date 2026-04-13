@@ -24,6 +24,7 @@ export function useKycStatus() {
   const kycStatus = useMemo(() => {
     if (status === undefined) return RISK_STATUS.DEFAULT
     if (status === -1) return RISK_STATUS.NOTSIGN
+    if (status === 0) return RISK_STATUS.NOTVERIFIED
     if (status === 1) return RISK_STATUS.VERIFYING
     if (status === 2) return RISK_STATUS.VERIFIED
     if (status === 3) return RISK_STATUS.REJECTED
