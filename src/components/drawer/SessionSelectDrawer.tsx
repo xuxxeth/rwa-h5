@@ -48,13 +48,13 @@ const SessionRow = memo(
     >
       {/* Session label */}
       <span className={cn(
-        "text-[16px] font-normal text-white",
+        "text-[16px] font-normal text-white shrink-0",
         session.disabled ? 'text-gray-400' : 'text-white'
       )}>{session.label}</span>
 
       {/* Time label + check */}
       <div className="flex items-center gap-2">
-        <span className="text-[14px] font-normal text-gray-400">{session.timeLabel}</span>
+        <div className="text-[14px] font-normal text-gray-400 max-w-[160px]">{session.timeLabel}</div>
         <div className="flex h-5 w-5 items-center justify-center">
           {selected && <CheckBlue size={20} color="var(--color-blue-50)" />}
         </div>

@@ -54,7 +54,10 @@ export const AmountInput = ({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-[8px] border border-gray-850 bg-gray-900 px-4 py-3">
+    <div className={cn(
+      "flex flex-col gap-2 rounded-[8px] border border-gray-850 bg-gray-900 px-4 py-3",
+      readOnly ? 'bg-[rgba(0,0,0,0)]' : ''
+    )}>
       <div className="flex items-center">
         <span className="flex-1 text-[16px] text-gray-400">{label}</span>
       </div>

@@ -22,7 +22,7 @@ export const Drawer = ({ open, onOpenChange, title, children, className }: Drawe
         {/* 底部面板 */}
         <DialogPrimitive.Content
           className={cn(
-            'fixed inset-x-0 bottom-0 z-[201] flex flex-col rounded-t-[24px] border-t border-gray-700 bg-gray-900 shadow-[0px_-2px_3px_0px_rgba(0,0,0,0.05)] duration-300',
+            'fixed inset-x-0 bottom-0 z-[201] flex flex-col bg-gray-900 duration-300',
             'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
             className
           )}
@@ -32,7 +32,7 @@ export const Drawer = ({ open, onOpenChange, title, children, className }: Drawe
           <DialogPrimitive.Description className='sr-only font-normal'>{title}</DialogPrimitive.Description>
 
           {/* 标题栏 */}
-          <div className='flex items-center justify-between px-5 py-3 font-normal'>
+          <div className='flex items-center justify-between px-5 py-3 font-normal rounded-t-[24px] border border-[#41464F] '>
             <span className='text-[16px] text-white'>{title}</span>
             <DialogPrimitive.Close className='flex items-center justify-center text-white'>
               <CloseX size={20} />

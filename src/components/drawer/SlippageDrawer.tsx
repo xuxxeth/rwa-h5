@@ -20,6 +20,7 @@ export const SlippageDrawer = memo(() => {
 
   // 0 = 推荐, 1 = 自定义
   const [current, setCurrent] = useState(0)
+  const [currentValue, setCurrentValue] = useState(DEFAULT_SLIPPAGE)
   const [customValue, setCustomValue] = useState('')
 
   // 打开时同步当前 slippage 到本地状态
@@ -27,9 +28,11 @@ export const SlippageDrawer = memo(() => {
     if (!open) return
     if (slippage !== DEFAULT_SLIPPAGE) {
       setCurrent(1)
+      setCurrentValue(DEFAULT_SLIPPAGE)
       setCustomValue(String(slippage))
     } else {
       setCurrent(0)
+      setCurrentValue(DEFAULT_SLIPPAGE)
       setCustomValue('')
     }
   }, [open, slippage])
@@ -39,7 +42,7 @@ export const SlippageDrawer = memo(() => {
     current === 1 && (customNum <= 0 || customNum > MAX_SLIPPAGE)
 
   const handleConfirm = () => {
-    const value = current === 0 ? DEFAULT_SLIPPAGE : customNum
+    const value = current === 0 ? currentValue || DEFAULT_SLIPPAGE : customNum
     updateSlippage(value)
     setOpen(false)
   }
@@ -49,20 +52,54 @@ export const SlippageDrawer = memo(() => {
       <div className='flex flex-col border-t border-gray-700'>
         <div className='flex flex-col gap-3 px-5 py-3'>
           {/* 推荐选项 */}
-          <div
-            className={cn(
-              'flex cursor-pointer items-center justify-between rounded-[8px] border px-4 py-3',
-              current === 0 ? 'border-green-50 bg-[rgba(37,167,80,0.2)]' : 'border-gray-750'
-            )}
-            onClick={() => setCurrent(0)}
-          >
-            <span className={cn('text-[16px]', current === 0 ? 'text-green-100' : 'text-white')}>
-              {t('v3.t3')}
-            </span>
-            <span className={cn('text-[16px]', current === 0 ? 'text-green-100' : 'text-white')}>
-              {DEFAULT_SLIPPAGE}%
-            </span>
+          <div className='flex items-center justify-between gap-x-2'>
+            <div
+              className={cn(
+                'flex cursor-pointer items-center justify-between rounded-[8px] border px-4 py-3 flex-1',
+                current === 0 && currentValue === 0.5 ? 'border-green-50 bg-[rgba(37,167,80,0.2)] text-green-100' : 'border-gray-750 text-white'
+              )}
+              onClick={() => {
+                setCurrent(0)
+                setCurrentValue(0.5)
+              }}
+            >
+              <span className={cn('text-[16px]')}>
+                {t('v3.t3')}
+              </span>
+              <span className={cn('text-[16px]')}>
+                {DEFAULT_SLIPPAGE}%
+              </span>
+            </div>
+            <div
+              className={cn(
+                'flex cursor-pointer items-center justify-center rounded-[8px] border px-4 py-3 flex-1',
+                current === 0 && currentValue === 0.1 ? 'border-green-50 bg-[rgba(37,167,80,0.2)] text-green-100' : 'border-gray-750 text-white'
+              )}
+              onClick={() => {
+                setCurrent(0)
+                setCurrentValue(0.1)
+              }}
+            >
+              <span className={cn('text-[16px]')}>
+                0.1%
+              </span>
+            </div>
+            <div
+              className={cn(
+                'flex cursor-pointer items-center justify-center rounded-[8px] border px-4 py-3 flex-1',
+                current === 0 && currentValue === 0.3 ? 'border-green-50 bg-[rgba(37,167,80,0.2)] text-green-100' : 'border-gray-750 text-white'
+              )}
+              onClick={() => {
+                setCurrent(0)
+                setCurrentValue(0.3)
+              }}
+            >
+              <span className={cn('text-[16px]')}>
+                0.3%
+              </span>
+            </div>
           </div>
+          
 
           {/* 自定义输入 */}
           <div

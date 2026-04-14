@@ -88,7 +88,7 @@ export function H5DialogIOS({
               {children}
             </div>
 
-            <div className='mx-auto mt-4 mb-4 h-[5px] w-[100px] rounded-full bg-[#767676]' />
+            <div className='mx-auto mt-4 mb-4 h-[5px] w-[100px] rounded-full ' />
           </div>
         </div>,
         document.body
