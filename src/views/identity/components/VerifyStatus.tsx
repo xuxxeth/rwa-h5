@@ -279,7 +279,6 @@ export function Verifying(props: { refresh: () => Promise<ApiResponse<IKycDetail
   const router = useRouter()
   const retryCount = useKycStore(state => state.retryCount)
   const isWaiting = retryCount > 0 && retryCount <=5 
-  console.log('===>retryCount', retryCount)
   return (
     <VerifyStatus
       type='verifying'

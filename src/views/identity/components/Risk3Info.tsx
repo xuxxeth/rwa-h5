@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/useToast"
 import { kycApi } from "@/service/kyc/api"
 import type { IKycDetail } from "@/service/kyc/types"
 import { RESPONSE_CODE } from "@/config/constants"
-import { retryRefresh, SectionBox, SectionTitle } from "./BaseInfo"
+import { retryRefresh, useResetRetryCount, SectionBox, SectionTitle } from "./BaseInfo"
 import {
   Text,
 } from './Upload/shared'
@@ -75,6 +75,8 @@ const Risk3Info = memo(
       
     }
 
+    useResetRetryCount()
+    
     return (
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">

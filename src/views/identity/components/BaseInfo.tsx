@@ -20,7 +20,16 @@ import { WarningInfo } from './WarningInfo'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
 import { parseISO } from 'date-fns'
+import { useKycStore } from '@/stores/kycStore'
 
+
+export function useResetRetryCount() {
+  const updateRetryCount = useKycStore(state => state.updateRetryCount)
+  
+  useEffect(() => {
+    updateRetryCount(0)
+  }, [updateRetryCount])
+}
 
 export async function retryRefresh(
   refresh: () => Promise<ApiResponse<IKycDetail>>,
@@ -30,7 +39,6 @@ export async function retryRefresh(
   let attempt = 1
   return new Promise(resolve => {
     const query = async () => {
-
       const result = await refresh()
       if (result.code === RESPONSE_CODE.SUCCESS && result.data?.rejectReason) {
         requestAnimationFrame(() => {

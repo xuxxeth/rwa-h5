@@ -15,7 +15,7 @@ import { WarningInfo } from './WarningInfo'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
 import { Text } from './Upload/shared'
-import { retryRefresh, SectionBox, SectionTitle, type BaseInfoFormData } from './BaseInfo'
+import { retryRefresh, useResetRetryCount, SectionBox, SectionTitle, type BaseInfoFormData } from './BaseInfo'
 import { H5Dialog } from '@/components/dialog/H5Dialog'
 import { cn } from '@/utils'
 import { LazyImage } from '@/components/image/LazyImage'
@@ -235,6 +235,8 @@ const ImageInfo = memo(
       }
       preAccount.current = account
     }, [account])
+
+    useResetRetryCount()
 
     // 组件卸载时重置重试状态，使用防抖避免 StrictMode 下的重复执行
     useDebouncedUnmount(onResetRetry)

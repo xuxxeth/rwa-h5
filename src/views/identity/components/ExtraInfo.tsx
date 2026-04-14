@@ -6,7 +6,7 @@ import { Upload } from "./Upload"
 import { useToast } from "@/hooks/useToast"
 import { kycApi } from "@/service/kyc/api"
 import { RESPONSE_CODE } from "@/config/constants"
-import { ErrorBox, InputBox, retryRefresh, SectionBox, SectionTitle } from "./BaseInfo"
+import { ErrorBox, InputBox, retryRefresh, useResetRetryCount, SectionBox, SectionTitle } from "./BaseInfo"
 import { KycInput } from "@/components/input/KycInput"
 import { KycTextarea } from "@/components/input/KycTextarea"
 import { useFieldArray } from "react-hook-form"
@@ -107,6 +107,9 @@ const ExtraInfo = memo(
       }
       
     }
+
+    // reset retryCount when mounted
+    useResetRetryCount()
 
     const handlePlus = async (action: string, index: number) => {
 
