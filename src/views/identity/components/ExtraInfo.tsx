@@ -169,7 +169,7 @@ const ExtraInfo = memo(
                     </div>
                     <div className="font-normal mb-2">
                       <div className="text-[16px]">{t('kyc.t41')} </div>
-                      <div className="text-[16px] text-[rgba(255,255,255,0.6)] mt-2">
+                      <div className="text-[14px] text-[rgba(255,255,255,0.6)] mt-2">
                         {t('kyc.t44')}：{t('kyc.t43')}
                       </div>
                     </div>

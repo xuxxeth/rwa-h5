@@ -63,27 +63,27 @@ export const TradeSummary = ({
   const tradeType = useTradeStore((s) => s.tradeType)
 
   // 兑换比例 toggle 状态
-  const [isRateReversed, setIsRateReversed] = useState(false)
+  // const [isRateReversed, setIsRateReversed] = useState(false)
 
-  const latestPriceDisplay = latestPrice ? truncate(latestPrice, 2) : '--'
+  // const latestPriceDisplay = latestPrice ? truncate(latestPrice, 2) : '--'
 
   // 正向：1 {symbol} = {limitPrice} {usdSymbol}
   // 反向：1 {usdSymbol} = {1/limitPrice} {symbol}
-  const { rateFrom, rateTo } = useMemo(() => {
-    if (!isRateReversed) {
-      return {
-        rateFrom: `1 ${symbol}`,
-        // rateTo: `${limitPrice} ${usdSymbol}`,
-        rateTo: <><div className='max-w-[240px] truncate'>{latestPriceDisplay} </div> {usdSymbol}</>
-      }
-    }
-    const inversePrice = toFixed(divide('1', limitPrice), decimals)
-    return {
-      rateFrom: `1 ${usdSymbol}`,
-      // rateTo: `${inversePrice} ${symbol}`,
-      rateTo: <><div className='max-w-[240px] truncate'>{inversePrice} </div> {symbol}</>
-    }
-  }, [isRateReversed, limitPrice, symbol, usdSymbol, decimals])
+  // const { rateFrom, rateTo } = useMemo(() => {
+  //   if (!isRateReversed) {
+  //     return {
+  //       rateFrom: `1 ${symbol}`,
+  //       // rateTo: `${limitPrice} ${usdSymbol}`,
+  //       rateTo: <><div className='max-w-[240px] truncate'>{latestPriceDisplay} </div> {usdSymbol}</>
+  //     }
+  //   }
+  //   const inversePrice = toFixed(divide('1', limitPrice), decimals)
+  //   return {
+  //     rateFrom: `1 ${usdSymbol}`,
+  //     // rateTo: `${inversePrice} ${symbol}`,
+  //     rateTo: <><div className='max-w-[240px] truncate'>{inversePrice} </div> {symbol}</>
+  //   }
+  // }, [isRateReversed, limitPrice, symbol, usdSymbol, decimals])
 
   // 滑点展示，与 EstimatedInfo 保持一致
   const slippageDisplay = `${slippage}%${slippage === DEFAULT_SLIPPAGE ? ` (${t('v3.t3')})` : ''}`
@@ -93,7 +93,7 @@ export const TradeSummary = ({
   return (
     <div className="flex flex-col gap-2">
       {/* 兑换比例 */}
-      <div className="flex items-center gap-1">
+      {/* <div className="flex items-center gap-1">
         <span className="text-[14px] text-gray-400">{rateFrom}</span>
         <SwapArrow
           size={14}
@@ -101,7 +101,7 @@ export const TradeSummary = ({
           onClick={() => setIsRateReversed((prev) => !prev)}
         />
         <div className="text-[14px] text-gray-400 flex items-center">{rateTo}</div>
-      </div>
+      </div> */}
 
       {/* 滑点 (仅市价单显示) */}
       {tradeType === TradeType.MARKET && (

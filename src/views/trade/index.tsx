@@ -41,6 +41,7 @@ import { USDSelectDrawer } from '@/components/drawer/USDSelectDrawer'
 import { MarketCloseTips } from './components/MarketCloseTips.tsx'
 const KycState = lazy(() => import("@/components/kyc-state"));
 import { cn } from '@/utils'
+import { RateDisplay } from './components/RateDisplay.tsx'
 
 
 export const TradePage = () => {
@@ -379,6 +380,12 @@ export const TradePage = () => {
             </Button>
           )}
 
+          <RateDisplay  
+            latestPrice={realtimeData?.p} 
+            symbol={inputToken?.symbol || ''}
+            usdSymbol={outputToken?.symbol || 'USDT'}
+            decimals={inputToken?.decimals ?? 6}
+          />
           {Number(orderValue) > 0 && <TradeSummary
             fromAmount={`${inputSize} ${inputToken?.symbol || ''}`}
             toAmount={`${allOrderValue} ${outputToken?.symbol || ''}`}

@@ -100,7 +100,7 @@ const OrdersPage = ({ account, chainId }: { account: string; chainId: number }) 
   } = useInfiniteQuery(infiniteOpenOrderOptions(account, chainId, isSignatureValid))
 
   const isRefetchEnabled = isFetchedAfterMount && !isLoading
-  useOrderChangedV2(refetch, isRefetchEnabled)
+  useOrderChangedV2(() => refetch(), isRefetchEnabled)
 
   const orders = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data])
 

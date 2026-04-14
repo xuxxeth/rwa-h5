@@ -81,6 +81,7 @@ function VerifyStatus(props: {
   extra?: ReactNode
   retryComponent?: ReactNode
   className?: string
+  showBtn?: boolean
 }) {
   const { t } = useTranslation()
   return (
@@ -94,15 +95,17 @@ function VerifyStatus(props: {
           {t(`${langPrefix}.${props.detail}`)}
         </div>
       </div>
-      <Button
-        className={props.className}
-        onClick={() => {
-          if (props.btnOnClick) {
-            props.btnOnClick()
-          }
-        }}
-        text={props.btnText}
-      />
+      {props.showBtn === false ? null : (
+        <Button
+          className={props.className}
+          onClick={() => {
+            if (props.btnOnClick) {
+              props.btnOnClick()
+            }
+          }}
+          text={props.btnText}
+        />
+      )}
       {props.extra}
     </VerifyStatusWrapper>
   )
@@ -275,13 +278,16 @@ function HotRwas() {
 export function Verifying(props: { refresh: () => Promise<ApiResponse<IKycDetail>> }) {
   const router = useRouter()
   const retryCount = useKycStore(state => state.retryCount)
+  const isWaiting = retryCount > 0 && retryCount <=5 
+  console.log('===>retryCount', retryCount)
   return (
     <VerifyStatus
       type='verifying'
       title='verifying'
-      detail={retryCount > 0 && retryCount < 6 ? 'verifyingWait' : 'verifyingTip'}
+      detail={isWaiting ? 'verifyingWait' : 'verifyingTip'}
       btnText='h'
       btnOnClick={() => router.push('/trade')}
+      showBtn={!isWaiting}
       className='bg-white text-black text-base font-semibold'
     />
   )

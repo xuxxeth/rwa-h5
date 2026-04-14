@@ -24,8 +24,8 @@ import { parseISO } from 'date-fns'
 
 export async function retryRefresh(
   refresh: () => Promise<ApiResponse<IKycDetail>>,
-  maxRetries = 3,
-  interval = 5000
+  maxRetries = 5,
+  interval = 3000
 ): Promise<any> {
   let attempt = 1
   return new Promise(resolve => {
@@ -38,7 +38,7 @@ export async function retryRefresh(
         });
         return resolve(result)
       }
-      if (attempt < maxRetries) {
+      if (attempt <= maxRetries) {
         setTimeout(() => {
           attempt += 1
           query()

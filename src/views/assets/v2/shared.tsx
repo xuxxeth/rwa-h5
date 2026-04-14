@@ -14,8 +14,10 @@ import { useWssStore } from '@/stores/wssStore'
 import { WalletNotConnectedSmallVersion } from '@/components/wallet-not-connected'
 import { useRouter } from '@/hooks/useRouter'
 
-export function useOrderChangedV2(refetch: () => Promise<any>, isRefetchEnable: boolean) {
+export function useOrderChangedV2(refetch: (isAutoRefresh?: boolean) => Promise<any>, isRefetchEnable: boolean) {
   const newOrder = useWssStore(state => state.newOrder)
+  const preNewOrder = useRef(newOrder)
+
   const refetchTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([])
   const lastOrderChangedEventTimeRef = useRef<number | null>(null)
 
@@ -29,6 +31,7 @@ export function useOrderChangedV2(refetch: () => Promise<any>, isRefetchEnable: 
   useEffect(() => {
     if (!isRefetchEnable) return
     if (!newOrder) return
+    if (newOrder === preNewOrder.current) return
 
     const rawEventTime = newOrder.E
     const parsedTs = Number(rawEventTime)
@@ -40,22 +43,18 @@ export function useOrderChangedV2(refetch: () => Promise<any>, isRefetchEnable: 
     refetchTimersRef.current.forEach(clearTimeout)
     refetchTimersRef.current = []
 
-    const delays = [200, 900, 1700, 2800]
+    const delays = [200, 600, 1500, 2800]
 
     delays.forEach((delay, index) => {
       refetchTimersRef.current.push(
         setTimeout(() => {
-          refetch()
+          refetch(true)
         }, delay)
       )
     })
-
-    return () => {
-      refetchTimersRef.current.forEach(clearTimeout)
-      refetchTimersRef.current = []
-    }
   }, [newOrder, isRefetchEnable, refetch])
 }
+
 
 export function useOrderChanged() {
   const [orderChanged, _setOrderChanged] = useState<OrderChanged | null>(null)
