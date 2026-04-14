@@ -194,7 +194,7 @@ const ExtraInfo = memo(
                               if (!value || !value.trim()) return true
 
                               // 有值：按规则校验
-                              const regex = /^[\u4e00-\u9fa5a-zA-Z0-9]{1,200}$/
+                              const regex = /^[\u4e00-\u9fa5a-zA-Z0-9。．.,，"“”'‘’ ]{1,200}$/
                               return (
                                 regex.test(value) || t('kyc.t63')
                               )

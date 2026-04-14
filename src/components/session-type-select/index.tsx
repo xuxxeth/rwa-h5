@@ -38,7 +38,6 @@ const SessionTypeSelect = memo(
       code: SessionType.DEFAULT,
       label: t('v3.t16'),
     })
-    console.log(tradingTime, 'tradingTime')
     const [drawerOpen, setDrawerOpen] = useState(false)
     const isRegular = useMemo(() => {
       return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
