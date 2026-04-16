@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
+import { openExternal } from '@/components/compliance'
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation('home')
+  const [auditOpen, setAuditOpen] = useState(false)
+  const auditRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      if (!auditRef.current) return
+      if (!auditRef.current.contains(event.target as Node)) {
+        setAuditOpen(false)
+      }
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [])
 
   return (
     <footer className='relative bg-[#131416] border-t border-white/10 pt-12 pb-8 text-white overflow-hidden'>
@@ -108,6 +122,9 @@ export const Footer: React.FC = () => {
               href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Privacy+Policy.pdf'
               target='_blank'
               rel='noopener noreferrer'
+              onClick={openExternal(
+                'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Privacy+Policy.pdf'
+              )}
               className='text-gray-400 hover:text-[#9CFF3A] transition-colors text-xs md:text-sm'
             >
               {t('footer.privacy')}
@@ -116,6 +133,9 @@ export const Footer: React.FC = () => {
               href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Terms+of+Service.pdf'
               target='_blank'
               rel='noopener noreferrer'
+              onClick={openExternal(
+                'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Terms+of+Service.pdf'
+              )}
               className='text-gray-400 hover:text-[#9CFF3A] transition-colors text-xs md:text-sm'
             >
               {t('footer.terms')}
@@ -128,6 +148,66 @@ export const Footer: React.FC = () => {
             >
               {t('footer.docs')}
             </a>
+
+            {/* Audit Report Dropdown */}
+            <div ref={auditRef} className='relative'>
+              <button
+                type='button'
+                onClick={() => setAuditOpen(prev => !prev)}
+                className='text-gray-400 hover:text-[#9CFF3A] transition-colors text-xs md:text-sm cursor-pointer flex items-center gap-1'
+              >
+                {t('footer.auditReport')}
+                <svg
+                  className={`w-3 h-3 transition-transform ${auditOpen ? 'rotate-180' : ''}`}
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M19 9l-7 7-7-7'
+                  />
+                </svg>
+              </button>
+              <div
+                className={`absolute bottom-full right-0 mb-2 w-max bg-[#1A1A1A] border border-white/10 rounded-lg shadow-xl transition-all duration-200 z-50 ${
+                  auditOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+                }`}
+              >
+                <div className='py-2 flex flex-col'>
+                  <a
+                    href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Cyberalpha+Protocol+Phase2+-+SlowMist+Audit+Report.pdf'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    onClick={(event) => {
+                      setAuditOpen(false)
+                      openExternal(
+                        'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Cyberalpha+Protocol+Phase2+-+SlowMist+Audit+Report.pdf'
+                      )(event)
+                    }}
+                    className='px-4 py-2 text-xs md:text-sm text-gray-400 hover:text-[#9CFF3A] hover:bg-white/5 transition-colors whitespace-nowrap'
+                  >
+                    {t('footer.auditSlowMist')}
+                  </a>
+                  <a
+                    href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Tiko+Digital+IT+Audit+Report+2026+v1.0.pdf'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    onClick={(event) => {
+                      setAuditOpen(false)
+                      openExternal(
+                        'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Tiko+Digital+IT+Audit+Report+2026+v1.0.pdf'
+                      )(event)
+                    }}
+                    className='px-4 py-2 text-xs md:text-sm text-gray-400 hover:text-[#9CFF3A] hover:bg-white/5 transition-colors whitespace-nowrap'
+                  >
+                    {t('footer.auditTyler')}
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -12,6 +12,41 @@ import { useSignatureValidStatus } from '@/hooks/useSignature'
 import { PRIVACY_SERVICE } from '@/config/privacyService'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 
+export const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+  event.preventDefault()
+  event.stopPropagation()
+  const normalizedUrl = url.replace(/\+/g, '%20')
+  const isMobile = (() => {
+    const uaMobile = (navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData?.mobile
+    if (typeof uaMobile === 'boolean') return uaMobile
+
+    const hasTouch = navigator.maxTouchPoints > 0
+    const coarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false
+    if (hasTouch && coarsePointer) return true
+
+    return /Mobi|Mobile|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Windows Phone|Opera Mini|Kindle|Silk|CriOS|FxiOS/i.test(
+      navigator.userAgent
+    )
+  })()
+  const isWalletWebView =
+    /MetaMask|OKX|Binance|Trust|TokenPocket|imToken|Bitget|Bybit|CoinbaseWallet|Coin98|Rainbow|Phantom|SafePal|MathWallet|ONTO|1inch|Klever/i.test(
+      navigator.userAgent
+    )
+  const isPdf = /\.pdf(?:$|\?)/i.test(normalizedUrl)
+  const mobileTargetUrl =
+    isWalletWebView && isPdf
+      ? `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(normalizedUrl)}`
+      : normalizedUrl
+  if (isMobile) {
+    window.location.href = mobileTargetUrl
+    return
+  }
+  const opened = window.open(normalizedUrl, '_blank', 'noopener,noreferrer')
+  if (!opened) {
+    window.location.href = normalizedUrl
+  }
+}
+
 const Compliance = () => {
   const { t } = useTranslation()
   const { account } = useActiveWeb3()
@@ -21,26 +56,6 @@ const Compliance = () => {
   const [show, setShow] = useState(false)
   const [aggree, setAggreee] = useState(false)
   const [loading, setLoading] = useState(false)
-
-  const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const normalizedUrl = url.replace(/\+/g, '%20')
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-    const isWalletWebView = /MetaMask|OKX|Binance|Trust/i.test(navigator.userAgent)
-    const isPdf = /\.pdf(?:$|\?)/i.test(normalizedUrl)
-    const mobileTargetUrl = isWalletWebView && isPdf
-      ? `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(normalizedUrl)}`
-      : normalizedUrl
-    if (isMobile) {
-      window.location.href = mobileTargetUrl
-      return
-    }
-    const opened = window.open(normalizedUrl, '_blank', 'noopener,noreferrer')
-    if (!opened) {
-      window.location.href = normalizedUrl
-    }
-  }
 
   const getAgreementsAccepted = async () => {
     setLoading(true)
