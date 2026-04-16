@@ -28,13 +28,13 @@ export const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchor
       navigator.userAgent
     )
   })()
-  const pdfUnsupportedWallets = ['MetaMask']
-  const isPdfUnsupportedWallet = pdfUnsupportedWallets.some(wallet =>
-    new RegExp(wallet, 'i').test(navigator.userAgent)
-  )
+  const isWalletWebView =
+    /MetaMask|OKX|Binance|Trust|TokenPocket|imToken|Bitget|Bybit|CoinbaseWallet|Coin98|Rainbow|Phantom|SafePal|MathWallet|ONTO|1inch|Klever/i.test(
+      navigator.userAgent
+    )
   const isPdf = /\.pdf(?:$|\?)/i.test(normalizedUrl)
   const mobileTargetUrl =
-    isPdfUnsupportedWallet && isPdf
+    isWalletWebView && isPdf
       ? `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(normalizedUrl)}`
       : normalizedUrl
   if (isMobile) {
