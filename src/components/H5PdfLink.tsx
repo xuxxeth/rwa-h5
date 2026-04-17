@@ -14,6 +14,9 @@ export function H5PdfLink(props: {
   // 使用 useRef 记录定时器和监听器引用，方便在 useEffect 中清理
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const listenerRef = useRef<(() => void) | null>(null)
+  // 记录当前是否已经有 Toast 在展示中
+  const isToastShowingRef = useRef<boolean>(false)
+  const toastResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 提取公共的清理函数，使用 useCallback 包裹以保持引用稳定
   const clearTimersAndListeners = useCallback(() => {
@@ -29,10 +32,17 @@ export function H5PdfLink(props: {
 
   // 确保组件卸载时，强行清理可能还挂着的定时器和监听器
   useEffect(() => {
-    return clearTimersAndListeners
-  }, [])
+    return () => {
+      clearTimersAndListeners()
+      if (toastResetTimerRef.current) {
+        clearTimeout(toastResetTimerRef.current)
+      }
+    }
+  }, [clearTimersAndListeners])
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     // 优先执行父组件传进来的点击事件
     if (props.onClick) {
       props.onClick(e)
@@ -40,6 +50,13 @@ export function H5PdfLink(props: {
 
     // 防抖：在每次新的点击发生前，先清理掉上一次可能还未执行完的定时器和监听器
     clearTimersAndListeners()
+
+    const ua = navigator.userAgent;
+    const isAndroid = /android/i.test(ua);
+    console.log('ua', ua);
+    console.log('isAndroid', isAndroid)
+    const isOKX = /OKX/i.test(ua);
+    console.log('isOKX', isOKX)
 
     // 1. 先定义好新的监听器，挂载到 listenerRef.current 上
     // 监听页面隐藏（说明成功跳转、跳到新标签页或拉起了系统下载管理器）
@@ -54,9 +71,17 @@ export function H5PdfLink(props: {
     // 无论是什么设备、什么浏览器，只要 800 毫秒后页面没切走（没拉起下载，没跳新窗口）
     // 我们就认为它不支持当前的跳转行为，统一给出提示
     timerRef.current = setTimeout(() => {
-      // 再次确认页面是可见的，才弹出提示
-      if (document.visibilityState === 'visible') {
+      // 再次确认页面是可见的，并且当前没有 Toast 正在展示时，才弹出提示
+      if (document.visibilityState === 'visible' && !isToastShowingRef.current) {
         toastInfo({ title: t('viewPdf'), duration: 5000 })
+        
+        // 标记 Toast 正在展示
+        isToastShowingRef.current = true
+        // 设置 5 秒（与 duration 同步）后重置展示状态，允许再次弹出
+        toastResetTimerRef.current = setTimeout(() => {
+          isToastShowingRef.current = false
+          toastResetTimerRef.current = null
+        }, 5000)
       }
       
       // 注意：这里只清理定时器引用，不要调用 clearTimersAndListeners 移除监听器。
