@@ -11,13 +11,13 @@ import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import { useSignatureValidStatus } from '@/hooks/useSignature'
 import { PRIVACY_SERVICE } from '@/config/privacyService'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { H5PdfLink } from '@/components/H5PdfLink'
 
 export const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
-  event.preventDefault()
-  event.stopPropagation()
   const normalizedUrl = url.replace(/\+/g, '%20')
   const isMobile = (() => {
-    const uaMobile = (navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData?.mobile
+    const uaMobile = (navigator as Navigator & { userAgentData?: { mobile?: boolean } })
+      .userAgentData?.mobile
     if (typeof uaMobile === 'boolean') return uaMobile
 
     const hasTouch = navigator.maxTouchPoints > 0
@@ -29,16 +29,25 @@ export const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchor
     )
   })()
 
-  const isAndroid = /android/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent)
   console.log('isMobile', isMobile)
   console.log('isAndroid', isAndroid)
   console.log('navigator.userAgent', navigator.userAgent)
 
-  const isWalletWebView =
+  const isGenericAndroidWebView = isAndroid && /wv|WebView/i.test(navigator.userAgent)
+  console.log('isGenericAndroidWebView', isGenericAndroidWebView)
+
+  // 1. 匹配明确的钱包 UA
+  const isExplicitWallet =
     /MetaMask|OKX|Binance|Trust|TokenPocket|imToken|Bitget|Bybit|CoinbaseWallet|Coin98|Rainbow|Phantom|SafePal|MathWallet|ONTO|1inch|Klever/i.test(
       navigator.userAgent
     )
-  console.log("isWalletWebView", isWalletWebView)
+  console.log('isExplicitWallet', isExplicitWallet)
+
+  // 2. 匹配通用的 Android WebView 特征 (很多钱包包括 Binance 安卓版隐藏了自身名字，但保留了系统 WebView 的通用标识)
+  const isWalletWebView = isExplicitWallet || isGenericAndroidWebView
+  console.log('isWalletWebView', isWalletWebView)
+
   const isPdf = /\.pdf(?:$|\?)/i.test(normalizedUrl)
   const mobileTargetUrl =
     isWalletWebView && isPdf
@@ -166,25 +175,19 @@ const Compliance = () => {
                 </div>
                 <div className='text-[rgba(255,255,255,0.6)] text-sm/4.5'>
                   {t('identity.aggree1')}
-                  <a
+                  <H5PdfLink
                     href={PRIVACY_SERVICE.userService.url}
-                    target='_blank'
-                    rel='noopener noreferrer'
                     className='text-[rgba(26,133,255,1)]'
-                    onClick={openExternal(PRIVACY_SERVICE.userService.url)}
                   >
                     《{t('compliance.t15')}》
-                  </a>
+                  </H5PdfLink>
                   {t('compliance.t17')}
-                  <a
+                  <H5PdfLink
                     href={PRIVACY_SERVICE.privacy.url}
-                    target='_blank'
-                    rel='noopener noreferrer'
                     className='text-[rgba(26,133,255,1)]'
-                    onClick={openExternal(PRIVACY_SERVICE.privacy.url)}
                   >
                     《{t('compliance.t16')}》
-                  </a>
+                  </H5PdfLink>
                 </div>
               </div>
             </div>

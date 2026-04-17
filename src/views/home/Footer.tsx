@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
 import { openExternal } from '@/components/compliance'
+import { H5PdfLink } from '@/components/H5PdfLink'
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation('home')
@@ -118,29 +119,18 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className='flex gap-6 font-normal'>
-            <a
+            <H5PdfLink
               href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Privacy+Policy.pdf'
-              target='_blank'
-              rel='noopener noreferrer'
-              // 这两个不跳转 google docs
-              // onClick={openExternal(
-              //   'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Privacy+Policy.pdf'
-              // )}
               className='text-gray-400 hover:text-[#9CFF3A] transition-colors text-xs md:text-sm'
             >
               {t('footer.privacy')}
-            </a>
-            <a
+            </H5PdfLink>
+            <H5PdfLink
               href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Terms+of+Service.pdf'
-              target='_blank'
-              rel='noopener noreferrer'
-              // onClick={openExternal(
-              //   'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Terms+of+Service.pdf'
-              // )}
               className='text-gray-400 hover:text-[#9CFF3A] transition-colors text-xs md:text-sm'
             >
               {t('footer.terms')}
-            </a>
+            </H5PdfLink>
             <a
               href='https://tiko.gitbook.io/tiko-docs/'
               target='_blank'
@@ -178,34 +168,24 @@ export const Footer: React.FC = () => {
                 }`}
               >
                 <div className='py-2 flex flex-col'>
-                  <a
+                  <H5PdfLink
                     href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Cyberalpha+Protocol+Phase2+-+SlowMist+Audit+Report.pdf'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    onClick={(event) => {
-                      setAuditOpen(false)
-                      openExternal(
-                        'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Cyberalpha+Protocol+Phase2+-+SlowMist+Audit+Report.pdf'
-                      )(event)
-                    }}
                     className='px-4 py-2 text-xs md:text-sm text-gray-400 hover:text-[#9CFF3A] hover:bg-white/5 transition-colors whitespace-nowrap'
+                    onClick={() => {
+                      setAuditOpen(false)
+                    }}
                   >
                     {t('footer.auditSlowMist')}
-                  </a>
-                  <a
+                  </H5PdfLink>
+                  <H5PdfLink
                     href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Tiko+Digital+IT+Audit+Report+2026+v1.0.pdf'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    onClick={(event) => {
-                      setAuditOpen(false)
-                      openExternal(
-                        'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Tiko+Digital+IT+Audit+Report+2026+v1.0.pdf'
-                      )(event)
-                    }}
                     className='px-4 py-2 text-xs md:text-sm text-gray-400 hover:text-[#9CFF3A] hover:bg-white/5 transition-colors whitespace-nowrap'
+                    onClick={() => {
+                      setAuditOpen(false)
+                    }}
                   >
                     {t('footer.auditTyler')}
-                  </a>
+                  </H5PdfLink>
                 </div>
               </div>
             </div>
