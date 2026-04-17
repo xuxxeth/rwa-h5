@@ -122,9 +122,10 @@ export const Footer: React.FC = () => {
               href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Privacy+Policy.pdf'
               target='_blank'
               rel='noopener noreferrer'
-              onClick={openExternal(
-                'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Privacy+Policy.pdf'
-              )}
+              // 这两个不跳转 google docs
+              // onClick={openExternal(
+              //   'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Privacy+Policy.pdf'
+              // )}
               className='text-gray-400 hover:text-[#9CFF3A] transition-colors text-xs md:text-sm'
             >
               {t('footer.privacy')}
@@ -133,9 +134,9 @@ export const Footer: React.FC = () => {
               href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Terms+of+Service.pdf'
               target='_blank'
               rel='noopener noreferrer'
-              onClick={openExternal(
-                'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Terms+of+Service.pdf'
-              )}
+              // onClick={openExternal(
+              //   'https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Terms+of+Service.pdf'
+              // )}
               className='text-gray-400 hover:text-[#9CFF3A] transition-colors text-xs md:text-sm'
             >
               {t('footer.terms')}
