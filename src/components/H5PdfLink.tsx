@@ -53,7 +53,7 @@ export function H5PdfLink(props: {
     const isAndroid = /android/i.test(ua)
     console.log('ua', ua)
     console.log('isAndroid', isAndroid)
-    const isOKX = /OKX/i.test(ua)
+    const isOKX = /OKX|OKEx/i.test(ua)
     console.log('isOKX', isOKX)
 
     if (isAndroid && isOKX) {
