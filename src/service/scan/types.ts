@@ -40,7 +40,7 @@ export const OrderReason = {
 export type OrderReason = (typeof OrderReason)[keyof typeof OrderReason]
 
 // 0 仅盘中 4 盘前+盘后
-export type SessionType = 0 | 4
+export type SessionType = 0 | 4 | 3
 
 export interface IOpenOrder {
   id: string

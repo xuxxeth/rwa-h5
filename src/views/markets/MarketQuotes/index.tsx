@@ -40,6 +40,82 @@ import { MARKET_STATUS } from '@/config/constants'
 
 type SortableField = 'name' | 'token' | 'price' | 'change' | 'marketCap' | 'dailyHigh'
 
+export function TradeState({ state }: { state: number }) {
+  switch (state) {
+    case 1:
+      return (
+        <IconWithTooltip
+          triggerClassName='ml-2 shrink-0'
+          icon='/images/v2/icons/trade_halt.svg'
+          tooltip={'marketQuotes.tH'}
+        />
+      )
+    case 3:
+      return (
+        <IconWithTooltip
+          triggerClassName='ml-2 shrink-0'
+          icon='/images/v2/icons/only-sell.svg'
+          tooltip={'marketQuotes.buyForbidden'}
+        />
+      )
+    default:
+      return null
+  }
+}
+export function SessionType({ sessionMask }: { sessionMask: number }) {
+  const preMarket = 1 << 1
+  const afterMarket = 1 << 2
+  const overnight = 1 << 3
+
+  const { t } = useTranslation()
+  const marketTradeState = useBaseStore(state => state.marketTradeState)
+
+  switch (marketTradeState) {
+    case MARKET_STATUS.BEFORE:
+      if ((sessionMask & preMarket) === 0) {
+        return (
+          <IconWithTooltip
+            triggerClassName='ml-1 shrink-0'
+            icon='/images/v2/icons/session1.svg'
+            tooltip={
+              <span>{t('marketQuotes.noPreOrPost', { session: t('marketQuotes.preMarket') })}</span>
+            }
+          />
+        )
+      }
+      break
+    case MARKET_STATUS.AFTER:
+      if ((sessionMask & afterMarket) === 0) {
+        return (
+          <IconWithTooltip
+            triggerClassName='ml-1 shrink-0'
+            icon='/images/v2/icons/session1.svg'
+            tooltip={
+              <span>
+                {t('marketQuotes.noPreOrPost', { session: t('marketQuotes.afterMarket') })}
+              </span>
+            }
+          />
+        )
+      }
+      break
+    case MARKET_STATUS.OVERNIGHT:
+      if ((sessionMask & overnight) === 0) {
+        return (
+          <IconWithTooltip
+            triggerClassName='ml-1 shrink-0'
+            tooltipClassName='max-w-[260px]'
+            icon='/images/v2/icons/session2.svg'
+            tooltip={<span>{t('marketQuotes.noOvernight')}</span>}
+          />
+        )
+      }
+      break
+    default:
+      return null
+  }
+}
+
 export function useRwaListWithQuote(rwaList: IRwa[]) {
   const [tokenWithQuote, setTokenWithQuote] = useState<Record<string, IQuote>>({})
 
@@ -127,6 +203,7 @@ export default function MarketQuotes() {
   const marketQuotes = useRwaListWithQuote(newRwaList)
 
   const { paginatedData, totalPage, currentPage, onPrevClick, onNextClick } =
+    // @ts-ignore
     usePaginationData<IMarketQuote>(20, MarketQuotesListConfig, marketQuotes, sort)
 
   return (

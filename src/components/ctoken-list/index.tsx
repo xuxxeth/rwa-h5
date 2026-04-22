@@ -240,15 +240,16 @@ const CTokenList = memo(
       return favorites.map(favorite => rwaMap.get(favorite)).filter(rwa => rwa !== undefined)
     }, [rwaList, favorites, selectTab])
 
-
     const rwaListWithBalance = useMemo(() => {
-      return newRwaList.filter(rwa => rwa.state < 2).map(rwa => {
-        return {
+      return newRwaList.filter(rwa => rwa.state !== 2).map(rwa => {
+        const newRwa = {
           ...rwa,
           ...tokenWithBalance[symbolToLower(rwa.symbol)],
-          ...tokenWithPrice[symbolToLower(rwa.symbol)]
+          ...tokenWithPrice[symbolToLower(rwa.symbol)],
         }
-      }).sort((a, b) => Number(b.balance ?? '0') - Number(a.balance ?? '0'))
+        newRwa.balanceValue = multiply(newRwa?.balance ?? '0', tokenWithPrice[symbolToLower(rwa.symbol)]?.price ?? '0')
+        return newRwa
+      }).sort((a, b) => Number(b.balanceValue) - Number(a.balanceValue))
     }, [newRwaList, tokenWithBalance, tokenWithPrice])
 
     const [searchTerm, setSearchTerm] = useState("")

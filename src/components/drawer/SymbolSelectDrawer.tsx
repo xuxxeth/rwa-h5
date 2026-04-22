@@ -19,6 +19,8 @@ import { multiply, symbolToLower } from '@/utils'
 import type { IRwa } from '@/service/base/types'
 import IconWithTooltip from '@/components/icon-tooltip'
 import { MARKET_STATUS } from '@/config/constants'
+import { MarketStatus } from '../markets/MarketStatus'
+import { SessionType, TradeState } from '@/views/markets/MarketQuotes'
 
 /* ────────────────────────── types ────────────────────────── */
 
@@ -33,61 +35,32 @@ type SortableField = 'name' | 'change' | 'marketCap'
 /* ────────────────────────── sub-components ───────────────── */
 
 /** Price + change% column */
-const TokenPrice = memo(({ symbol, marketOpen, state }: { symbol: string; marketOpen?: boolean; state?: string }) => {
-  const tokenPrice = useRwaPrice(symbol)
-  // const up = useMemo(() => Number(tokenPrice?.up), [tokenPrice?.up])
-  const closeUp = useMemo(() => Number(tokenPrice?.closeUp), [tokenPrice?.closeUp])
-  const up = useMemo(() => Number(tokenPrice?.up), [tokenPrice?.up])
-
-  const nup = useMemo(() => {
-    return marketOpen ? up : closeUp
-  }, [closeUp, up, marketOpen])
+const TokenPrice = memo(({ token }: { token: IRwa }) => {
+  const nup = useMemo(() => Number(token?.up), [token?.up])
 
   return (
-    <div className="flex flex-col justify-center text-[16px]">
-      <div className={cn(
-        "flex items-center gap-x-1",
-        nup === 0 ? 'text-[#A1A1A1]' : nup > 0
-                ? "text-[#50E3C2]"
-                : "text-[rgba(227,80,122,1)]"
-      )}>
-        <span className=" font-medium text-[16px]">{tokenPrice?.closePrice ? ('$' + tokenPrice?.closePrice) : '--'}</span>
-        <div className=" font-normal flex items-center gap-x-[4px] text-[12px]">
+    <div className="text-[14px]">
+      <div 
+        className={
+          nup === 0 ? 'text-[#A1A1A1]' : nup > 0
+            ? "text-[#50E3C2] text-[12px]"
+            : "text-[rgba(227,80,122,1)] text-[12px]"
+        }
+      >
+        <span className=" font-medium text-[16px]">{token?.price ? ('$' + token?.price) : '--'}</span>
+        <div className=" font-normal flex items-center gap-x-[4px] mt-1">
           <span
+            
           >
             {nup !== 0 && (nup > 0 ? '+' : '-')}
             {Math.abs(Number( nup || "0")) || '0.00'}%
           </span>
         </div>
       </div>
-      {
-        !marketOpen && (
-          <div className="flex items-center gap-x-1 text-[#9DA3AF] text-[12px]">
-            <span className="">{tokenPrice?.price ? ('$' + tokenPrice?.price) : '--'}</span>
-            {
-              Number(tokenPrice?.price) > 0 ? (
-                <div className=" font-normal flex items-center gap-x-[4px]">
-                  <span
-                  >
-                    {up !== 0 && (up > 0 ? '+' : '-')}
-                    {Math.abs(Number(tokenPrice?.up || "0"))}%
-                  </span>
-                </div>
-              ) : 
-              <div className=" font-normal flex items-center gap-x-[4px]">
-                <span
-                >
-                  --
-                </span>
-              </div>
-            }
-            
-            <div className="pl-1 bg-[rgba(255,255,255,0.03)] h-[17px] flex items-center px-1 text-[10px] shrink-0">{state}</div>
-          </div>
-        )
-      }
+      
+      
     </div>
-  )
+  );
 })
 TokenPrice.displayName = 'TokenPrice'
 
@@ -99,7 +72,7 @@ const TokenHoldings = memo(
     const total = multiply(tokenBalance, tokenPrice)
 
     return (
-      <div className="flex flex-col items-stretch">
+      <div className="flex flex-col items-stretch shrink-0">
         <span className="text-right text-[16px] font-normal text-white">
           {formatTokenAmountWithCommas(tokenBalance)}
         </span>
@@ -121,8 +94,8 @@ const TokenRow = memo(
     >
       {/* Name section – fixed 140px */}
       <div className={cn(
-        "flex w-[124px] shrink-0 items-center gap-2",
-          account ? 'w-[124px]' : 'flex-1'
+        "flex w-[164px] shrink-0 items-center gap-2",
+          account ? 'w-[164px]' : 'flex-1'
         )
       }>
         <LazyImage src={token.icon} className="h-8 w-8 shrink-0 rounded-full" />
@@ -133,29 +106,25 @@ const TokenRow = memo(
           </div>
           <span className="truncate text-[14px] font-normal text-[#9DA3AF]">{token.name}</span>
         </div>
-        {token.state === 1 && (
-          <div 
-            onClick={e => {
-              e.stopPropagation()
-              e.preventDefault()
-            }}
-            onTouchEnd={e => {
-              e.stopPropagation()
-              e.preventDefault()
-            }}
-          >
-            <IconWithTooltip
-              triggerClassName=""
-              icon="/images/v2/icons/trade_halt.svg"
-              tooltip="portfolio.tH"
-            />
-          </div>
-        )}
+
+        <div className="flex items-center"
+          onClick={e => {
+            e.stopPropagation()
+            e.preventDefault()
+          }}
+          onTouchEnd={e => {
+            e.stopPropagation()
+            e.preventDefault()
+          }}
+        >
+          <TradeState state={token.state} />
+          <SessionType sessionMask={token.sessionMask} />
+        </div>
       </div>
 
       {/* Price / change – hug width */}
-      <div className={cn('shrink-0', account ? 'w-[136px]' : 'flex-1')}>
-        <TokenPrice symbol={token.symbol} marketOpen={marketOpen} state={state} />
+      <div className={cn('shrink-0', account ? 'w-[106px]' : 'flex-1')}>
+        <TokenPrice token={token} />
       </div>
 
       {/* Holdings – fill */}
@@ -184,25 +153,17 @@ export const SymbolSelectDrawer = memo(
     const rwaList = useRwas()
 
     /* ── merge balance + price ── */
-    const rwaListWithBalance = useMemo(
-      () =>
-        rwaList
-          .filter((rwa) => rwa.state < 2)
-          .map((rwa) => {
-            const balanceInfo = tokenWithBalance[symbolToLower(rwa.symbol)]
-            const priceInfo = tokenWithPrice[symbolToLower(rwa.symbol)]
-            return {
-              ...rwa,
-              ...balanceInfo,
-              ...priceInfo,
-              value: multiply(balanceInfo?.balance ?? '0', priceInfo?.price ?? '0')
-            }
-          })
-          .sort((a, b) => a.weight - b.weight)
-          .sort((a, b) => Number(b.value ?? '0') - Number(a.value ?? '0')
-      ),
-      [rwaList, tokenWithBalance, tokenWithPrice],
-    )
+    const rwaListWithBalance = useMemo(() => {
+      return rwaList.filter(rwa => rwa.state !== 2).map(rwa => {
+        const newRwa = {
+          ...rwa,
+          ...tokenWithBalance[symbolToLower(rwa.symbol)],
+          ...tokenWithPrice[symbolToLower(rwa.symbol)],
+        }
+        newRwa.balanceValue = multiply(newRwa?.balance ?? '0', tokenWithPrice[symbolToLower(rwa.symbol)]?.price ?? '0')
+        return newRwa
+      }).sort((a, b) => Number(b.balanceValue) - Number(a.balanceValue))
+    }, [rwaList, tokenWithBalance, tokenWithPrice])
 
     /* ── search ── */
     const [searchTerm, setSearchTerm] = useState('')
@@ -229,8 +190,8 @@ export const SymbolSelectDrawer = memo(
             return sort.order === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
           }
           case 'change': {
-            const upA = marketTradeState === MARKET_STATUS.OPEN ? Number(a.up) : Number(a.closeUp) || 0
-            const upB = marketTradeState === MARKET_STATUS.OPEN ? Number(b.up) : Number(b.closeUp) || 0
+            const upA = Number(a.up) || 0
+            const upB = Number(b.up) || 0
             return sort.order === 'asc'
               ? upA - upB
               : upB - upA
@@ -297,8 +258,8 @@ export const SymbolSelectDrawer = memo(
       }} title={t('Select a token')}>
         <div className="flex flex-col gap-4 bg-[#1A1B1E] pt-4">
           {/* ── Search ── */}
-          <div className="px-5">
-            <div className="flex items-center gap-1 rounded-[4px] bg-[#131416] p-2">
+          <div className="px-5 flex items-center gap-2">
+            <div className="flex items-center gap-1 rounded-[4px] bg-[#131416] p-2 flex-1">
               <Search size={18} color="#737A87" className="shrink-0" />
               <Input
                 className="h-auto pl-0 text-[16px] font-normal text-white placeholder:text-[#737A87]"
@@ -307,6 +268,7 @@ export const SymbolSelectDrawer = memo(
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            <MarketStatus />
           </div>
 
           {/* ── Column headers + list ── */}
@@ -315,8 +277,8 @@ export const SymbolSelectDrawer = memo(
             <div className="flex items-center gap-1 px-5 text-[14px] font-normal text-[#9DA3AF]">
               <div
                 className={cn(
-                  "flex w-[124px] shrink-0 cursor-pointer items-center gap-1",
-                  account ? 'w-[124px]' : 'flex-1'
+                  "flex w-[164px] shrink-0 cursor-pointer items-center gap-1",
+                  account ? 'w-[164px]' : 'flex-1'
                 )}
                 onClick={() => onSortChange('name')}
               >
@@ -326,7 +288,7 @@ export const SymbolSelectDrawer = memo(
               <div
                 className={cn(
                   'flex shrink-0 cursor-pointer items-center gap-0.5',
-                  account ? 'w-[136px]' : 'flex-1',
+                  account ? 'w-[126px]' : 'flex-1',
                 )}
                 onClick={() => onSortChange('change')}
               >

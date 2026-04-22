@@ -131,6 +131,7 @@ export const OrderConfirmDrawer = memo(
             <Row
               label={t('v3.t18')}
               value={
+                sessionType === SessionType.OVERNIGHT ? t('v3.t171') :
                 sessionType === SessionType.PRE_MARKET_AND_AFTER_HOURS
                   ? t('v3.t17')
                   : t('v3.t16')

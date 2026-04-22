@@ -42,6 +42,8 @@ import { MarketCloseTips } from './components/MarketCloseTips.tsx'
 const KycState = lazy(() => import("@/components/kyc-state"));
 import { cn } from '@/utils'
 import { RateDisplay } from './components/RateDisplay.tsx'
+import { MarketStatus } from '@/components/markets/MarketStatus.tsx'
+import { RwaSessionStatus } from '@/components/markets/RwaSessionStatus.tsx'
 
 
 export const TradePage = () => {
@@ -244,6 +246,8 @@ export const TradePage = () => {
     action,
     inputTokenBalance,
     outputTokenBalance,
+    effectivePrice,
+    realtimePrice: realtimeData?.p ? String(realtimeData.p) : '',
     t,
     language: i18n.language,
   })
@@ -295,6 +299,10 @@ export const TradePage = () => {
 
         {/* 交易操作区 */}
         <div className='flex flex-col gap-2'>
+          <div className="mb-1">
+            <MarketStatus from="trade" />
+          </div>
+          <RwaSessionStatus from="lite-trade" />
           {/* 买入/卖出 Tab */}
           <BuySellTabs />
 

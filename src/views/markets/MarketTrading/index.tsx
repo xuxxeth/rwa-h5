@@ -1,7 +1,6 @@
 import { BoxCard } from '@/components/BoxCard'
 import { useTranslation } from '@/hooks/useTranslation'
 import { ConvertTabs } from '@/components/markets/ConvertTabs'
-import { TradeBox } from '@/components/markets/TradeBox'
 import { FAQ } from '@/components/markets/FAQ'
 import { KlineBody } from '../components/Klinebody'
 import { DialogController, useShowDialog } from '@/components/dialog/DialogController'
@@ -31,7 +30,6 @@ function Markets() {
                   <div className=' mt-3 '>
                     <TradeTypeSwitch />
                   </div>
-                  <TradeBox from='markets' />
                 </BoxCard>
                 <FAQ />
               </div>

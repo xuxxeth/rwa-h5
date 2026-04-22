@@ -11,6 +11,7 @@ import { MARKET_STATUS } from '@/config/constants'
 import { SessionSelectDrawer } from '@/components/drawer/SessionSelectDrawer'
 import { useTradingStartTime } from '@/hooks/useMarketState'
 import { useSupportRegular } from '@/hooks/useSupportRegular'
+import { useNotSupportSession } from '@/hooks/useNotSupportSession'
 
 export type ISessionTypeItem = {
   code: string
@@ -39,48 +40,93 @@ const SessionTypeSelect = memo(
       label: t('v3.t16'),
     })
     const [drawerOpen, setDrawerOpen] = useState(false)
-    const isRegular = useMemo(() => {
-      return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
-    }, [inputToken, tradingTime])
     const isOpenOrClose =
       marketTradeState === MARKET_STATUS.OPEN || marketTradeState === MARKET_STATUS.CLOSE
+    const isRegular = useMemo(() => {
+      return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER || tradingTime?.tradeState === MARKET_STATUS.OVERNIGHT)
+    }, [inputToken, tradingTime])
 
-    useEffect(() => {
-      // - 盘前/盘后时段，两个选项都支持选，默认为盘前+盘后（Extended Hour）
-      // - 盘中/闭市时段，组件禁选，固定为盘中
-      if (isRegular) {
-        setTypeItem({
-          code: SessionType.DEFAULT,
-          label: t('v3.t16'),
-        })
-        updateSessionType(SessionType.DEFAULT)
-        return
-      }
-      if (marketTradeState === MARKET_STATUS.CLOSE || marketTradeState === MARKET_STATUS.OPEN) {
-        setTypeItem({ code: SessionType.DEFAULT, label: t('v3.t16') })
-        updateSessionType(SessionType.DEFAULT)
-      } else {
-        setTypeItem({ code: SessionType.PRE_MARKET_AND_AFTER_HOURS, label: t('v3.t17') })
-        updateSessionType(SessionType.PRE_MARKET_AND_AFTER_HOURS)
-      }
-    }, [marketTradeState, t, isRegular,])
-
+    const { notSupportBeforeOrAfter, notSupportOvernight } = useNotSupportSession(marketTradeState, inputToken)
 
     const sessionTypeList = useMemo(() => {
       return [
         {
           code: SessionType.PRE_MARKET_AND_AFTER_HOURS,
           label: t('v3.t17'),
-          timeLabel: tradingTime ? `${tradingTime.preOpenTime.H}:${tradingTime.preOpenTime.M} ~ ${tradingTime.openTime.H}:${tradingTime.openTime.M} (${t('v3.t31')}) + ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} ~ ${tradingTime.afterCloseTime.H}:${tradingTime.afterCloseTime.M} (${t('v3.t31')})` : '--:--',
-          disabled: isRegular
+          timeLabel: tradingTime ? `${t('v3.t31')}: ${tradingTime.preOpenTime.H}:${tradingTime.preOpenTime.M} ~ ${tradingTime.openTime.H}:${tradingTime.openTime.M} + ${t('v3.t31')}: ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} ~ ${tradingTime.afterCloseTime.H}:${tradingTime.afterCloseTime.M}` : '--:--',
+          timeLabelLocal: tradingTime ? `${tradingTime.preOpenTimeLocal.H}:${tradingTime.preOpenTimeLocal.M} ~ ${tradingTime.openTimeLocal.H}:${tradingTime.openTimeLocal.M} + ${tradingTime.closeTimeLocal.H}:${tradingTime.closeTimeLocal.M} ~ ${tradingTime.afterCloseTimeLocal.H}:${tradingTime.afterCloseTimeLocal.M}` : '--:--',
+          disabled: isRegular || tradingTime?.tradeState === MARKET_STATUS.OVERNIGHT || tradingTime?.tradeState === MARKET_STATUS.OPEN || tradingTime?.tradeState === MARKET_STATUS.CLOSE || notSupportBeforeOrAfter.notSupport, // 盘前盘后时间段，在夜盘、盘中和闭市状态下不可选
         },
         {
           code: SessionType.DEFAULT,
           label: t('v3.t16'),
-          timeLabel: tradingTime ? `${tradingTime.openTime.H}:${tradingTime.openTime.M} ~  ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} (${t('v3.t31')})` : '--:--',
+          timeLabel: tradingTime ? `${t('v3.t31')}: ${tradingTime.openTime.H}:${tradingTime.openTime.M} ~ ${tradingTime.closeTime.H}:${tradingTime.closeTime.M}` : '--:--',
+          timeLabelLocal: tradingTime ? `${tradingTime.openTimeLocal.H}:${tradingTime.openTimeLocal.M} ~ ${tradingTime.closeTimeLocal.H}:${tradingTime.closeTimeLocal.M}` : '--:--'
+        },
+        {
+          code: SessionType.OVERNIGHT,
+          label: t('marketQuotes.overnight'),
+          timeLabel: tradingTime ? `${t('v3.t31')}: ${tradingTime.nightTradingStartTime.H}:${tradingTime.nightTradingStartTime.M} ~ ${tradingTime.nightTradingEndTime.H}:${tradingTime.nightTradingEndTime.M}` : '--:--',
+          timeLabelLocal: tradingTime ? `${tradingTime.nightTradingStartTimeLocal.H}:${tradingTime.nightTradingStartTimeLocal.M} ~ ${tradingTime.nightTradingEndTimeLocal.H}:${tradingTime.nightTradingEndTimeLocal.M}` : '--:--',
+          // 夜盘时间段，仅在夜盘状态下可选
+          disabled: tradingTime?.tradeState !== MARKET_STATUS.OVERNIGHT || notSupportOvernight.notSupport
         }
       ]
-    }, [t, tradingTime, isRegular])
+    }, [t, tradingTime, isRegular, notSupportBeforeOrAfter.notSupport, notSupportOvernight.notSupport])
+
+    useEffect(() => {
+      // 盘前盘后，只支持盘中交易的股票，在盘前盘后和夜盘状态，默认显示盘中
+      if (isRegular) {
+        setTypeItem({
+          code: SessionType.DEFAULT,
+          label: t('v3.t16'),
+        })
+        updateSessionType(SessionType.DEFAULT)
+      }
+      // 闭闹和盘中
+      else if (marketTradeState === MARKET_STATUS.CLOSE || marketTradeState === MARKET_STATUS.OPEN) {
+        setTypeItem({
+          code: SessionType.DEFAULT,
+          label: t('v3.t16'),
+        })
+        updateSessionType(SessionType.DEFAULT)
+      }
+      // 夜盘
+      else if (marketTradeState === MARKET_STATUS.OVERNIGHT) {
+        // 如果当前是夜盘时间，但不支持夜盘交易，则默认选中仅盘中
+        if (notSupportOvernight.notSupport) {
+          setTypeItem({
+            code: SessionType.DEFAULT,
+            label: t('v3.t16'),
+          })
+          updateSessionType(SessionType.DEFAULT)
+        } else {
+            setTypeItem({
+            code: SessionType.OVERNIGHT,
+            label: t('marketQuotes.overnight'),
+          })
+          updateSessionType(SessionType.OVERNIGHT)
+        }
+        
+      } else {
+        // 如果不支持盘前或盘后单，则默认选中仅盘中
+        if (notSupportBeforeOrAfter.notSupport) {
+          setTypeItem({
+            code: SessionType.DEFAULT,
+            label: t('v3.t16'),
+          })
+          updateSessionType(SessionType.DEFAULT)
+        }  else {
+          // 其他情况默认选中盘前盘后 
+          setTypeItem({
+            code: SessionType.PRE_MARKET_AND_AFTER_HOURS,
+            label: t('v3.t17'),
+          })
+          updateSessionType(SessionType.PRE_MARKET_AND_AFTER_HOURS)
+        }
+      }
+    }, [marketTradeState, isRegular, t, notSupportBeforeOrAfter.notSupport, notSupportOvernight.notSupport, updateSessionType])
+
 
     return (
       <>
@@ -107,6 +153,10 @@ const SessionTypeSelect = memo(
                     <span className='font-semibold'>{t('v3.t17') ?? ' '}：</span>
                     <span>{t('v3.t20', {duration: sessionTypeList[0]?.timeLabel})}</span>
                   </div>
+                  <div className="mt-2">
+                    <span className=" font-semibold">{t('marketQuotes.overnight') ?? ' '}：</span>
+                    <span> {t('v3.t201', {duration: sessionTypeList[2]?.timeLabel})}</span>
+                  </div>
                 </div>
               }
             >
@@ -131,6 +181,7 @@ const SessionTypeSelect = memo(
 
         {/* Drawer */}
         <SessionSelectDrawer
+          sessionTypeList={sessionTypeList}
           open={drawerOpen}
           onOpenChange={setDrawerOpen}
           value={typeItem.code}

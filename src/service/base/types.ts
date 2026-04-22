@@ -25,10 +25,17 @@ export interface ITokenWithPrice  {
   "up"?: string, 
   "postUp"?: string, 
   "dailyHigh"?: string,
+  "upValue"?: string
 }
 
 // 0-正常，1-禁止买卖, 2-下架
 export type IRwaState = 0 | 1 | 2
+
+// 1 REGULAR
+// 2 PRE_MARKET
+// 4 AFTER_MARKET
+// 8 OVERNIGHT
+export type ISessionMask = 1 | 2 | 4 | 8
 
 export interface IStockWithPrice {
   "price"?: string , 
@@ -80,11 +87,20 @@ export interface IRwa {
   "tokens": string[],
   "precision": number,
   "state": IRwaState,
+  "sessionMask": number,
   "weight": number,
   "stockStatistics": {
     "totalShare": number,
     "circShare": number
-  }
+  },
+  "sessionMaskList"?: number[],
+  "is24H"?: boolean,
+  "balanceValue"?: string,
+  "balance"?: string,
+  "origin"?: string,
+  "up"?: string,
+  "upValue"?: string,
+  "price"?: string | number,
 }
 
 export type IRwaWithBalancePrice = IRwa & ITokenWithBalance & ITokenWithPrice
@@ -107,6 +123,8 @@ export interface IMarket {
   "timeInForce": number,
   "validDate": number,
   "slippage": string, // 默认滑点容忍度
+  "nightTradingEndTime": number,
+  "nightTradingStartTime": number
 }
 // 券商状态信息
 /**

@@ -15,7 +15,8 @@ interface SessionSelectDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   value: SessionType
-  onChange: (code: SessionType) => void
+  onChange: (code: SessionType) => void,
+  sessionTypeList: SessionOption[]
 }
 
 interface SessionOption {
@@ -67,7 +68,7 @@ SessionRow.displayName = 'SessionRow'
 /* ────────────────────────── main component ──────────────── */
 
 export const SessionSelectDrawer = memo(
-  ({ open, onOpenChange, value, onChange }: SessionSelectDrawerProps) => {
+  ({ open, onOpenChange, value, onChange, sessionTypeList }: SessionSelectDrawerProps) => {
     const { t } = useTranslation()
     const tradingTime = useTradingStartTime()
     const { isSupportRegular } = useSupportRegular()
@@ -75,29 +76,6 @@ export const SessionSelectDrawer = memo(
     const isRegular = useMemo(() => {
       return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
     }, [inputToken, tradingTime])
-
-
-    const sessionTypeList = useMemo<SessionOption[]>(
-      () => [
-        {
-          code: SessionType.DEFAULT,
-          label: t('v3.t16'),
-          timeLabel: tradingTime
-            ? `${tradingTime.openTime.H}:${tradingTime.openTime.M} ~ ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} (${t('v3.t31')})`
-            : '--:--',
-        },
-        {
-          code: SessionType.PRE_MARKET_AND_AFTER_HOURS,
-          label: t('v3.t17'),
-          timeLabel: tradingTime
-            ? `${tradingTime.preOpenTime.H}:${tradingTime.preOpenTime.M} ~ ${tradingTime.openTime.H}:${tradingTime.openTime.M} (${t('v3.t31')}) + ${tradingTime.closeTime.H}:${tradingTime.closeTime.M} ~ ${tradingTime.afterCloseTime.H}:${tradingTime.afterCloseTime.M} (${t('v3.t31')})`
-            : '--:--',
-          disabled: isRegular
-        },
-      ],
-      [t, tradingTime, isRegular],
-    )
-
 
     return (
       <Drawer open={open} onOpenChange={onOpenChange} title={t('v3.t18')}>

@@ -23,6 +23,13 @@ type ErrorHandlerKeys = (typeof CODE_TO_HANDLER)[keyof typeof CODE_TO_HANDLER]
 export type ErrorHandlers = {
   [key in ErrorHandlerKeys]?: () => void
 }
+export const RWA_STATUS = {
+  BUYANDSELL: 0,
+  HALT: 1,
+  OFFLINE: 2,
+  SELL: 3,
+  
+}
 
 export const MARKET_STATUS = {
   DEFAULT: -1,
@@ -30,6 +37,7 @@ export const MARKET_STATUS = {
   BEFORE: 1,
   OPEN: 2,
   AFTER: 3,
+  OVERNIGHT: 4
 }
 
 export const RISK_STATUS = {
