@@ -13,7 +13,7 @@ import type {
   IStockWithPrice,
   IChain,
 } from '@/service/base/types'
-import { truncate, checkSymbolEqual, symbolToLower, getEasternSecondsSinceMidnight, calculateUp, subtract } from '@/utils'
+import { truncate, checkSymbolEqual, symbolToLower, getEasternSecondsSinceMidnight, calculateUp, subtract, numberToBinaryArray } from '@/utils'
 
 const ENABLE_CACHE = false
 // 缓存时间，2小时
@@ -130,7 +130,12 @@ export const useBaseStore = create<BaseStore>()(
       getBaseRwas: async (chainId?: number) => {
         const res = await baseApi.getBaseRwas(chainId)
         if (res.code === RESPONSE_CODE.SUCCESS) {
-          set({ rwaList: res.data || [] })
+          const rwaList = (res.data || []).map(rwa => ({
+            ...rwa,
+            is24H: rwa.sessionMask === 15,
+            sessionMaskList: numberToBinaryArray(rwa.sessionMask ?? 0),
+          }))
+          set({ rwaList: rwaList })
         }
         return res
       },

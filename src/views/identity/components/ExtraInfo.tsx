@@ -6,7 +6,7 @@ import { Upload } from "./Upload"
 import { useToast } from "@/hooks/useToast"
 import { kycApi } from "@/service/kyc/api"
 import { RESPONSE_CODE } from "@/config/constants"
-import { ErrorBox, InputBox, retryRefresh, useResetRetryCount, SectionBox, SectionTitle } from "./BaseInfo"
+import { ErrorBox, InputBox, retryRefresh, useResetRetryCount, SectionBox, SectionTitle, handleFormEnterKeyDown } from "./BaseInfo"
 import { KycInput } from "@/components/input/KycInput"
 import { KycTextarea } from "@/components/input/KycTextarea"
 import { useFieldArray } from "react-hook-form"
@@ -116,7 +116,11 @@ const ExtraInfo = memo(
     }
 
     return (
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-2 px-6">
+      <form 
+        className="w-full mt-2 px-6"
+        onSubmit={handleSubmit(onSubmit)}
+        onKeyDown={handleFormEnterKeyDown}
+        >
         
         {/* <SectionBox className="pb-5"> */}
           <SectionTitle>{t('kyc.t25')}</SectionTitle>

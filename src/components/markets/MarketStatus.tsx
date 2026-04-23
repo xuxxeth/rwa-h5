@@ -144,7 +144,7 @@ const MarketStatus = memo(
                 <div className="text-[12px] leading-[14px] shrink-0"
                   style={{ color: stateLabel.c, }}
                 >
-                  {stateLabel.t1}
+                  {stateLabel.t1 + t('v3.t39')}
                 </div>
               )
             }

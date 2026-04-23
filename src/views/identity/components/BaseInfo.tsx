@@ -22,6 +22,17 @@ import useDebouncedUnmount from '@/hooks/useDebouncedUnmount'
 import { parseISO } from 'date-fns'
 import { useKycStore } from '@/stores/kycStore'
 
+export const handleFormEnterKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+  if (e.key !== 'Enter') return
+
+  const target = e.target
+  if (target instanceof HTMLElement && target.tagName === 'TEXTAREA') {
+    return
+  }
+
+  e.preventDefault()
+}
+
 
 export function useResetRetryCount() {
   const updateRetryCount = useKycStore(state => state.updateRetryCount)
