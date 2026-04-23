@@ -15,7 +15,7 @@ const Warning = ({ children, className }: WarningProps) => {
         className,
       )}
     >
-      <InfoWarning size={18} className="shrink-0" />
+      <InfoWarning size={18} className="shrink-0 relative bottom-[2px]" />
       <div className="text-[12px] leading-[1.25em] text-yellow-50">
         {children}
       </div>

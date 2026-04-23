@@ -181,7 +181,7 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
         />
         <DataCell
           label={t('portfolio.orderTable.session')}
-          value={order.sessionType === 3 ? t('portfolio.rthOnly') : order.sessionType === 0 ? t('portfolio.rthOnly') : t('portfolio.preAfter')}
+          value={order.sessionType === 3 ? t('portfolio.overnight') : order.sessionType === 0 ? t('portfolio.rthOnly') : t('portfolio.preAfter')}
           align='right'
         />
       </div>

@@ -65,7 +65,7 @@ const SessionTypeSelect = memo(
         },
         {
           code: SessionType.OVERNIGHT,
-          label: t('marketQuotes.overnight'),
+          label: t('v3.t171'),
           timeLabel: tradingTime ? `${t('v3.t31')}: ${tradingTime.nightTradingStartTime.H}:${tradingTime.nightTradingStartTime.M} ~ ${tradingTime.nightTradingEndTime.H}:${tradingTime.nightTradingEndTime.M}` : '--:--',
           timeLabelLocal: tradingTime ? `${tradingTime.nightTradingStartTimeLocal.H}:${tradingTime.nightTradingStartTimeLocal.M} ~ ${tradingTime.nightTradingEndTimeLocal.H}:${tradingTime.nightTradingEndTimeLocal.M}` : '--:--',
           // 夜盘时间段，仅在夜盘状态下可选
@@ -103,7 +103,7 @@ const SessionTypeSelect = memo(
         } else {
             setTypeItem({
             code: SessionType.OVERNIGHT,
-            label: t('marketQuotes.overnight'),
+            label: t('v3.t171'),
           })
           updateSessionType(SessionType.OVERNIGHT)
         }
