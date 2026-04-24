@@ -5,7 +5,7 @@ import { useTradeStore } from "@/stores/tradeStore"
 import storage from "@/utils/storage"
 import { cn } from "@/utils/tw"
 import { memo, useMemo } from "react"
-import IconWithTooltip from "../../../../ca-web/src/components/icon-tooltip"
+import IconWithTooltip from "../icon-tooltip"
 
 const MarketStatus = memo(
   ({
@@ -115,7 +115,7 @@ const MarketStatus = memo(
           t1: t("marketQuotes.buyForbidden"),
           t2: t("marketQuotes.thHover"),
           c: '#CA3F64',
-          i: '/images/v2/icons/sell.png'
+          i: '/images/v2/icons/sell2.png'
         }
       }
 
