@@ -8,6 +8,7 @@ import { useTradeStore } from '@/stores/tradeStore'
 import { useSupportRegular } from '@/hooks/useSupportRegular'
 import { MARKET_STATUS } from '@/config/constants'
 import { cn } from '@/utils/tw'
+import IconWithTooltip from '../icon-tooltip'
 
 /* ────────────────────────── types ────────────────────────── */
 
@@ -23,6 +24,7 @@ interface SessionOption {
   code: SessionType
   label: string
   timeLabel: string
+  timeLabelLocal: string
   disabled?: boolean
 }
 
@@ -38,30 +40,50 @@ const SessionRow = memo(
     session: SessionOption
     selected: boolean
     onClick: () => void
-  }) => (
-    <div
-      className="flex cursor-pointer items-center justify-between gap-1 bg-gray-900 px-5 py-5 active:bg-gray-850"
-      onClick={() => {
-        if (!session.disabled) {
-          onClick()
-        }
-      }}
-    >
-      {/* Session label */}
-      <span className={cn(
-        "text-[16px] font-normal text-white shrink-0",
-        session.disabled ? 'text-gray-400' : 'text-white'
-      )}>{session.label}</span>
+  }) => {
+    const { t } = useTranslation()
+    return (
+      <IconWithTooltip tooltipClassName=" pr-8" triggerClassName="w-full" 
+        tooltip={session.disabled ? (<>
+        <div className="text-[12px]">
+          <span>{t('v3.t203') + ' '}</span>
+          <span className="text-[#9DA3AF]">{session.timeLabel}</span> 
+          {session.code === SessionType.PRE_MARKET_AND_AFTER_HOURS ? <br /> : null}
+          （<span className="text-[#9DA3AF]">{t('v3.t204') + ' ' + session.timeLabelLocal}</span>）
+          <span>{t('v3.t205')}</span>
+        </div>
+      </>) : undefined}
+      >
 
-      {/* Time label + check */}
-      <div className="flex items-center gap-2">
-        <div className="text-[14px] font-normal text-gray-400 max-w-[160px]">{session.timeLabel}</div>
-        <div className="flex h-5 w-5 items-center justify-center">
-          {selected && <CheckBlue size={20} color="var(--color-blue-50)" />}
+      <div
+        className={cn(
+          "flex cursor-pointer items-center justify-between gap-1 bg-gray-900 px-5 py-5 active:bg-gray-850 w-full",
+          session.disabled ? 'bg-gray-850' : ''
+        )}
+        onClick={() => {
+          if (!session.disabled) {
+            onClick()
+          }
+        }}
+      >
+        {/* Session label */}
+        <span className={cn(
+          "text-[16px] font-normal text-white shrink-0",
+          session.disabled ? 'text-gray-400' : 'text-white'
+        )}>{session.label}</span>
+
+        {/* Time label + check */}
+        <div className="flex items-center gap-2">
+          <div className="text-[14px] font-normal text-gray-500 max-w-[160px] text-right">{session.timeLabel}</div>
+          <div className="flex h-5 w-5 items-center justify-center">
+            {selected && <CheckBlue size={20} color="var(--color-blue-50)" />}
+          </div>
         </div>
       </div>
-    </div>
-  ),
+      </IconWithTooltip>
+
+    )
+  } ,
 )
 SessionRow.displayName = 'SessionRow'
 

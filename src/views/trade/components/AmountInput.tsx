@@ -77,7 +77,7 @@ export const AmountInput = ({
           />
           {tokenSymbol && (
             <button
-              className="flex items-center gap-[2px] rounded-full border border-gray-850 bg-gray-900 py-[2px] pl-1 pr-[2px]"
+              className="flex items-center gap-[2px] rounded-full border border-gray-850 bg-gray-900 py-[2px] pl-1 pr-[4px]"
               onClick={onTokenClick}
             >
               <img
