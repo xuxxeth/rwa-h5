@@ -137,8 +137,7 @@ const SessionTypeSelect = memo(
             className,
             from === 'lite-trade'
               ? 'bg-[#1A1B1E]'
-              : 'border border-solid border-[rgba(35,36,39,1)]',
-            isOpenOrClose ? 'border-[#232427]' : 'border-[#1A1B1E]'
+              : 'border border-solid border-[#1A1B1E]',
           )}
         >
           <div className='flex w-full items-center justify-between gap-2 text-[14px] font-normal text-white'>
@@ -167,14 +166,12 @@ const SessionTypeSelect = memo(
             <div
               className='flex items-center'
               onClick={() => {
-                if (!isOpenOrClose) {
-                  setDrawerOpen(true)
-                }
+                setDrawerOpen(true)
               }}
             >
               <span className='text-[#9DA3AF]'>{orderValue ?? ''}</span>
               <span className='ml-2 text-[14px] text-white'>{typeItem.label ?? '--'}</span>
-              {!isOpenOrClose && <ChevronDown size={20} className='ml-1 text-white' />}
+              {<ChevronDown size={20} className='ml-1 text-white' />}
             </div>
           </div>
         </div>
