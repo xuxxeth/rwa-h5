@@ -223,7 +223,7 @@ export const Hero: React.FC = () => {
 
         {/* Mobile Cards Container */}
         <div className='mt-10 w-full flex flex-col gap-4 md:hidden'>
-          {stockData.slice(0, 3).map((stock) => (
+          {stockData.slice(0, 3).map(stock => (
             <div
               key={stock.name}
               onClick={() => handleClick(stock as IRwa)}
@@ -242,18 +242,22 @@ export const Hero: React.FC = () => {
                   <LazyImage src={stock.icon} alt={stock.name} />
                 </div>
                 <div className='text-left'>
-                  <div className='font-bold text-gray-900 text-base leading-tight'>{stock.name}</div>
+                  <div className='font-bold text-gray-900 text-base leading-tight'>
+                    {stock.name}
+                  </div>
                   <div className='text-xs text-gray-400 font-medium mt-0.5'>{stock.symbol}</div>
                 </div>
               </div>
 
               {/* Right side: Price and Change */}
               <div className='flex flex-col items-end'>
-                <div className={`text-xl font-semibold ${stock.color} text-gray-900 tracking-tight leading-tight`}>
-                  {stock.price ? textPrefix(truncate(stock.price, stock.precision), '$') : ''}
+                <div
+                  className={`text-xl font-semibold ${stock.color} text-gray-900 tracking-tight leading-tight`}
+                >
+                  {stock.price ? textPrefix(truncate(stock.price, stock.precision), '$') : '--'}
                 </div>
                 <div className={`text-xs font-bold ${stock.color} mt-1`}>
-                  {stock.up !== undefined ? formatUp(stock.up) : ''}
+                  {stock.up !== undefined ? formatUp(stock.up) : '--'}
                 </div>
               </div>
             </div>

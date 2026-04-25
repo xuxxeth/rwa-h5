@@ -1,11 +1,10 @@
 export interface IAggregateData {
     timestamp: number
     items: {
-      S: string
-      p: number
-      c: number
-      pc: number
-      s: number
+      s: number  // 股票编号    
+      S: string  // 股票Symbol
+      p: number  // 最新价
+      o: number  // 今开价(24小时开始价格)新增
     }[]
   }
 
