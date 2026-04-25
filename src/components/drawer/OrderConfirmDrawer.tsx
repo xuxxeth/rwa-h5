@@ -221,7 +221,7 @@ export const OrderConfirmDrawer = memo(
             </div>
 
             <Button
-              className="h-[40px] w-full rounded-[8px] bg-white text-[14px] font-medium text-black hover:bg-white/90"
+              className="h-[48px] w-full rounded-[8px] bg-white text-[14px] font-medium text-black hover:bg-white/90"
               onClick={() => {
                 setShowConfirm(!innerShow)
                 onClick?.()

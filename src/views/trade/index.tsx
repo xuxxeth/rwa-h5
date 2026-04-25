@@ -294,8 +294,6 @@ export const TradePage = () => {
     <div className='flex min-h-screen flex-col bg-gray-950 font-normal'>
       <div className='flex flex-col gap-3 px-5 py-[10px]'>
         <KycState />
-        {/* 交易时段状态栏 */}
-        <SessionStatusBar />
 
         {/* 交易操作区 */}
         <div className='flex flex-col gap-2'>
@@ -373,7 +371,7 @@ export const TradePage = () => {
             <Button
               variant={buttonVariant}
               size='lg'
-              className={cn(`w-full !text-white`, isMarketCloseDisabled ? '!text-gray-500' : '')}
+              className={cn(`w-full !text-white`, (order.loading || uiState.disabled || isMarketCloseDisabled) ? '!text-gray-500' : '')}
               loading={order.loading}
               disabled={uiState.disabled || isMarketCloseDisabled || order.loading}
               onClick={() => {
