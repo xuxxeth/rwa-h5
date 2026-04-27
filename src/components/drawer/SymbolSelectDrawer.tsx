@@ -259,10 +259,10 @@ export const SymbolSelectDrawer = memo(
         <div className="flex flex-col gap-4 bg-[#1A1B1E] pt-4">
           {/* ── Search ── */}
           <div className="px-5 flex items-center gap-2">
-            <div className="flex items-center gap-1 rounded-[100px] bg-[#131416] p-1 flex-1">
+            <div className="flex items-center gap-1 rounded-[100px] bg-[#131416] p-2 flex-1">
               <Search size={18} color="#737A87" className="shrink-0" />
               <Input
-                className="h-[28px] pl-0 text-[16px] font-normal text-white placeholder:text-[#737A87]"
+                className="h-[20px] pl-0 text-[16px] font-normal text-white placeholder:text-[#737A87]"
                 placeholder={t('v2.tx.t36')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

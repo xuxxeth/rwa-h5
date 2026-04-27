@@ -528,3 +528,8 @@ body {
         transform: none;
     }
 }
+@media (max-width: 600px) {
+    [data-sonner-toaster] [data-sonner-toast] {
+      right: 16px !important;
+    }
+  }

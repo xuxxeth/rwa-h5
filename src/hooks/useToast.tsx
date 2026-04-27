@@ -10,7 +10,6 @@ import OpenOutline from '@/components/icons/set/OpenOutline'
 import CloseX from '@/components/icons/set/CloseX'
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
-
 interface CustomToastOptions {
   title: string
   btnText?: string

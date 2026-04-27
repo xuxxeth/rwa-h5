@@ -21,7 +21,7 @@ import { TradeType } from '@/hooks/useCaCommon'
 import { parseAmount, truncateUP, formatTokenAmountWithCommas, INTEGER_REGEX, symbolToLower } from '@/utils'
 import { useTokenBalance } from '@/hooks/useTokenBalances'
 import { useTrading } from '@/hooks/useTrading'
-import { useTxToast } from '@/hooks/useTxToast'
+import { setHx2ToastId, useTxToast } from '@/hooks/useTxToast'
 import { useCalcFee } from '@/hooks/useCalcFee'
 import { useToast } from '@/hooks/useToast'
 import { useTradeStoreBindings } from '@/components/markets/TradeBox/useTradeStoreBindings'
@@ -227,7 +227,8 @@ export const TradePage = () => {
     t,
     toastError,
     onStart: handleStartStep,
-    onSuccess: () => {
+    onSuccess: (result) => {
+      setHx2ToastId(result?.data?.transactionHash || '')
       freshTokenBalances()
       updateInputSize('')
     },

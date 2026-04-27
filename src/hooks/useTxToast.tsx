@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useTradeStore } from '@/stores/tradeStore'
 import { cn } from '@/utils/tw'
 import { useMemo } from 'react'
@@ -12,6 +12,22 @@ import StepWallet from '@/components/icons/set/StepWallet'
 import StepSign from '@/components/icons/set/StepSign'
 import StepChain from '@/components/icons/set/StepChain'
 import StepCheckCircle from '@/components/icons/set/StepCheckCircle'
+
+function useCanHover() {
+  const [canHover, setCanHover] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const update = () => setCanHover(mediaQuery.matches)
+
+    update()
+    mediaQuery.addEventListener('change', update)
+
+    return () => mediaQuery.removeEventListener('change', update)
+  }, [])
+
+  return canHover
+}
 
 interface CustomToastOptions {
   action: string // place | cancel
@@ -66,7 +82,8 @@ function StepIcon({ state, icon: IconComponent }: { state: StepState; icon: Reac
 
 export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
   const { t: $t } = useTranslation()
-
+  const [paused, setPaused] = useState(false)
+  const canHover = useCanHover()
   const buyStepsList: StepDef[] = [
     { step: 0, label: $t('v2.tx.t1'), labelIng: $t('v2.tx.t2'), icon: StepWallet },
     { step: 1, label: $t('v2.tx.t5'), labelIng: $t('v2.tx.t6'), icon: StepSign },
@@ -88,6 +105,9 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
 
   const txError = useTradeStore((s) => s.txError)
   const txSuccess = useTradeStore((s) => s.txSuccess)
+  const boundToastId = txSuccess.tx ? hx2ToastId[txSuccess.tx] : undefined
+  const isCurrentToastBound = boundToastId === t
+  const canShowTxResult = !txSuccess.tx || isCurrentToastBound
 
   const successMsg = useMemo(() => {
     if (txStep > 2 && !txError) return action === 'place' ? $t('v2.tx.t72') : $t('v2.tx.t73')
@@ -100,11 +120,39 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
       : successMsg
         ? successMsg
         : (currentStep?.labelIng ?? '')
+    // 如果有txSuccess.msg，说明是后端返回的消息，则3s后自动关闭toast；如果没有，则不自动关闭，等待用户点击关闭
+  const durationRef = useRef<number>(0)
+  // @ts-ignore
+  const timerRef = useRef<NodeJS.Timeout | undefined>(0)
+  useEffect(() => {
+    
+    if(txSuccess.tx && isCurrentToastBound) {
+      // timer = setTimeout(() => {
+      //   toast.dismiss(t)
+      // }, 3000)
+
+      timerRef.current = setInterval(() => {
+        if (durationRef.current > 30) {
+          durationRef.current = 0
+          toast.dismiss()
+          clearInterval(timerRef.current)
+        } else {
+          if (!paused) {
+            durationRef.current++
+          }
+          
+        }
+      }, 100)
+    }
+    return () => timerRef.current && clearInterval(timerRef.current)
+  }, [txSuccess.tx, paused, isCurrentToastBound])
 
   return (
-    <div className='w-[335px] overflow-hidden rounded-[8px]'>
+    <div className='w-[335px] overflow-hidden rounded-[8px]'
+      onClick={!canHover && txSuccess.tx ? () => setPaused((value) => !value) : undefined}
+    >
       {/* Header */}
-      <div className='flex items-center justify-between gap-2 border border-gray-750 bg-gray-800 px-3 py-1.5 rounded-t-[8px]'>
+      <div className='flex items-center justify-between gap-2 border border-gray-750 bg-gray-800 px-3 py-1.5 pt-2 rounded-t-[8px]'>
         <span className='text-[12px] font-medium leading-[1.25em] text-white'>
           {$t('v2.tx.txInProgress')}
         </span>
@@ -112,6 +160,7 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
           onClick={(e) => {
             e.stopPropagation()
             e.preventDefault()
+            timerRef.current && clearInterval(timerRef.current)
             toast.dismiss(t)
             onClick?.()
           }}
@@ -121,7 +170,7 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
       </div>
 
       {/* Body */}
-      <div className='relative flex flex-col gap-2 border border-t-0 border-gray-750 bg-gray-850 p-3 rounded-b-[8px]'>
+      <div className='relative flex flex-col gap-2 border border-t-0 border-gray-750 bg-gray-850 p-3 pb-2 rounded-b-[8px]'>
         {/* Steps row: each step is a column (icon + label), with connectors between icons */}
         <div className='flex w-full items-start justify-between gap-2'>
           {stepsList.map((step, index) => {
@@ -180,17 +229,23 @@ export function TxToastItem({ t, action, approveed, onClick }: ToastItemProps) {
           )}
         </div>
 
-        {/* <div className='absolute bottom-0 left-0 right-0 h-[3px] rounded-[10px] bg-gray-700' />
-        <div
-          className='absolute bottom-0 left-0 h-[3px] bg-green-100 transition-all duration-300'
-          style={{ width: `${Math.min(((txStep - stepsList[0].step) / stepsList.length) * 100, 100)}%` }}
-        /> */}
+        {canShowTxResult && txSuccess.tx && (
+          <div
+            className="absolute left-0 bottom-0 right-0 h-[3px] origin-left"
+            style={{
+              backgroundColor: '#2EE4A7',
+              animation: `toast-progress ${3000}ms linear forwards`,
+              animationPlayState: paused ? 'paused' : 'running',
+            }}
+          />
+        )}
       </div>
     </div>
   )
 }
 
 let currentToastId: string | number | undefined
+let hx2ToastId: {[key: string]: string | number | undefined} = {}
 
 export function getCurrentToastId() {
   return currentToastId
@@ -199,11 +254,37 @@ export function getCurrentToastId() {
 export function setCurrentToastId(id?: string | number) {
   currentToastId = id
 }
+/**
+ * 将hx和toastId绑定起来
+ * @returns 
+ */
+
+export function setHx2ToastId(hx: string) {
+  if (hx) {
+    hx2ToastId[hx] = getCurrentToastId()
+  }
+  
+}
+/**
+ * 根据toastId查找对应的hash，然后些hash对应的toastId清空
+ * @returns 
+ */
+
+export function updateHx2ToastId(toastId: number | string) {
+  const hxItem = Object.entries(hx2ToastId).find(item => item[1] === toastId)
+  if (hxItem && hxItem[0]) {
+    hx2ToastId[hxItem[0]] = undefined
+  }
+
+}
 
 export function useTxToast() {
   function toastFun({ duration, action, approveed, onClick }: CustomToastOptions) {
     toast.custom(
       (t) => {
+        // 更新前，先上一个toastId对应的hash清空掉
+        const toastId = getCurrentToastId()
+        toastId && updateHx2ToastId(toastId)
         setCurrentToastId(t)
         return <TxToastItem t={t} action={action} approveed={approveed} onClick={onClick} />
       },
@@ -215,8 +296,10 @@ export function useTxToast() {
     toastFun({ ...data })
   }
   function dismissTxToast() {
-    if (getCurrentToastId()) {
-      toast.dismiss(getCurrentToastId())
+    const toastId = getCurrentToastId()
+    if (toastId) {
+      updateHx2ToastId(toastId)
+      toast.dismiss(toastId)
       setCurrentToastId(undefined)
     }
   }
