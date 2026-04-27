@@ -40,7 +40,7 @@ function IconWithTooltip({
       if (isControlled) {
         controlledOnOpenChange?.(nextOpen)
       } else {
-        // Mobile-only behavior: block hover/focus auto-open, allow close only.
+        // Keep open state driven by trigger clicks; only allow Radix to close it.
         if (nextOpen) return
         setInternalOpen(nextOpen)
       }
@@ -103,9 +103,6 @@ function IconWithTooltip({
             'px-4 py-2 rounded-[8px] bg-gray-700 text-white font-normal text-xs duration-0 animate-none max-w-[250px]',
             tooltipClassName
           )}
-          onPointerDownOutside={(e) => {
-            e.preventDefault()
-          }}
         >
           {typeof tooltip === 'string' ? t(tooltip) : tooltip}
           <TooltipArrow className='fill-gray-700' />
