@@ -100,7 +100,7 @@ function IconWithTooltip({
         </TooltipTrigger>
         <TooltipContent
           className={cn(
-            'px-4 py-2 rounded-[8px] bg-gray-700 text-white font-normal text-xs duration-0 animate-none max-w-[250px]',
+            'p-3 rounded-[8px] bg-gray-700 text-white font-normal text-xs duration-0 animate-none max-w-[250px]',
             tooltipClassName
           )}
         >
