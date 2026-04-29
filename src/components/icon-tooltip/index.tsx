@@ -85,6 +85,9 @@ function IconWithTooltip({
       </>
     )
   }
+  if (!tooltip) {
+    return renderTrigger()
+  }
 
   return (
     <TooltipProvider>
