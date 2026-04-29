@@ -2,7 +2,7 @@ import { useActiveWeb3 } from "@/hooks/useActiveWe3";
 import { useRouter } from "@/hooks/useRouter";
 import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getCurrentToastId } from "@/hooks/useTxToast";
+import { getCurrentToastId, useTxToast } from "@/hooks/useTxToast";
 import { useBaseStore } from "@/stores/baseStore";
 import { useTradeStore } from "@/stores/tradeStore";
 import { useWssStore } from "@/stores/wssStore";
@@ -28,6 +28,7 @@ const Updater = memo(
     const { toastSuccess, toastError } = useToast()
     const { t } = useTranslation()
     const { account } = useActiveWeb3()
+    const { dismissTxToast } = useTxToast()
     const newOrder = useWssStore(state => state.newOrder)
     const setTxSuccess = useTradeStore(state => state.setTxSuccess)
     const freshTokenBalances = useBaseStore(state => state.freshTokenBalances)
@@ -129,9 +130,11 @@ const Updater = memo(
       }
       const toastId = getCurrentToastId()
       console.log("new order info", toastId, message)
-      if (toastId && newOrder.x !== "CANCELLED") {
+      // if (toastId && newOrder.x !== "CANCELLED") {
+      if (toastId && newOrder.x === "NEW") {
         setTxSuccess("success", message, newOrder.hx)
       } else if (!NO_SHOW_PATH.includes(router.location.pathname)) {
+        dismissTxToast()
         if (isFailed) {
           toastError({ title: message, tx: newOrder.hx })
         } else {
