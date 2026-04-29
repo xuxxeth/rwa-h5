@@ -10,6 +10,7 @@ import { usePendingStep } from '@/hooks/usePendingStep'
 import { CircleLoading } from '@/components/loading'
 import { useToast } from '@/hooks/useToast'
 import LivenessComplete from '../LivenessComplete'
+import { useKycStore } from '@/stores/kycStore'
 
 const faceLangPrefix = 'identity.face'
 
@@ -25,6 +26,7 @@ export default function FaceRecognition({
   isLivenessComplete?: boolean
 }) {
   const { toastSuccess } = useToast()
+  const updateRetryCount = useKycStore(state => state.updateRetryCount)
 
   const { t } = useTranslation()
   // undefined 表示还没有请求
@@ -81,6 +83,11 @@ export default function FaceRecognition({
       onResetRetry()
     }
   }, [status])
+
+  // 活体结果页没有自动刷新的问题，这里主动把 retryCount 设置为一个大于 5 的数字，使其不展示自动刷新的文案
+  useEffect(() => {
+    updateRetryCount(6)
+  }, [updateRetryCount])
 
   useEffect(() => {
     if (isExpired || !urlInfo || !urlInfo.url || !urlInfo.expireTime || !urlInfo.bizNo) return
