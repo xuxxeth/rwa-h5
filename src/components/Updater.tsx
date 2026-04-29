@@ -129,7 +129,8 @@ const Updater = memo(
       }
       const toastId = getCurrentToastId()
       console.log("new order info", toastId, message)
-      if (toastId && newOrder.x !== "CANCELLED") {
+      // if (toastId && newOrder.x !== "CANCELLED") {
+      if (toastId && newOrder.x === "NEW") {
         setTxSuccess("success", message, newOrder.hx)
       } else if (!NO_SHOW_PATH.includes(router.location.pathname)) {
         if (isFailed) {
