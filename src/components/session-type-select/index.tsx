@@ -183,7 +183,7 @@ const SessionTypeSelect = memo(
           onOpenChange={setDrawerOpen}
           value={typeItem.code}
           onChange={code => {
-            const label = code === SessionType.DEFAULT ? t('v3.t16') : t('v3.t17')
+            const label = code === SessionType.OVERNIGHT ? t('v3.t171') : code === SessionType.DEFAULT ? t('v3.t16') : t('v3.t17')
             setTypeItem({ code, label })
             updateSessionType(code)
           }}
