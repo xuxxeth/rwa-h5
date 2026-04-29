@@ -109,6 +109,8 @@ const Compliance = () => {
   useEffect(() => {
     if (account && isSignatureValid) {
       getAgreementsAccepted()
+    } else {
+      setShow(false)
     }
   }, [account, isSignatureValid])
 
