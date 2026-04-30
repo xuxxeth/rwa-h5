@@ -524,7 +524,7 @@ body {
 @media (max-width: 600px) {
     [data-sonner-toaster][data-x-position=center] {
         left: auto !important;
-        right: var(--mobile-offset-right);
+        right: 16px;
         transform: none;
     }
 }

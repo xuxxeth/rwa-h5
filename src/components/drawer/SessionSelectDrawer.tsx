@@ -92,13 +92,6 @@ SessionRow.displayName = 'SessionRow'
 export const SessionSelectDrawer = memo(
   ({ open, onOpenChange, value, onChange, sessionTypeList }: SessionSelectDrawerProps) => {
     const { t } = useTranslation()
-    const tradingTime = useTradingStartTime()
-    const { isSupportRegular } = useSupportRegular()
-    const inputToken = useTradeStore(state => state.inputToken)
-    const isRegular = useMemo(() => {
-      return isSupportRegular(inputToken?.symbol || '') && (tradingTime?.tradeState === MARKET_STATUS.BEFORE || tradingTime?.tradeState === MARKET_STATUS.AFTER)
-    }, [inputToken, tradingTime])
-
     return (
       <Drawer open={open} onOpenChange={onOpenChange} title={t('v3.t18')}>
         <div className="flex flex-col bg-gray-900">
