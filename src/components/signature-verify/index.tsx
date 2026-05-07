@@ -47,8 +47,8 @@ export default function SignatureVerify(props: {
           {subDesc && t(subDesc)}
         </div>
       ) : (
-        <div className='text-xs text-base text-gray-400 font-normal text-center'>
-          <div className={cn('w-[450px] m-auto', descClassName)}>{t(desc)}</div>
+        <div className='text-base text-gray-400 font-normal text-center'>
+          <div className={cn('w-[350px] m-auto', descClassName)}>{t(desc)}</div>
           {subDesc && <div className={cn('w-[350px] m-auto', subDescClassName)}>{t(subDesc)}</div>}
         </div>
       )}

@@ -13,7 +13,7 @@ const Home = lazy(() => import('../views/home'));
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <Navigate to={'/trade'} replace />,
+    element: <MarketTrading />,
   },
   {
     path: '/home',

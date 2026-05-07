@@ -81,7 +81,7 @@ function IdentityEntry() {
         isTitleSameLine={false}
         buttonClassName='mt-4 text-base'
         titleClassName='text-2xl'
-        descClassName='w-[550px] text-lg'
+        descClassName='text-lg'
         desc='identity.signd'
         subDescClassName='text-lg'
         subDesc='identity.signSubd'
@@ -97,6 +97,9 @@ function IdentityEntry() {
 function Identity({ account }: { account: string }) {
   const { i18n } = useTranslation()
   const router = useRouter()
+  const [unauthorized, setUnauthorized] = useState(false)
+  const lang = useI18nLanguage(i18n)
+  const [isSignatureValid, refreshIsSignatureValid] = useSignatureValidStatus()
 
   const [kycDetail, setKycDetail] = useState<IKycDetail | undefined>(undefined)
   const expireStatus = useKycExpired()
@@ -124,6 +127,19 @@ function Identity({ account }: { account: string }) {
       //   updateRetryCount(retryCount.current)
       // }
       const res = await kycApi.getKycDetail()
+      // 签名失败
+      // @ts-ignore
+      if (res?.error === 'Unauthorized') {
+        setUnauthorized(true)
+        return {
+          code: 500,
+          data: {
+            overallStatus: KYC_OVERALL_STATUS.VERIFYING,
+            applyStatus: KYC_OVERALL_STATUS.VERIFYING,
+          },
+          message: null,
+        }
+      }
       if (res?.data) {
         if (pendingStepRef.current) {
           const stepRes = await kycApi.getKycStepDetail(pendingStepRef.current)
@@ -384,6 +400,29 @@ function Identity({ account }: { account: string }) {
       },
     ]
   }, [kycDetail, expireStatus, isRetry])
+
+  if (unauthorized) {
+    return (
+      <div className='px-4'>
+        <SignatureVerify
+          isTitleSameLine={lang === 'zh'}
+          buttonClassName='mt-4 text-base'
+          titleClassName='text-2xl'
+          descClassName='text-lg'
+          desc='identity.signd'
+          subDescClassName='text-lg'
+          subDesc='identity.signSubd'
+          className='mt-24'
+          refreshIsSignatureValid={() => {
+            setUnauthorized(false)
+            refreshIsSignatureValid()
+            refresh(true)
+          }}
+        />
+      </div>
+      
+    )
+  }
 
   const matchedRule = rules.find(r => r.match())
   if (matchedRule) {

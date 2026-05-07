@@ -9,7 +9,7 @@ import { useRouter } from "@/hooks/useRouter";
 import { usePendingStep } from "@/hooks/usePendingStep";
 import { formatSecondsToDateTime } from "@/utils/format";
 
-const NO_SHOW_PATH = ['/identity', '/']
+const NO_SHOW_PATH = ['/identity', '/home']
 
 const defaultContent = {title: '', content: '', btnText: '', btn: ''}
 
