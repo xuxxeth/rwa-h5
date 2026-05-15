@@ -11,6 +11,7 @@ import { KYC_UPLOAD_STORAGE_KEY } from "@/views/identity/components/Upload/share
 import { OrderReason } from "@/service/scan/types";
 import { lazy, memo, useCallback, useEffect, useRef } from "react";
 import { useGetTokenBalances } from "@/hooks/useTokenBalances";
+import { useFetchKycStatus } from "@/hooks/useKycStatus";
 const Compliance = lazy(() => import("@/components/compliance"));
 
 const NO_SHOW_PATH = ['/home']
@@ -159,6 +160,8 @@ const Updater = memo(
       }
       preAccount.current = account
     }, [account])
+
+    useFetchKycStatus()
 
     return (
       <>

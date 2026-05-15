@@ -237,7 +237,6 @@ export const SymbolSelectDrawer = memo(
           stateLabel = t("v3.t25")
         }
       }
-      console.log('marketTradeState', marketTradeState, stateLabel)
       return stateLabel
     }, [
       t,

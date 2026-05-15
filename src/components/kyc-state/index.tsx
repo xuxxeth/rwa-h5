@@ -129,15 +129,26 @@ const KycState = () => {
       setShow(true)
       return
     }
+    // 需要人工复审
+    if (pendingStep.manualReiview && kycDetail?.status === KYC_STATUS.DECLINED) {
+      setContent({
+        title: t('kyc.t71'),
+        content: t('kyc.t72', {expire: formatSecondsToDateTime(Math.floor((kycDetail?.expireTime || 0) / 1000))}),
+        btnText: t('kyc.t35'),
+        btn: 'upload'
+      })
+      setShow(true)
+      return
+    }
     if (!kycDetail && !pendingStep.step) {
       setShow(false)
       setContent(defaultContent)
     }
+
     if (!kycDetail || isNotShow || pendingStep.step) {
       
       return
     } 
-
 
     if (ocrIncome && kycDetail?.expireTime) {
       setContent({

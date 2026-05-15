@@ -182,11 +182,12 @@ function Identity({ account }: { account: string }) {
     if (livenessCompleteDetail.isLivenessSuccess) {
       return
     }
+    if (!pendingStep.loaded) return
     if (pendingStep.step) {
       pendingStepRef.current = pendingStep.step
     }
     refresh(true)
-  }, [account, pendingStep.step, livenessCompleteDetail.isLivenessSuccess])
+  }, [account, pendingStep.loaded, pendingStep.step, livenessCompleteDetail.isLivenessSuccess])
 
   // 切换语言， 重新拉取认证详情
   useEffect(() => {
@@ -250,7 +251,7 @@ function Identity({ account }: { account: string }) {
       },
       {
         match: () => overallStatus === KYC_OVERALL_STATUS.ISSUE,
-        render: () => <VerifyIssue />,
+        render: () => <VerifyIssue issueInfo={kycDetail?.userInfo?.reviewInfo?.reviewCommentToUser} />,
       },
       // 认证中 - Income High Risk
       {
@@ -275,7 +276,9 @@ function Identity({ account }: { account: string }) {
             // 认证中或人工审核中都显示 认证中状态， 因为人工审核中也是在审核这个 OCR 结果
             (status === KYC_STATUS.VERIFYING || status === KYC_STATUS.REVIEW)) ||
           // 认证后，子流程需要重新提交收入证明材料
-          (verifyType === KYC_VERIFY_TYPE.INCOME && status === KYC_STATUS.REVIEW),
+          (verifyType === KYC_VERIFY_TYPE.INCOME && status === KYC_STATUS.REVIEW)  ||
+          (verifyType === KYC_VERIFY_TYPE.MANUAL_VERIFICATION && status === KYC_STATUS.REVIEW),
+          
         render: () => <Verifying refresh={refresh} />,
       },
       // 认证中 - OCR Failed/Rejected Retry
@@ -326,6 +329,19 @@ function Identity({ account }: { account: string }) {
       //     />
       //   ),
       // },
+            // 人工复核
+      {
+        match: () =>
+          overallStatus === KYC_OVERALL_STATUS.VERIFYING &&
+          verifyType === KYC_VERIFY_TYPE.MANUAL_VERIFICATION &&
+          status === KYC_STATUS.DECLINED,
+        render: () => (
+          <ExtraInfo
+            reviewCommentToUser={kycDetail?.userInfo?.reviewInfo?.reviewCommentToUser}
+            refresh={refresh}
+          />
+        ),
+      },
       // 认证中 - Liveness Verifying or Retry
       {
         match: () =>
@@ -366,6 +382,7 @@ function Identity({ account }: { account: string }) {
           (status === KYC_STATUS.VERIFYING || status === KYC_STATUS.REVIEW),
         render: () => <Verifying refresh={refresh} />,
       },
+      
       // 认证中 - AML Declined (AML 驳回)
       {
         match: () =>

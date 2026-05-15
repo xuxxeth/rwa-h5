@@ -45,13 +45,16 @@ export function FaceRecognitionFailed(props: { retry: () => void }) {
   )
 }
 
-export function VerifyIssue() {
+export function VerifyIssue(props: {
+  issueInfo?: string
+}) {
   const router = useRouter()
   return (
     <VerifyStatus
       type='failed'
       title='f'
       detail='issue'
+      issueInfo={props.issueInfo}
       btnText='h'
       btnOnClick={() => router.push('/')}
     />
@@ -82,6 +85,7 @@ function VerifyStatus(props: {
   retryComponent?: ReactNode
   className?: string
   showBtn?: boolean
+  issueInfo?: string
 }) {
   const { t } = useTranslation()
   return (
@@ -91,6 +95,14 @@ function VerifyStatus(props: {
         <div className='mb-2 text-center text-base font-normal'>
           {t(`${langPrefix}.${props.title}`)}
         </div>
+        {
+          props.issueInfo && (
+            <div className='text-sm text-gray-400 text-center mb-2'>
+              {props.issueInfo}
+            </div>
+          )
+        }
+        
         <div className='text-sm text-gray-400 text-center'>
           {t(`${langPrefix}.${props.detail}`)}
         </div>

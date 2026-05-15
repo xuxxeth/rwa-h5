@@ -525,11 +525,14 @@ body {
     [data-sonner-toaster][data-x-position=center] {
         left: auto !important;
         right: 16px;
-        transform: none;
+        transform: translateX(0px) !important;
     }
+    
 }
+
 @media (max-width: 600px) {
     [data-sonner-toaster] [data-sonner-toast] {
       right: 16px !important;
+      transform: translateX(0px) !important;
     }
   }
