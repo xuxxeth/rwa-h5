@@ -34,6 +34,9 @@ interface TradeSummaryProps {
   brokerageFee: string
   /** 交易活动费 */
   tradingActivityFee: string
+  secFee: string,
+  catFee: string,
+  feeRate: string,
   /** 网络费(原生币) */
   networkFeeInNative: string
   /** 是否买入 */
@@ -54,6 +57,9 @@ export const TradeSummary = ({
   platformFee,
   brokerageFee,
   tradingActivityFee,
+  secFee,
+  catFee,
+  feeRate,
   networkFeeInNative,
   isBuy,
   decimals,
@@ -63,27 +69,11 @@ export const TradeSummary = ({
   const tradeType = useTradeStore((s) => s.tradeType)
 
   // 兑换比例 toggle 状态
-  // const [isRateReversed, setIsRateReversed] = useState(false)
-
-  // const latestPriceDisplay = latestPrice ? truncate(latestPrice, 2) : '--'
-
-  // 正向：1 {symbol} = {limitPrice} {usdSymbol}
-  // 反向：1 {usdSymbol} = {1/limitPrice} {symbol}
-  // const { rateFrom, rateTo } = useMemo(() => {
-  //   if (!isRateReversed) {
-  //     return {
-  //       rateFrom: `1 ${symbol}`,
-  //       // rateTo: `${limitPrice} ${usdSymbol}`,
-  //       rateTo: <><div className='max-w-[240px] truncate'>{latestPriceDisplay} </div> {usdSymbol}</>
-  //     }
-  //   }
-  //   const inversePrice = toFixed(divide('1', limitPrice), decimals)
-  //   return {
-  //     rateFrom: `1 ${usdSymbol}`,
-  //     // rateTo: `${inversePrice} ${symbol}`,
-  //     rateTo: <><div className='max-w-[240px] truncate'>{inversePrice} </div> {symbol}</>
-  //   }
-  // }, [isRateReversed, limitPrice, symbol, usdSymbol, decimals])
+  const feeConfig = useTradeStore(state => state.feeConfig)
+  const feeRateConfig = useMemo(() => {
+      if (!feeConfig) return null
+      return isBuy ? feeConfig.buyFeeRate : feeConfig.sellFeeRate
+    },[feeConfig, isBuy])
 
   // 滑点展示，与 EstimatedInfo 保持一致
   const slippageDisplay = `${slippage}%${slippage === DEFAULT_SLIPPAGE ? ` (${t('v3.t3')})` : ''}`
@@ -141,6 +131,16 @@ export const TradeSummary = ({
             label: t('v2.tx.t33'),
             value: <><div className='max-w-[140px] truncate'>{tradingActivityFee} </div> {feeSymbol}</>,
             visible: !isBuy as boolean,
+          },
+          {
+            label: t('v2.tx.t47'),
+            value: `${secFee || '--'} ${feeSymbol}`,
+            visible: !isBuy && !feeRateConfig?.secFeeRate?.noFee,
+          },
+          {
+            label: t('v2.tx.t48'),
+            value: `${catFee || '--'} ${feeSymbol}`,
+            visible: !feeRateConfig?.catFeeRate?.noFee,
           },
           {
             label: t('v2.tx.t34'),

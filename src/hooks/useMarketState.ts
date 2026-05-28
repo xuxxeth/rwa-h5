@@ -1,32 +1,19 @@
-import { MARKET_STATUS } from "@/config/constants";
 import { useBaseStore } from "@/stores/baseStore";
-import { ta } from "date-fns/locale";
 import { useEffect, useMemo, useRef, useState } from "react";
+import wsService, { type IWSSMarketState } from "@/service/webSocket/service";
 
 export function useMarketState() {
   const getMarketState = useBaseStore(state => state.getMarketState)
-
-  const marketTimer = useRef<NodeJS.Timeout | null>(null)
+  const setMarketState = useBaseStore(state => state.setMarketState)
 
   useEffect(() => {
-    const getMarketStateInterval = () => {
-      getMarketState()
-        .finally(() => {
-          if (!marketTimer.current) {
-            marketTimer.current = setTimeout(() => {
-              marketTimer.current && clearTimeout(marketTimer.current)
-              marketTimer.current = null
-              getMarketStateInterval()
-            }, 5000)
-          }
-          
-        })
+     const listener = (data: IWSSMarketState) => {
+      setMarketState(data)
     }
-    getMarketStateInterval()
-
+    wsService.on('marketState', listener)
+    getMarketState()
     return () => {
-      marketTimer.current && clearTimeout(marketTimer.current)
-      marketTimer.current = null
+      wsService.off('marketState', listener)
     }
   }, [])
 
@@ -100,7 +87,7 @@ export function useTradingStartTime() {
   const { tradingStartTime, tradingEndTime, preMarketMinutes, afterMarketMinutes, nightTradingStartTime, nightTradingEndTime } = useBaseStore(state => state.marketInfo)
 
   const [countdown, setCountdown] = useState({H: '00', M: '00', S: '00'});
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // const timerRef = useRef<NodeJS.Timeout | null>(null);
   
   // useEffect(() => {
   //   const updateCountdown = () => {

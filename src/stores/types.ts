@@ -15,7 +15,35 @@ import type { ICandlesItem, ICandlesParams } from "@/service/kline/types";
 import type { IUserCofnig } from "@/service/risk/types";
 import type { IOrderData, ISummaryData, ISummaryDataItem } from "@/service/webSocket/types";
 import { type IKycDetail, type IKycStatus } from '@/service/kyc/types'
-import type { SessionType, TradeType } from "@/hooks/useCaCommon"
+import type { FeeItem, SessionType, TradeType } from "@/hooks/useCaCommon"
+import type { IWSSMarketState } from "@/service/webSocket/service";
+
+export type IFeeRate = {
+  value: string;
+  minValue: string;
+  maxValue: string;
+  noFee?: boolean;
+}
+
+export type IFeeConfig = {
+  platformFee: number;
+  buyFeeConfigs: FeeItem[];
+  sellFeeConfigs: FeeItem[];
+  buyFeeRate: {
+    platformFeeRate: IFeeRate;
+    brokerageFeeRate: IFeeRate;
+    tradingActivityFeeRate: IFeeRate;
+    secFeeRate: IFeeRate;
+    catFeeRate: IFeeRate;
+  };
+  sellFeeRate: {
+    platformFeeRate: IFeeRate;
+    brokerageFeeRate: IFeeRate;
+    tradingActivityFeeRate: IFeeRate;
+    secFeeRate: IFeeRate;
+    catFeeRate: IFeeRate;
+  };
+}
 
 export interface BaseStore {
   connectInit: boolean,
@@ -57,13 +85,16 @@ export interface BaseStore {
   getStocks: () => Promise<ApiResponse<IStock[]>>;
   getMarket: () => Promise<ApiResponse<IMarket>>;
   getMarketState: () => Promise<ApiResponse<IMarketState>>;
+  setMarketState: (data: IWSSMarketState) => void;
   updateRwasPrice: (priceList: IRwaPrice[]) => void;
   updateStocksPrice: (priceList: IRwaPrice[]) => void;
   freshTokenBalances: () => void;
   setCurrentChain: (chain: IChain | null) => void;
 }
 
+
 export interface TradeStore {
+  feeConfig: IFeeConfig | null;
   realtimeRwaData: ISummaryDataItem | null;
   inputToken: IRwa | null;
   outputToken: IToken | null;
@@ -94,6 +125,7 @@ export interface TradeStore {
   setTxError: (msg: string) => void
   setTxSuccess: (type: string, msg: string, tx: string) => void
   setRealtimeRwaData: (data: ISummaryDataItem | null) => void
+  setFeeConfig: (feeConfig: IFeeConfig | null) => void;
 }
 
 export interface WssStore {

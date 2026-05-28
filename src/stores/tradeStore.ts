@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { TradeStore } from './types'
+import type { IFeeConfig, TradeStore } from './types'
 
 import type { IRwa, IToken } from '@/service/base/types'
 import type { ISummaryDataItem } from '@/service/webSocket/types';
@@ -10,6 +10,7 @@ import { DEFAULT_SLIPPAGE } from '@/config/constants';
 export const useTradeStore = create<TradeStore>()(
   persist(
     (set, get) => ({
+      feeConfig: null,
       realtimeRwaData: null,
       inputToken: null,
       outputToken: null,
@@ -70,6 +71,9 @@ export const useTradeStore = create<TradeStore>()(
       },
       setRealtimeRwaData: (data: ISummaryDataItem | null) => {
         set({realtimeRwaData: data})
+      },
+      setFeeConfig: (feeConfig: IFeeConfig | null) => {
+        set({feeConfig})
       }
     }),
     {

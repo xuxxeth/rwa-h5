@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Drawer } from '@/components/drawer'
 import { Button } from '@/components/ui/button'
@@ -21,6 +21,8 @@ type OrderConfirmDrawerProps = {
   platformFee: string
   brokerageFee: string
   tradingActivityFee: string
+  secFee: string,
+  catFee: string,
   estimatedFee: string
   action: string
   tradeType: TradeType
@@ -42,6 +44,8 @@ export const OrderConfirmDrawer = memo(
     platformFee,
     brokerageFee,
     tradingActivityFee,
+    secFee,
+    catFee,
     estimatedFee,
     networkFeeInNative,
     feeRate,
@@ -65,16 +69,19 @@ export const OrderConfirmDrawer = memo(
     const total = action === 'buy' ? value.plus(fee) : value.minus(fee)
 
     const allFee = `${total.toFixed(2)} ${symbol}`
+    const feeConfig = useTradeStore(state => state.feeConfig)
 
-    const commissionRate = marketInfo?.commissionRate || '0.0004'
-    const commissionRatePercent = `${(Number(commissionRate) * 100).toFixed(2).replace(/\.?0+$/, '')}%`
-    const minCommissionPerOrder = marketInfo?.minCommissionPerOrder || '0.35'
-    const actionFeeRate = marketInfo?.actionFeeRate || '0.000166'
-    const minActionFeePerOrder = marketInfo?.minActionFeePerOrder || '0.01'
-    const maxActionFeePerOrder = marketInfo?.maxActionFeePerOrder || '8.3'
+    const feeRateConfig = useMemo(() => {
+      if (!feeConfig) return null
+      return action === 'buy' ? feeConfig.buyFeeRate : feeConfig.sellFeeRate
+    },[feeConfig, action])
 
-    const feeRatePercent = `${(Number(feeRate) * 100).toFixed(2).replace(/\.?0+$/, '')}%`
-
+    const feeRatePercent = useMemo(() => {
+      return feeRate ? 
+        `${(Number(feeRate) * 100).toFixed(2).replace(/\.?0+$/, '')}%` : 
+        feeRateConfig ? `${(Number(feeRateConfig.platformFeeRate?.value) * 100).toFixed(2).replace(/\.?0+$/, '')}%` : '--'
+    }, [feeRate, feeRateConfig?.platformFeeRate?.value]);
+    
     const isMarketOrder = tradeType === TradeType.MARKET
 
     return (
@@ -162,12 +169,7 @@ export const OrderConfirmDrawer = memo(
               items={[
                 {
                   label: (
-                    <TooltipWithBorder
-                      tooltip={t('v2.tx.t321', {
-                        r1: commissionRatePercent,
-                        r2: minCommissionPerOrder,
-                      })}
-                    >
+                    <TooltipWithBorder tooltip={t('v2.tx.t321', {r1: feeRateConfig?.brokerageFeeRate?.value || '--', r2: feeRateConfig?.brokerageFeeRate?.minValue || '--'})}>
                       {t('v2.tx.t32')}
                     </TooltipWithBorder>
                   ),
@@ -175,18 +177,30 @@ export const OrderConfirmDrawer = memo(
                 },
                 {
                   label: (
-                    <TooltipWithBorder
-                      tooltip={t('v2.tx.t331', {
-                        r1: actionFeeRate,
-                        r2: minActionFeePerOrder,
-                        r3: maxActionFeePerOrder,
-                      })}
-                    >
+                    <TooltipWithBorder tooltip={t('v2.tx.t331', {r1: feeRateConfig?.tradingActivityFeeRate?.value || '--', r2: feeRateConfig?.tradingActivityFeeRate?.minValue || '--', r3: feeRateConfig?.tradingActivityFeeRate?.maxValue || '--'})}>
                       {t('v2.tx.t33')}
                     </TooltipWithBorder>
                   ),
                   value: `${tradingActivityFee} ${feeSymbol}`,
                   visible: action === 'sell',
+                },
+                {
+                  label: (
+                    <TooltipWithBorder tooltip={t('v2.tx.t471', {r1: feeRateConfig?.secFeeRate?.value || '--', r2: feeRateConfig?.secFeeRate?.minValue || '--'})}>
+                      {t('v2.tx.t47')}
+                    </TooltipWithBorder>
+                  ),
+                  value: `${secFee || '--'} ${feeSymbol}`,
+                  visible: action === 'sell' && !feeRateConfig?.secFeeRate?.noFee,
+                },
+                {
+                  label: (
+                    <TooltipWithBorder tooltip={t('v2.tx.t481', {r1: feeRateConfig?.catFeeRate?.value || '--', r2: feeRateConfig?.catFeeRate?.minValue || '--'})}>
+                      {t('v2.tx.t48')}
+                    </TooltipWithBorder>
+                  ),
+                  value: `${catFee || '--'} ${feeSymbol}`,
+                  visible: !feeRateConfig?.catFeeRate?.noFee,
                 },
                 {
                   label: (
