@@ -3,9 +3,11 @@ import { Badge } from '@/components/Badge'
 import { useRouter } from '@/hooks/useRouter'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useTradeStore } from '@/stores/tradeStore'
-import { TradeType } from '@/hooks/useCaCommon'
+import { SessionType, TradeType } from '@/hooks/useCaCommon'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import { useSignatureValidStatus } from '@/hooks/useSignature'
+import { MARKET_STATUS } from '@/config/constants'
+import { useBaseStore } from '@/stores/baseStore'
 
 export const OrderTypeSelector = () => {
   const { t } = useTranslation()
@@ -14,6 +16,8 @@ export const OrderTypeSelector = () => {
   const [isSignatureValid] = useSignatureValidStatus()
   const tradeType = useTradeStore(state => state.tradeType)
   const updateTradeType = useTradeStore(state => state.updateTradeType)
+  const marketTradeState = useBaseStore(state => state.marketTradeState)
+  const updateSessionType = useTradeStore(state => state.updateSessionType)
 
   return (
     <div className="flex items-center justify-between font-normal">
@@ -24,7 +28,25 @@ export const OrderTypeSelector = () => {
               ? 'bg-gray-850 text-white'
               : 'text-gray-400'
           }`}
-          onClick={() => updateTradeType(TradeType.MARKET)}
+          onClick={() => {
+            updateTradeType(TradeType.MARKET)
+            // 这里要根据当前市场状态来更新下单的SessionType，暂时先写死
+            if (marketTradeState === MARKET_STATUS.BEFORE) {
+              updateSessionType(SessionType.PRE_MARKET_AND_AFTER_HOURS)
+            }
+            if (marketTradeState === MARKET_STATUS.OPEN) {
+              updateSessionType(SessionType.DEFAULT)
+            }
+            if (marketTradeState === MARKET_STATUS.AFTER) {
+              updateSessionType(SessionType.PRE_MARKET_AND_AFTER_HOURS)
+            }
+            if (marketTradeState === MARKET_STATUS.OVERNIGHT) {
+              updateSessionType(SessionType.OVERNIGHT)
+            }
+            if (marketTradeState === MARKET_STATUS.CLOSED || marketTradeState === MARKET_STATUS.CLOSE) {
+              updateSessionType(SessionType.DEFAULT)
+            }
+          }}
         >
           {t('market')}
         </button>

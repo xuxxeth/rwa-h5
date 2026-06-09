@@ -1,22 +1,31 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Drawer } from '@/components/drawer'
 import { Button } from '@/components/ui/button'
 import { NumberInput } from '@/components/v2/input/NumberInput'
 import { useTradeStore } from '@/stores/tradeStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { DEFAULT_SLIPPAGE } from '@/config/constants'
 import { SLIPPAGE_INPUT_REGEX } from '@/utils/regex'
 import { cn } from '@/lib/utils'
+import { DEFAULT_SLIPPAGE, MARKET_STATUS } from "@/config/constants"
+import { LazyImage } from "../image/LazyImage"
+import { useBaseStore } from "@/stores/baseStore"
 
 
 const MAX_SLIPPAGE = 3
 
 export const SlippageDrawer = memo(() => {
   const { t } = useTranslation()
+  const marketTradeState = useBaseStore(state => state.marketTradeState)
   const open = useTradeStore((s) => s.slippageDrawerOpen)
   const setOpen = useTradeStore((s) => s.setSlippageDrawerOpen)
   const slippage = useTradeStore((s) => s.slippage)
   const updateSlippage = useTradeStore((s) => s.updateSlippage)
+
+  const sessionLabel = useMemo(() => {
+    if (marketTradeState === MARKET_STATUS.OPEN || MARKET_STATUS.CLOSE) return ''
+    return marketTradeState === MARKET_STATUS.OVERNIGHT ? t("marketQuotes.overnight")
+      : marketTradeState === MARKET_STATUS.AFTER ? t("v3.t29") : t("v3.t27")
+  }, [marketTradeState, t])
 
   // 0 = 推荐, 1 = 自定义
   const [current, setCurrent] = useState(0)
@@ -129,6 +138,19 @@ export const SlippageDrawer = memo(() => {
               </span>
             </div>
           </div>
+          {
+            sessionLabel && (
+              <div className="pb-3 px-1  text-[12px] text-[#FFB219] flex">
+                <div className="w-[18px] h-[18px] shrink-0 mr-2 relative -top-[1px]">
+                  <LazyImage src="/images/v2/icons/warning.png" className="w-[18px] h-[18px]" />
+                </div>
+                
+                <div>
+                  {t('v3.t40', {session: sessionLabel})}
+                </div>
+              </div>
+            )
+          }
         </div>
 
         {/* 确认按钮 */}

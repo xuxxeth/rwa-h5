@@ -10,7 +10,7 @@ const MarketCloseTips = () => {
   const marketTradeState = useBaseStore(state => state.marketTradeState)
   const tradeType = useTradeStore(state => state.tradeType)
 
-  if (tradeType === TradeType.MARKET && (marketTradeState !== MARKET_STATUS.OPEN)) {
+  if (tradeType === TradeType.MARKET && (marketTradeState === MARKET_STATUS.CLOSE)) {
     return <Warning>{t('v2.tx.t23')}</Warning>
   }
 

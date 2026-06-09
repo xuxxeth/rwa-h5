@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 import { useTradeStore } from '@/stores/tradeStore'
 import { useTranslation } from '@/hooks/useTranslation'
-import { SessionType } from '@/hooks/useCaCommon'
+import { SessionType, TradeType } from '@/hooks/useCaCommon'
 import IconWithTooltip from '../icon-tooltip'
 import { useBaseStore } from '@/stores/baseStore'
 import { MARKET_STATUS } from '@/config/constants'
@@ -47,6 +47,9 @@ const SessionTypeSelect = memo(
     }, [inputToken, tradingTime])
 
     const { notSupportBeforeOrAfter, notSupportOvernight } = useNotSupportSession(marketTradeState, inputToken)
+
+    const tradeType = useTradeStore(state => state.tradeType)
+    const isMarket = tradeType === TradeType.MARKET
 
     const sessionTypeList = useMemo(() => {
       return [
@@ -127,7 +130,15 @@ const SessionTypeSelect = memo(
       }
     }, [marketTradeState, isRegular, t, notSupportBeforeOrAfter.notSupport, notSupportOvernight.notSupport, updateSessionType])
 
-
+    // fix: 切换订单类型，重置市价单SessionType
+    const preTradeType = useRef<TradeType | null>(null)
+    useEffect(() => {
+      if (tradeType === TradeType.LIMIT && preTradeType.current === TradeType.MARKET) {
+        updateSessionType(typeItem.code)
+      }
+      preTradeType.current = tradeType
+    }, [tradeType, typeItem])
+    
     return (
       <>
         {/* Trigger bar */}
@@ -139,6 +150,7 @@ const SessionTypeSelect = memo(
               ? 'bg-[#1A1B1E]'
               : 'border border-solid border-[#1A1B1E]',
           )}
+          style={{ display: isMarket ? 'none' : 'flex' }}
         >
           <div className='flex w-full items-center justify-between gap-2 text-[14px] font-normal text-white'>
             <IconWithTooltip

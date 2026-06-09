@@ -125,7 +125,6 @@ export const TradePage = () => {
   const marketTradeState = useBaseStore(state => state.marketTradeState)
   const tradeType = useTradeStore(state => state.tradeType)
   const sessionType = useTradeStore(state => state.sessionType)
-  const isMarketCloseDisabled = marketTradeState !== MARKET_STATUS.OPEN && tradeType === TradeType.MARKET
   // ── Effective price (with slippage for market orders) ──
   const effectivePrice = useEffectivePrice({
     tradeType,
@@ -240,6 +239,7 @@ export const TradePage = () => {
 
   // ── UI state (button text, disabled, insufficient) ──
   const uiState = useLimitOrderUIState({
+    tradeType,
     limitPrice,
     orderValue,
     inputSize,
@@ -252,6 +252,8 @@ export const TradePage = () => {
     realtimePrice: realtimeData?.p ? String(realtimeData.p) : '',
     t,
     language: i18n.language,
+    marketTradeState,
+    marketInfo
   })
 
   // ── Button variant ──
@@ -373,9 +375,9 @@ export const TradePage = () => {
             <Button
               variant={buttonVariant}
               size='lg'
-              className={cn(`w-full !text-white`, (order.loading || uiState.disabled || isMarketCloseDisabled) ? '!text-gray-500' : '')}
+              className={cn(`w-full !text-white`, (order.loading || uiState.disabled) ? '!text-gray-500' : '')}
               loading={order.loading}
-              disabled={uiState.disabled || isMarketCloseDisabled || order.loading}
+              disabled={uiState.disabled || order.loading}
               onClick={() => {
                 if (showConfirm) {
                   orderDialog.setOpen(true)
