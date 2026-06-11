@@ -43,12 +43,13 @@ export function useRequestSignature() {
   }
 }
 
-export function useSignatureValidStatus(): [boolean, (isValid?: boolean) => void] {
+export function useSignatureValidStatus(): [boolean, (isValid?: boolean) => void, () => any] {
   const { validSignature } = useRequestSignature()
   const isSignatureValid = useTradeStore(state => state.isSignatureValid)
   const setIsSignatureValid = useTradeStore(state => state.setIsSignatureValid)
 
   const { account, chainId } = useActiveWeb3()
+
   useEffect(() => {
     setIsSignatureValid(!!validSignature())
   }, [account, chainId])
@@ -61,5 +62,5 @@ export function useSignatureValidStatus(): [boolean, (isValid?: boolean) => void
     }
   }
 
-  return [isSignatureValid, refreshIsSignatureValid]
+  return [isSignatureValid, refreshIsSignatureValid, validSignature]
 }

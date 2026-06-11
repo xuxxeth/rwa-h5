@@ -12,6 +12,14 @@ import { useSignatureValidStatus } from '@/hooks/useSignature'
 import { PRIVACY_SERVICE } from '@/config/privacyService'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { H5PdfLink } from '@/components/H5PdfLink'
+import { validateInviteCode } from '@/utils'
+import { useRouter } from '@/hooks/useRouter'
+
+function getReferralCode(path: string) {
+  const match = path.match(/^\/referral\/([^/]+)$/)
+
+  return match ? match[1] : null
+}
 
 export const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
   const normalizedUrl = url.replace(/\+/g, '%20')
@@ -65,6 +73,7 @@ export const openExternal = (url: string) => (event: React.MouseEvent<HTMLAnchor
 
 const Compliance = () => {
   const { t } = useTranslation()
+  const router = useRouter()
   const { account } = useActiveWeb3()
   const [isSignatureValid] = useSignatureValidStatus()
   const { toastError } = useToast()
@@ -107,12 +116,14 @@ const Compliance = () => {
   }
 
   useEffect(() => {
-    if (account && isSignatureValid) {
+    const inviteCode = getReferralCode(router.location.pathname)
+    
+    if (account && isSignatureValid && !validateInviteCode(inviteCode || '')) {
       getAgreementsAccepted()
     } else {
       setShow(false)
     }
-  }, [account, isSignatureValid])
+  }, [account, isSignatureValid, router.location?.pathname])
 
   useEffect(() => {
     if(!show) {

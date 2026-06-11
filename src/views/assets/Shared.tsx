@@ -1,6 +1,6 @@
 import { useState, type ReactNode, type RefObject } from 'react'
 import { LazyImage } from '@/components/image/LazyImage'
-import { cn, shortenAddress } from '@/utils'
+import { cn, shortenAddress, isGreater } from '@/utils'
 import { useTranslation } from '@/hooks/useTranslation'
 import CopyButton from '@/components/button/copyButton'
 import {
@@ -11,12 +11,15 @@ import {
 import VectorSVG from '@/components/pagination/vector.svg?react'
 import { CheckBoxBySVG } from '@/components/check-box'
 import { textSuffix, toFixed, sum } from '@/utils'
-import type { IOrder, OrderType, RiskType } from '@/service/scan/types'
-import { OrderReason, OrderSide, OrderState } from '@/service/scan/types'
+import type { IOrder, OrderType, RiskType, ICommissionItem } from '@/service/scan/types'
 import BigNumber from 'bignumber.js'
 import IconWithTooltip from '@/components/icon-tooltip'
 import NoRecord, { NoRecordAndSeeMore } from '@/components/no-record'
 import { useNavigate } from 'react-router-dom'
+import { useBaseStore } from '@/stores/baseStore'
+import { extractHourMinute } from '@/hooks/useMarketState'
+import { useFeeRulesI18n } from '@/hooks/useFeeRulesI18n'
+import { type TableOrderType } from '@/views/assets/v2/shared'
 
 export type OrderChanged = {
   orderId: string
@@ -37,30 +40,58 @@ export function checkOrderChangedEqual(a: OrderChanged | null, b: OrderChanged |
 }
 
 export function TextCell(props: { text: string | number; className?: string }) {
-  return <div className={cn('text-xs/4 font-normal', props.className)}>{props.text}</div>
+  return <div className={cn('text-xs/4 font-normal text-white', props.className)}>{props.text}</div>
 }
 
-export function TradingFees(props: { currency: string; commission: string; fee: string }) {
-  let { currency, commission, fee } = props
+export function TradingFees(props: {
+  currency: string
+  commissionItems: ICommissionItem[] | null
+  commission: string
+  fee: string
+}) {
+  const { data: feeRulesI18n } = useFeeRulesI18n()
+  let { currency, commissionItems, commission, fee } = props
+
   commission = toFixed(commission)
   fee = toFixed(fee)
-
   const sumFees = sum(commission, fee)
-  const { t } = useTranslation()
+
+  const { t, i18n } = useTranslation()
+
+  function getRuleTitle(ruleId: number) {
+    const titleFromApi = feeRulesI18n?.[ruleId]
+    if (titleFromApi) return titleFromApi
+
+    const key = `portfolio.orderTable.ruleId.${ruleId}`
+    if (!i18n.exists(key)) return `ruleId${ruleId}`
+    return t(key)
+  }
+
+  const commissions = Array.isArray(commissionItems)
+    ? [...commissionItems]
+        .sort((a, b) => a.ruleId - b.ruleId)
+        .map(item => ({
+          title: getRuleTitle(item.ruleId)!,
+          value: item.amount,
+        }))
+    : [
+        {
+          title: t('portfolio.orderTable.bf'),
+          value: commission,
+        },
+      ]
+
   const tooltip = (
     <div className='flex flex-col gap-1'>
       {[
+        ...commissions,
         {
-          title: 'bf',
-          value: commission,
-        },
-        {
-          title: 'pf',
+          title: t('portfolio.orderTable.pf'),
           value: fee,
         },
       ].map(({ value, title }) => (
         <div className='text-xs/[15px] text-gray-300 flex flex-row justify-between'>
-          {t(`portfolio.orderTable.${title}`)}
+          {title}
           <span className='ml-9'>
             {value} {currency}
           </span>
@@ -70,11 +101,17 @@ export function TradingFees(props: { currency: string; commission: string; fee: 
   )
   return (
     <div>
-      <IconWithTooltip
-        iconOrTextClassName='text-xs/[15px] font-normal border-b border-dashed'
-        text={`${sumFees} ${currency}`}
-        tooltip={tooltip}
-      />
+      {isGreater(sumFees, 0) ? (
+        <IconWithTooltip
+          iconOrTextClassName='text-xs/[15px] font-normal border-b border-dashed'
+          text={`${sumFees} ${currency}`}
+          tooltip={tooltip}
+        />
+      ) : (
+        <span className='font-normal'>
+          {sumFees} {currency}
+        </span>
+      )}
     </div>
   )
 }
@@ -114,7 +151,7 @@ export function ValueCell(props: { value: string; currency?: string }) {
 }
 
 export function ReasonCell({ reason }: { reason: IOrder['reason'] }) {
-  if (reason === OrderReason.None) return <div>--</div>
+  if (reason === 0) return <div>--</div>
 
   const reasonMap: Record<number, string> = {
     1: '1',
@@ -124,6 +161,8 @@ export function ReasonCell({ reason }: { reason: IOrder['reason'] }) {
     5: '5',
     6: '6',
     7: '7',
+    8: '8',
+    9: '9',
   }
 
   const key = reasonMap[reason]
@@ -139,14 +178,14 @@ export function ReasonCell({ reason }: { reason: IOrder['reason'] }) {
   )
 }
 
-export function SideCell(props: { side: OrderSide; className?: string }) {
+export function SideCell(props: { side: 0 | 1; className?: string }) {
   const { t } = useTranslation()
   const { side, className } = props
 
   return (
     <TextCell
-      text={side === OrderSide.Buy ? t('assets.order.buy') : t('assets.order.sell')}
-      className={cn(side === OrderSide.Buy ? 'text-green-50' : 'text-red-50', className)}
+      text={side === 0 ? t('assets.order.buy') : t('assets.order.sell')}
+      className={cn(side === 0 ? 'text-green-50' : 'text-red-50', className)}
     />
   )
 }
@@ -162,6 +201,17 @@ export function TxHashCell({ hash }: { hash: string }) {
   )
 }
 
+export function AddressCell(props: { address: string; className?: string }) {
+  return (
+    <div className='flex flex-row items-center gap-1.5 cursor-pointer'>
+      <span className={cn('text-xs font-normal text-white', props.className)}>
+        {shortenAddress(props.address, 4, 4)}
+      </span>
+      <CopyButton copyText={props.address} />
+    </div>
+  )
+}
+
 export function TokenCell(props: {
   icon?: string | undefined
   token: string | undefined
@@ -172,50 +222,54 @@ export function TokenCell(props: {
 }) {
   return (
     <div
-      className={'flex flex-row gap-2 font-normal cursor-pointer'}
+      className={'flex flex-row gap-2 font-normal cursor-pointer overflow-hidden'}
       onClick={() => props.onClick?.()}
     >
       {props.icon && <LazyImage className={'w-8 h-8 rounded-[50%]'} src={props.icon} />}
-      <div className='flex flex-col'>
+      <div className='flex flex-col overflow-hidden'>
         <div className={cn('text-sm/4.5', props.tokenClassName)}>{props.token}</div>
-        <div className={cn('text-gray-400 text-xs/[15px]', props.nameClassName)}>{props.name}</div>
+        <IconWithTooltip tooltip={props.name} triggerClassName='justify-start'>
+          <div className={cn('text-gray-400 text-xs/[15px] truncate', props.nameClassName)}>
+            {props.name}
+          </div>
+        </IconWithTooltip>
       </div>
     </div>
   )
 }
 
 export const openStatus = {
-  value: [OrderState.PendingSubmit, OrderState.PendingFill],
+  value: [0, 9], // 0 待提交 // 9 待成交
   text: 'open',
   className: 'text-white',
 }
 
 export const partiallyFilledStatus = {
-  value: [OrderState.PartialFilled],
+  value: [1], // 1 部分成交
   text: 'partiallyFilled',
   className: 'text-[rgba(255,178,25,1)]',
 }
 
 export const failedStatus = {
-  value: [OrderState.Failed],
+  value: [2], // 2 下单失败
   text: 'orderFailed',
   className: 'text-red-50',
 }
 
 export const cancelledStatus = {
-  value: [OrderState.Cancelled],
+  value: [3], // 3 已撤销
   text: 'cancelled',
   className: 'text-gray-400',
 }
 
 export const filledStatus = {
-  value: [OrderState.Filled],
+  value: [5], // 5 全部成交
   text: 'filled',
   className: 'text-white',
 }
 
 export const pendingCancelStatus = {
-  value: [OrderState.PendingCancel],
+  value: [8], //8 待撤单
   text: 'pendingCancel',
   className: 'text-gray-500',
 }
@@ -245,11 +299,76 @@ export function OrderStatusCell(props: { state: number }) {
 }
 
 export function SessionTypeCell({ sessionType }: { sessionType: number }) {
+  const {
+    tradingStartTime,
+    tradingEndTime,
+    preMarketMinutes,
+    afterMarketMinutes,
+    nightTradingStartTime,
+    nightTradingEndTime,
+  } = useBaseStore(state => state.marketInfo)
+  const { t } = useTranslation()
+
+  const getDuration = (timestamp1: number, timestamp2: number) => {
+    const start = extractHourMinute(timestamp1)
+    const end = extractHourMinute(timestamp2)
+    if (start && start?.H && end && end?.H) {
+      return `${start.H}:${start.M} ~ ${end.H}:${end.M}`
+    }
+    return '--'
+  }
+
   switch (sessionType) {
     case 0:
-      return <TextCellWithTranslation text='portfolio.rthOnly' />
+      return (
+        <IconWithTooltip
+          tooltip={
+            <span>
+              {t('v3.t19', {
+                duration: getDuration(tradingStartTime, tradingEndTime) + ` (${t('v3.t31')})`,
+              })}
+            </span>
+          }
+          text='portfolio.rthOnly'
+          iconOrTextClassName='border-b border-dashed'
+        />
+      )
+    case 3:
+      return (
+        <IconWithTooltip
+          tooltip={
+            <span>
+              {t('v3.t201', {
+                duration:
+                  getDuration(nightTradingStartTime, nightTradingEndTime) + ` (${t('v3.t31')})`,
+              })}
+            </span>
+          }
+          text='portfolio.overnight'
+          iconOrTextClassName='border-b border-dashed'
+        />
+      )
+    case 1:
+    case 2:
     case 4:
-      return <TextCellWithTranslation text='portfolio.preAfter' />
+      return (
+        <IconWithTooltip
+          tooltip={
+            <span>
+              {t('v3.t20', {
+                duration:
+                  getDuration(tradingStartTime - preMarketMinutes * 60 * 1000, tradingStartTime) +
+                  ` (${t('v3.t31')})` +
+                  ' + ' +
+                  getDuration(tradingEndTime, tradingEndTime + afterMarketMinutes * 60 * 1000) +
+                  ` (${t('v3.t31')})`,
+              })}
+            </span>
+          }
+          text='portfolio.preAfter'
+          iconOrTextClassName='border-b border-dashed'
+        />
+      )
     default:
       return null
   }
@@ -396,7 +515,7 @@ export function ScrollLoadMore<TData>(props: {
   data: TData[]
   isLoading: boolean
   loadMoreRef: RefObject<HTMLDivElement | null>
-  type: 'open' | 'history' | 'trade'
+  type: TableOrderType
 }) {
   const { t } = useTranslation()
   const { isFetchingNextPage, hasNextPage, data, isLoading, loadMoreRef, type } = props

@@ -259,6 +259,14 @@ export function numberToBinaryArray(num: number, options: { length?: number; hig
 
   return arr;
 }
+/**
+ * 验证邀请码有效性
+ */
+
+export function validateInviteCode(code: string): boolean {
+  const inviteCodeRegex = /^[A-Za-z0-9]{10}$/
+  return inviteCodeRegex.test(code);
+}
 
 export function hasPermission(value: number, bit: number) {
   return (value & (1 << bit)) !== 0

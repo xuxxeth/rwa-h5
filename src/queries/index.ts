@@ -39,7 +39,7 @@ export function openOrderOptions(
   })
 }
 
-export function infiniteOrderOptions<T extends { orderId: string }, F extends { after?: string; limit?: number }>(
+export function infiniteOrderOptions<T extends { orderId?: string }, F extends { after?: string; limit?: number }>(
   api: (filters: F, errorHandlers?: ErrorHandlers) => Promise<{ data: T[] }>,
   account: string,
   chainId: number,

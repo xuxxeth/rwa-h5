@@ -156,6 +156,8 @@ function HistoryOrder(props: {
         filter={filters}
         tableConfig={orderHistoryTableConfig}
         type='history'
+        lngPrefix='portfolio.orderTable'
+        signatureSubTitle='signatureVerifyDescBottom'
       />
     </>
   )
@@ -242,7 +244,12 @@ const orderHistoryTableConfig: ITableConfig<
     sortable: false,
     breakOnSpace: false,
     render: (item: IOrder) => (
-      <TradingFees currency={item.currency} commission={item.commission} fee={item.fee} />
+      <TradingFees
+        currency={item.currency}
+        commissionItems={item.commissionItems}
+        commission={item.commission}
+        fee={item.fee}
+      />
     ),
   },
   {

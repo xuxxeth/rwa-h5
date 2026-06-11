@@ -36,7 +36,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-[49] grid w-auto min-w-[320px] translate-x-[-50%] translate-y-[-50%] gap-4 bg-[#131416] border border-[#232427] p-4 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-[8px] text-white",
+        "fixed left-[50%] top-[50%] z-[49] grid w-auto min-w-[320px] translate-x-[-50%] translate-y-[-50%] gap-4 bg-[#131416] border border-[#232427] p-4 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-[8px] text-white focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0",
         className
       )}
       onPointerDownOutside={(e) => {
@@ -53,7 +53,7 @@ const DialogContent = React.forwardRef<
     >
       {children}
       <DialogPrimitive.Close className={cn("absolute right-4 top-4 rounded-sm opacity-80 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground", closeClassName)}>
-        <img src="/images/v2/icons/close.png" className={cn("w-4 h-4", closeIconClassName)} alt="Close" />
+        <img src="/images/v2/icons/close.png" className={cn("w-5 h-5", closeIconClassName)} alt="Close" />
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>

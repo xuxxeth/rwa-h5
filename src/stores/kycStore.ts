@@ -10,16 +10,28 @@ export const useKycStore = create<KycStore>((set, get) => ({
   isLoading: false,
   error: null,
   riskUserConfig: null,
+  riskUserConfigForReferral: undefined,
   retryCount: 0,
   getUserConfig: async () => {
-    const res = await riskApi.getUserConfig()
-    if (res.code === 9401) {
-      set({ riskUserConfig: { actions: -1, verifyType: 2, verifyState: 2, blacklist: true } })
-    } else {
-      set({ riskUserConfig: res.data || {} })
-    }
+    try {
+      const res = await riskApi.getUserConfig()
+      if (res.code === 9401) {
+        set({ riskUserConfig: { actions: -1, verifyType: 2, verifyState: 2, blacklist: true } })
+        set({ riskUserConfigForReferral: undefined })
+      } else {
+        set({ riskUserConfig: res.data || {} })
+        set({ riskUserConfigForReferral: res.data })
+      }
 
-    return res
+      return res
+    } catch (error: any) {
+      set({ riskUserConfigForReferral: undefined })
+      return {
+        code: 9401,
+        data: { actions: -1, verifyType: 2, verifyState: 2, blacklist: true },
+        message: '',
+      }
+    }
   },
   refetchKycStatusAndConfigIfNeed: async (kycDetail: IKycDetail) => {
     const { kycStatus, fetchKycStatus, getUserConfig } = get()

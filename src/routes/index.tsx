@@ -8,6 +8,7 @@ const MarketTrading = lazy(() => import('../views/trade'))
 const Identity = lazy(() => import('../views/identity'))
 const Orders = lazy(() => import('../views/orders'))
 const Home = lazy(() => import('../views/home'));
+const Referral = lazy(() => import('../views/referral'))
 
 // 路由表
 const routes: RouteObject[] = [
@@ -34,6 +35,10 @@ const routes: RouteObject[] = [
   {
     path: '/identity',
     element: <Identity />,
+  },
+  {
+    path: '/referral/:inviteCode?',
+    element: <Referral />,
   },
   {
     path: '/com',

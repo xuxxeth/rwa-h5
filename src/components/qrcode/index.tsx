@@ -22,6 +22,7 @@ const QRCode = ({ value, size = 200, margin = 0, className }: QRCodeProps) => {
       dotsOptions: {
         color: '#000000',
         type: 'square',
+        roundSize: false,
       },
       backgroundOptions: {
         color: '#fff',

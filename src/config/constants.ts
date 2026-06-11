@@ -159,3 +159,5 @@ export const SUPPORT_REGULAR_PROD = ['ABNB', 'CEG', 'GLXY']
 export const SUPPORT_REGULAR_TEST = ['NFLX', 'CRCL']
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000' as const
+export const REFERRAL_INFO = 'https://tiko.gitbook.io/tiko-docs/referral-program/quick-start-guide'
+export const REFERRAL_FAQ = 'https://tiko.gitbook.io/tiko-docs/referral-program/faq'

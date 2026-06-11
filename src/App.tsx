@@ -1,7 +1,7 @@
 import { useRoutes } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import routes from './routes'
-import { useEffect, useMemo } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import storage from './utils/storage'
 import { useTranslation } from './hooks/useTranslation'
 
@@ -12,16 +12,14 @@ import { useActiveWeb3 } from './hooks/useActiveWe3'
 import { ScrollToTop } from './components/ScrollToTop'
 import { useWssAuth, useWssOn } from './hooks/useWssOn'
 import { useMarketState } from './hooks/useMarketState'
-import { Menus } from './components/menu'
 import { useRiskUserConfig } from './hooks/useRiskStatus'
 import { Updater } from './components/Updater'
 import { useRouter } from './hooks/useRouter'
-import { HomeMenus } from './components/menu/HomeMenus'
 import GoogleAnalytics from '@/components/google-analytics/GoogleAnalytics'
 import { createPortal } from 'react-dom'
 import { Header } from '@/components/Header.tsx'
-import { Footer } from '@/components/Footer.tsx'
 import { Settings } from '@/components/Settings.tsx'
+import { BottomMenus } from './components/menu/BottomMenus'
 
 BigNumber.config({
   DECIMAL_PLACES: 80, // 足够精度，避免 DeFi 里丢失小数
@@ -106,7 +104,10 @@ function App() {
       <RoutesWrapper />
       {createPortal(<Toaster position='top-center' />, document.getElementById('toast-root')!)}
 
-      <Updater />
+      <Suspense fallback={null}>
+        <Updater />
+      </Suspense>
+      <BottomMenus />
       <Settings />
     </>
   )

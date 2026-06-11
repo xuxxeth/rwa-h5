@@ -64,6 +64,11 @@ export interface IOpenOrder {
   sessionType: SessionType
 }
 
+export interface ICommissionItem {
+  ruleId: number
+  amount: string
+}
+
 export interface IOrder {
   id: string
   orderId: string
@@ -91,6 +96,7 @@ export interface IOrder {
   txHash: string
   currency: string
   commission: string
+  commissionItems: ICommissionItem[]
   fee: string
   sessionType: SessionType
 }
@@ -110,4 +116,31 @@ export interface ITrade {
   txTime: number
   reason: OrderReason
   currency: string
+}
+
+export interface IRebate {
+  id: string
+  orderId: string
+  txHash: string
+  chainId: number
+  referee: string
+  amount: string
+  token: string
+  ratio: number
+  rebateTime: number
+}
+
+export interface IRebateFilter {
+  after?: string
+  before?: string
+  limit?: number
+}
+
+export interface IClaim {
+  id: string
+  txHash: string
+  chainId: number
+  account: string
+  data: string
+  claimTime: number
 }

@@ -5,8 +5,8 @@ import { Button } from '../ui/button'
 import { useKycStore } from '@/stores/kycStore'
 import { useState } from 'react'
 
-function SignButton(props: { className?: string; refreshIsSignatureValid?: () => void }) {
-  const { className, refreshIsSignatureValid } = props
+function SignButton(props: { className?: string; refreshIsSignatureValid?: () => void, label?: string, callback?: () => void }) {
+  const { className, refreshIsSignatureValid, label, callback } = props
   const { t } = useTranslation()
   const { signing, signature } = useRequestSignature()
   const [loading, setLoading] = useState(false)
@@ -17,15 +17,17 @@ function SignButton(props: { className?: string; refreshIsSignatureValid?: () =>
     await signature()
     refreshIsSignatureValid && refreshIsSignatureValid()
     await getUserConfig()
+    callback && await callback()
     setLoading(false)
   }
   return (
     <Button
+      loading={signing || loading}
       disabled={signing || loading}
       onClick={handleSignatureVerify}
       className={cn('bg-white text-black w-[148px] h-[32px] rounded-[8px] text-[12px]', className)}
     >
-      {t('gotoSignature')}
+      {label || t('gotoSignature')}
     </Button>
   )
 }

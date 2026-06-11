@@ -303,8 +303,8 @@ export function isLess(
 
 /** 是否小于等于 */
 export function isLessOrEqual(
-  a: string | number | BigNumber,
-  b: string | number | BigNumber
+  a: string | number | BigNumber | bigint,
+  b: string | number | BigNumber | bigint
 ): boolean {
   return toBN(a).isLessThanOrEqualTo(toBN(b))
 }

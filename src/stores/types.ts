@@ -142,6 +142,7 @@ export interface WssStore {
 
 export interface RiskSTore {
   riskUserConfig: IUserCofnig | null
+  riskUserConfigForReferral: IUserCofnig | undefined | null
   getUserConfig: () => Promise<ApiResponse<IUserCofnig>>;
 }
 

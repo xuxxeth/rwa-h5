@@ -107,7 +107,7 @@ body {
   width: 320px !important;
 }
 [data-sonner-toaster][data-y-position='top'] {
-  top: 80px !important;
+  top: 54px !important;
 }
 [data-sonner-toast] {
   background: transparent !important;
@@ -517,14 +517,14 @@ body {
 @media (max-width: 600px) {
     [data-sonner-toaster] [data-sonner-toast] {
         left: auto !important;
-        right: 0;
+        right: 0 !important;
         width: 320px !important;
     }
 }
 @media (max-width: 600px) {
     [data-sonner-toaster][data-x-position=center] {
         left: auto !important;
-        right: 16px;
+        right: 0px !important;
         transform: translateX(0px) !important;
     }
     

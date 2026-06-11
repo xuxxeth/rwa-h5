@@ -9,81 +9,40 @@ import { useRwaTokens } from '@/hooks/useTokens'
 import { noop, cn } from '@/utils'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { infiniteOrderOptions } from '@/queries'
-import { ScrollLoadMore, type OrderChanged, checkOrderChangedEqual } from '../Shared'
+import { ScrollLoadMore } from '../Shared'
 import { useWssStore } from '@/stores/wssStore'
 import { WalletNotConnectedSmallVersion } from '@/components/wallet-not-connected'
 import { useRouter } from '@/hooks/useRouter'
 
-export function useOrderChangedV2(refetch: (isAutoRefresh?: boolean) => Promise<any>, isRefetchEnable: boolean) {
-  const newOrder = useWssStore(state => state.newOrder)
-  const preNewOrder = useRef(newOrder)
+// export function useOrderChanged() {
+// const [orderChanged, _setOrderChanged] = useState<OrderChanged | null>(null)
+// const newOrder = useWssStore(state => state.newOrder)
 
-  const refetchTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([])
-  const lastOrderChangedEventTimeRef = useRef<number | null>(null)
+// const setOrderChanged = (orderChanged: OrderChanged | null) => {
+//   _setOrderChanged(prev => {
+//     if (checkOrderChangedEqual(orderChanged, prev)) {
+//       return prev
+//     }
+//     return orderChanged
+//   })
+// }
 
-  useEffect(() => {
-    return () => {
-      refetchTimersRef.current.forEach(clearTimeout)
-      refetchTimersRef.current = []
-    }
-  }, [])
+// useEffect(() => {
+//   if (newOrder === null) return
+//   const newOrderChanged = {
+//     orderId: String(newOrder.id),
+//     status: newOrder.x,
+//     eventTime: newOrder.E,
+//     details: newOrder
+//   }
+//   setOrderChanged(newOrderChanged)
+// }, [newOrder])
 
-  useEffect(() => {
-    if (!isRefetchEnable) return
-    if (!newOrder) return
-    if (newOrder === preNewOrder.current) return
-
-    const rawEventTime = newOrder.E
-    const parsedTs = Number(rawEventTime)
-    const ts = Number.isFinite(parsedTs) && parsedTs > 0 ? parsedTs : Date.now()
-
-    if (ts === lastOrderChangedEventTimeRef.current) return
-    lastOrderChangedEventTimeRef.current = ts
-
-    refetchTimersRef.current.forEach(clearTimeout)
-    refetchTimersRef.current = []
-
-    const delays = [200, 600, 1500, 2800]
-
-    delays.forEach((delay, index) => {
-      refetchTimersRef.current.push(
-        setTimeout(() => {
-          refetch(true)
-        }, delay)
-      )
-    })
-  }, [newOrder, isRefetchEnable, refetch])
-}
-
-
-export function useOrderChanged() {
-  const [orderChanged, _setOrderChanged] = useState<OrderChanged | null>(null)
-  const newOrder = useWssStore(state => state.newOrder)
-
-  const setOrderChanged = (orderChanged: OrderChanged | null) => {
-    _setOrderChanged(prev => {
-      if (checkOrderChangedEqual(orderChanged, prev)) {
-        return prev
-      }
-      return orderChanged
-    })
-  }
-
-  useEffect(() => {
-    if (newOrder === null) return
-    const newOrderChanged = {
-      orderId: String(newOrder.id),
-      status: newOrder.x,
-      eventTime: newOrder.E,
-    }
-    setOrderChanged(newOrderChanged)
-  }, [newOrder])
-
-  return orderChanged
-}
+// return orderChanged
+// }
 
 export function useOrderList<
-  T extends { orderId: string; id: string },
+  T extends { orderId?: string; id: string },
   F extends { after?: string; before?: string },
 >(
   chainId: number,
@@ -104,9 +63,9 @@ export function useOrderList<
   const [isFirstLoadDone, setIsFirstLoadDone] = useState(false)
 
   // 如果是第一页的话，把 prev 设置为 disabled
-  const fetchFirstPage = async () => {
+  const fetchFirstPage = async (isAutoRefresh?: boolean) => {
     try {
-      setIsLoading(true)
+      setIsLoading(!isAutoRefresh)
       setIsPrevEnabled(false)
       setIsNextEnabled(false)
       const res = await api({ ...filter, limit: PAGE_LIMIT })
@@ -218,7 +177,7 @@ export function useOrderList<
 }
 
 export function OrderTable<
-  T extends { orderId: string; id: string },
+  T extends { orderId?: string; id: string },
   F extends { after?: string; before?: string },
 >({
   chainId,
@@ -230,6 +189,10 @@ export function OrderTable<
   dataMode,
   scrollId,
   type,
+  lngPrefix,
+  scrollToTopWhenPagination,
+  signatureSubTitle,
+  paginationClassName,
 }: {
   chainId?: number | null
   account?: string
@@ -242,24 +205,29 @@ export function OrderTable<
   >
   dataMode: 'pagination' | 'scroll'
   scrollId: (item: T) => string
-  type: 'open' | 'history' | 'trade'
+  type: TableOrderType
+  lngPrefix: string
+  scrollToTopWhenPagination?: boolean
+  signatureSubTitle: string
+  paginationClassName?: string
 }) {
+  const [isSignatureValid, refreshIsSignatureValid] = useSignatureValidStatus()
+
   if (!chainId || !account) {
     return (
-      <WithTableHeader tableConfig={tableConfig} dataMode={dataMode}>
+      <WithTableHeader tableConfig={tableConfig} dataMode={dataMode} lngPrefix={lngPrefix}>
         <WalletNotConnectedSmallVersion />
       </WithTableHeader>
     )
   }
 
-  const [isSignatureValid, refreshIsSignatureValid] = useSignatureValidStatus()
-
   if (!isSignatureValid) {
     return (
-      <WithTableHeader tableConfig={tableConfig} dataMode={dataMode}>
+      <WithTableHeader tableConfig={tableConfig} dataMode={dataMode} lngPrefix={lngPrefix}>
         <SignatureVerify
           desc='signatureVerifyDescTop'
-          subDesc='signatureVerifyDescBottom'
+          // subDesc='signatureVerifyDescBottom'
+          subDesc={signatureSubTitle}
           className='mt-9'
           refreshIsSignatureValid={refreshIsSignatureValid}
         />
@@ -268,16 +236,19 @@ export function OrderTable<
   }
 
   return (
-    <WithTableHeader tableConfig={tableConfig} dataMode={dataMode}>
+    <WithTableHeader tableConfig={tableConfig} dataMode={dataMode} lngPrefix={lngPrefix}>
       {dataMode === 'pagination' && (
         <OrderContentByPagination<T, F>
           chainId={chainId}
           account={account}
           PAGE_LIMIT={PAGE_LIMIT}
+          scrollToTopWhenPagination={scrollToTopWhenPagination}
           api={api}
           filter={filter}
           scrollId={scrollId}
           tableConfig={tableConfig}
+          type={type}
+          paginationClassName={paginationClassName}
         />
       )}
       {dataMode === 'scroll' && (
@@ -297,10 +268,10 @@ export function OrderTable<
   )
 }
 
-function WithTableHeader<T extends { orderId: string }>({
+function WithTableHeader<T extends { orderId?: string }>({
   children,
   tableConfig,
-  dataMode,
+  lngPrefix,
 }: {
   children: React.ReactNode
   tableConfig: ITableConfig<
@@ -308,6 +279,7 @@ function WithTableHeader<T extends { orderId: string }>({
     { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
   >
   dataMode: 'pagination' | 'scroll'
+  lngPrefix: string
 }) {
   return (
     <>
@@ -316,7 +288,7 @@ function WithTableHeader<T extends { orderId: string }>({
         T,
         { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
       >
-        lngPrefix='portfolio.orderTable'
+        lngPrefix={lngPrefix}
         config={tableConfig}
         sort={null}
         className={cn('border-none h-7 px-4', 'bg-gray-900')}
@@ -328,8 +300,10 @@ function WithTableHeader<T extends { orderId: string }>({
   )
 }
 
+export type TableOrderType = 'open' | 'history' | 'trade' | 'invitee' | 'rebate' | 'claim'
+
 export function OrderContentByScroll<
-  T extends { orderId: string; id: string },
+  T extends { orderId?: string; id: string },
   F extends { after?: string; before?: string },
 >({
   api,
@@ -353,7 +327,7 @@ export function OrderContentByScroll<
   isSignatureValid: boolean
   refreshIsSignatureValid: (_isValid: boolean) => void
   scrollId: (item: T) => string
-  type: 'open' | 'history' | 'trade'
+  type: TableOrderType
 }) {
   const router = useRouter()
   const rwaTokens = useRwaTokens()
@@ -376,15 +350,9 @@ export function OrderContentByScroll<
     })
   )
 
-  const orderChanged = useOrderChanged()
-
-  useEffect(() => {
-    if (!isFetchedAfterMount) return
-    if (isLoading) return
-    if (!orderChanged) return
-
-    refetch()
-  }, [orderChanged, isFetchedAfterMount, isLoading])
+  const needRefreshedWhenOrderChanged = ['open', 'history', 'trade'].includes(type)
+  const isRefetchEnable = isFetchedAfterMount && !isLoading && needRefreshedWhenOrderChanged
+  useOrderChangedV2(isAutoRefresh => refetch(), isRefetchEnable)
 
   const allOrders = data?.pages?.flatMap(page => page.data) || []
   const loadMoreRef = useRef<HTMLDivElement>(null)
@@ -436,8 +404,52 @@ export function OrderContentByScroll<
   )
 }
 
+export function useOrderChangedV2(
+  refetch: (isAutoRefresh?: boolean) => Promise<any>,
+  isRefetchEnable: boolean
+) {
+  const newOrder = useWssStore(state => state.newOrder)
+  const preNewOrder = useRef(newOrder)
+
+  const refetchTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([])
+  const lastOrderChangedEventTimeRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      refetchTimersRef.current.forEach(clearTimeout)
+      refetchTimersRef.current = []
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isRefetchEnable) return
+    if (!newOrder) return
+    if (newOrder === preNewOrder.current) return
+
+    const rawEventTime = newOrder.E
+    const parsedTs = Number(rawEventTime)
+    const ts = Number.isFinite(parsedTs) && parsedTs > 0 ? parsedTs : Date.now()
+
+    if (ts === lastOrderChangedEventTimeRef.current) return
+    lastOrderChangedEventTimeRef.current = ts
+
+    refetchTimersRef.current.forEach(clearTimeout)
+    refetchTimersRef.current = []
+
+    const delays = [200, 600, 1500, 2800]
+
+    delays.forEach((delay, index) => {
+      refetchTimersRef.current.push(
+        setTimeout(() => {
+          refetch(true)
+        }, delay)
+      )
+    })
+  }, [newOrder, isRefetchEnable, refetch])
+}
+
 export function OrderContentByPagination<
-  T extends { orderId: string; id: string },
+  T extends { orderId?: string; id: string },
   F extends { after?: string; before?: string },
 >({
   chainId,
@@ -447,6 +459,9 @@ export function OrderContentByPagination<
   filter,
   tableConfig,
   scrollId,
+  scrollToTopWhenPagination,
+  type,
+  paginationClassName,
 }: {
   chainId: number
   account: string
@@ -458,8 +473,10 @@ export function OrderContentByPagination<
     T,
     { rwaTokens: IRwa[]; refetch: () => void; onTokenClick?: (rwa: IRwa) => void }
   >
+  scrollToTopWhenPagination?: boolean
+  type: TableOrderType
+  paginationClassName?: string
 }) {
-  const router = useRouter()
   const rwaTokens = useRwaTokens()
 
   const {
@@ -474,16 +491,11 @@ export function OrderContentByPagination<
     isFirstLoadDone,
   } = useOrderList<T, F>(chainId, account, PAGE_LIMIT, scrollId, api, filter)
 
-  const orderChanged = useOrderChanged()
-
-  useEffect(() => {
-    if (orderChanged === null) return
-    if (!isFirstLoadDone) return
-    fetchFirstPage()
-  }, [orderChanged, isFirstLoadDone])
+  const needRefreshedWhenOrderChanged = ['open', 'history', 'trade'].includes(type)
+  const isRefetchEnable = isFirstLoadDone && needRefreshedWhenOrderChanged
+  useOrderChangedV2(fetchFirstPage, isRefetchEnable)
 
   const onTokenClick = (rwa: IRwa) => {
-    // router.push(`/trade/${rwa.symbol}`)
     window.open(`/trade/${rwa.symbol}`, '_blank')
   }
 
@@ -498,7 +510,7 @@ export function OrderContentByPagination<
         isLoading={isLoading}
         config={tableConfig}
         extra={{ rwaTokens, refetch: fetchFirstPage, onTokenClick }}
-        getKey={(item: T) => item.orderId}
+        getKey={(item: T) => scrollId(item)}
         className={cn('hover:bg-opacity-01 px-4 group')}
         tdClassName='h-[56px] text-xs/4'
       />
@@ -510,6 +522,8 @@ export function OrderContentByPagination<
             onPrevClick={() => {
               tryFetchPrevPage()
             }}
+            className={paginationClassName}
+            scrollToTopWhenPagination={scrollToTopWhenPagination}
             onNextClick={() => {
               tryFetchNextPage()
             }}

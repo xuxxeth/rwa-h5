@@ -57,8 +57,8 @@ importers:
         specifier: ^9.3.1
         version: 9.3.1
       ca-common-web:
-        specifier: ^0.1.81
-        version: 0.1.81(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
+        specifier: ^0.1.82
+        version: 0.1.82(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -71,6 +71,9 @@ importers:
       framer-motion:
         specifier: ^12.23.24
         version: 12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      html-to-image:
+        specifier: ^1.11.13
+        version: 1.11.13
       i18next:
         specifier: ^25.5.1
         version: 25.5.1(typescript@5.8.3)
@@ -1763,8 +1766,8 @@ packages:
     peerDependencies:
       esbuild: '>=0.17'
 
-  ca-common-web@0.1.81:
-    resolution: {integrity: sha512-n/zovPMyUkZH5fjwE8Q1nllaqjhaKVl7TUcxAOMtfS7KRS0FSedWi6DXS2pT5MCI5CRo3fUalbH6qC64KZdITQ==}
+  ca-common-web@0.1.82:
+    resolution: {integrity: sha512-TU2O0njb2a/buiyMlLgWDN4Ui7Dfp1QfUKVxqWvtznOI/fofkhKx0fuBYEQ/uf6E2q6VC/S8n2/FZq3EXDM4BQ==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
@@ -2271,6 +2274,9 @@ packages:
 
   html-parse-stringify@3.0.1:
     resolution: {integrity: sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==}
+
+  html-to-image@1.11.13:
+    resolution: {integrity: sha512-cuOPoI7WApyhBElTTb9oqsawRvZ0rHhaHwghRLlTuffoD1B2aDemlCruLeZrUIIdvG7gs9xeELEPm6PhuASqrg==}
 
   i18next@25.5.1:
     resolution: {integrity: sha512-dDnnt362852mKtHGeAU9v3yF8NVQBdXGB++zmW8VMfNe4XEyR7JlSh815TWQHq9DvLfdkLJzFu90OmmRFd24Jw==}
@@ -4644,7 +4650,7 @@ snapshots:
       esbuild: 0.25.9
       load-tsconfig: 0.2.5
 
-  ca-common-web@0.1.81(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3):
+  ca-common-web@0.1.82(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3):
     dependencies:
       qr-code-styling: 1.9.2
       react: 19.1.1
@@ -5168,6 +5174,8 @@ snapshots:
   html-parse-stringify@3.0.1:
     dependencies:
       void-elements: 3.1.0
+
+  html-to-image@1.11.13: {}
 
   i18next@25.5.1(typescript@5.8.3):
     dependencies:

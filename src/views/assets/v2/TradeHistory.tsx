@@ -129,6 +129,8 @@ function TradeHistory(props: {
         filter={filters}
         tableConfig={tradeHistoryTableConfig}
         type="trade"
+        lngPrefix='portfolio.orderTable'
+        signatureSubTitle='signatureVerifyDescBottom'
       />
     </>
   )
