@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useActiveWeb3 } from "./useActiveWe3";
 import { riskApi } from "@/service/risk/api";
 import { useTradeStore } from "@/stores/tradeStore";
+import { hasPermission } from "@/utils";
 
 export function useRiskUserConfig() {
   const { chainId, account } = useActiveWeb3()
@@ -89,7 +90,7 @@ export function useRiskStatus() {
   const riskStatus = useMemo(() => {
     if (!riskUserConfig) return RISK_STATUS.DEFAULT
     if (riskUserConfig.actions === -1) return RISK_STATUS.NOTSIGN
-    if (riskUserConfig.actions === 1 || riskUserConfig.actions === 2 || riskUserConfig.actions === 3) return RISK_STATUS.VERIFIED
+    if (hasPermission(riskUserConfig?.actions || 0, 1) || hasPermission(riskUserConfig?.actions || 0, 2) || hasPermission(riskUserConfig?.actions || 0, 3)) return RISK_STATUS.VERIFIED
     if (riskUserConfig.blacklist) return RISK_STATUS.ISSUE
     return RISK_STATUS.NOTVERIFIED
   }, [riskUserConfig])
