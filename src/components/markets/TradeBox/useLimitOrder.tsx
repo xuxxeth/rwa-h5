@@ -4,7 +4,7 @@ import { useState, useCallback } from "react"
 import BigNumber from "bignumber.js"
 import { TradeType, SideType, TifType, SessionType } from "@/hooks/useCaCommon"
 import { useBaseStore } from "@/stores/baseStore"
-import { parseAmount } from "@/utils"
+import { hasPermission, parseAmount } from "@/utils"
 import type { IRwa, IToken } from "@/service/base/types"
 import type { TFunction } from "i18next"
 import { zeroAddress } from "@/config/constants"
@@ -66,11 +66,11 @@ export function useLimitOrder({
       toastError({ title: t('v2.tx.t39') })
       return false
     }
-    if (riskUserConfig?.actions === 1 && action === 'sell') {
+    if (hasPermission(riskUserConfig?.actions || 0, 1) && action === 'sell') {
       toastError({ title: t('v2.tx.t41') })
       return false
     }
-    if (riskUserConfig?.actions === 2 && action === 'buy') {
+    if (hasPermission(riskUserConfig?.actions || 0, 2) && action === 'buy') {
       toastError({ title: t('v2.tx.t40') })
       return false
     }
