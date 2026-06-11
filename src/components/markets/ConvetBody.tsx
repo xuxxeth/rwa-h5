@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
 import { ConnectButtonText } from "@/components/button/ConnectButtonText";
 import BigNumber from "bignumber.js";
-import { formatTokenAmountWithCommas, isGreater, isLess, parseAmount, truncate, truncateUP } from "@/utils";
+import { formatTokenAmountWithCommas, hasPermission, isGreater, isLess, parseAmount, truncate, truncateUP } from "@/utils";
 import { useShowDialog, DialogController } from '@/components/dialog/DialogController'
 import { ExpiresSetting } from "../expires-setting";
 import { useTradeStore } from "@/stores/tradeStore";
@@ -181,12 +181,12 @@ export function ConverBody({
       return
     }
     // 禁止卖
-    if (riskUserConfig?.actions === 1 && action === 'sell') {
+    if (hasPermission(riskUserConfig?.actions || 0, 1) && action === 'sell') {
       toastError({title: t('v2.tx.t41')})
       return
     }
     // 禁止买
-    if (riskUserConfig?.actions === 2 && action === 'buy') {
+    if (hasPermission(riskUserConfig?.actions || 0, 2) && action === 'buy') {
       toastError({title: t('v2.tx.t40')})
       return
     }
