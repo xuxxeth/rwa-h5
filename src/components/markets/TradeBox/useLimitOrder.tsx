@@ -66,11 +66,11 @@ export function useLimitOrder({
       toastError({ title: t('v2.tx.t39') })
       return false
     }
-    if (hasPermission(riskUserConfig?.actions || 0, 1) && action === 'sell') {
+    if (!hasPermission(riskUserConfig?.actions || 0, 1) && action === 'sell') {
       toastError({ title: t('v2.tx.t41') })
       return false
     }
-    if (hasPermission(riskUserConfig?.actions || 0, 2) && action === 'buy') {
+    if (!hasPermission(riskUserConfig?.actions || 0, 0) && action === 'buy') {
       toastError({ title: t('v2.tx.t40') })
       return false
     }

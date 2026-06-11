@@ -90,7 +90,7 @@ export function useRiskStatus() {
   const riskStatus = useMemo(() => {
     if (!riskUserConfig) return RISK_STATUS.DEFAULT
     if (riskUserConfig.actions === -1) return RISK_STATUS.NOTSIGN
-    if (hasPermission(riskUserConfig?.actions || 0, 1) || hasPermission(riskUserConfig?.actions || 0, 2) || hasPermission(riskUserConfig?.actions || 0, 3)) return RISK_STATUS.VERIFIED
+    if (hasPermission(riskUserConfig?.actions || 0, 0) || hasPermission(riskUserConfig?.actions || 0, 1) || hasPermission(riskUserConfig?.actions || 0, 2)) return RISK_STATUS.VERIFIED
     if (riskUserConfig.blacklist) return RISK_STATUS.ISSUE
     return RISK_STATUS.NOTVERIFIED
   }, [riskUserConfig])

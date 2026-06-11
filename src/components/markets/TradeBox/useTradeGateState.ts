@@ -51,10 +51,10 @@ export function useTradeGateState({
     if (riskUserConfig?.actions === 0) {
       return t('identity.verifyID')
     }
-    if (hasPermission(riskUserConfig?.actions || 0, 1) && action === 'sell') {
+    if (!hasPermission(riskUserConfig?.actions || 0, 1) && action === 'sell') {
       return t('kyc.t51')
     }
-    if (hasPermission(riskUserConfig?.actions || 0, 2) && action === 'buy') {
+    if (!hasPermission(riskUserConfig?.actions || 0, 0) && action === 'buy') {
       return t('kyc.t51')
     }
     
