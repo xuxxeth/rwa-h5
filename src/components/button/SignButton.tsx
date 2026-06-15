@@ -14,10 +14,15 @@ function SignButton(props: { className?: string; refreshIsSignatureValid?: () =>
 
   const handleSignatureVerify = async () => {
     setLoading(true)
-    await signature()
-    refreshIsSignatureValid && refreshIsSignatureValid()
-    await getUserConfig()
-    callback && await callback()
+    try {
+      const res = await signature()
+      refreshIsSignatureValid && refreshIsSignatureValid()
+      await getUserConfig()
+      res && callback && await callback()
+    } catch (error) {
+      console.error('Signature verification failed:', error)
+    }
+    
     setLoading(false)
   }
   return (

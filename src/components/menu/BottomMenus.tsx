@@ -6,7 +6,7 @@ import RefIcon from "./RefIcon"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useRouter } from "@/hooks/useRouter"
 
-const BOTTOM_MENUS_PATH = ['/referral', '/trade', '/']
+const BOTTOM_MENUS_PATH = ['/referral', '/trade']
 
 export function BottomMenus() {
   const { t } = useTranslation()
@@ -15,7 +15,9 @@ export function BottomMenus() {
   // http://localhost:8001/referral/3MNVNRPBY6
   // 这样的地址就识别错误了，怎么解
   const isBottomMenus = useMemo(
-    () => BOTTOM_MENUS_PATH.some(path => router.location.pathname.startsWith(path) || router.location.pathname === '/' ),
+    () => {
+      return BOTTOM_MENUS_PATH.some(path => router.location.pathname !== '/' && router.location.pathname.startsWith(path)) || router.location.pathname === '/'
+    },
     [router.location.pathname]
   )
 
@@ -28,7 +30,31 @@ export function BottomMenus() {
     }
   }, [router.location.pathname])
 
-  if (!isBottomMenus) return null
+  const [keyboardOpen, setKeyboardOpen] = useState(false)
+
+  useEffect(() => {
+    const vv = window.visualViewport
+
+    if (!vv) return
+
+    const initialHeight = vv.height
+
+    const onResize = () => {
+      setKeyboardOpen(
+        vv.height < initialHeight * 0.8
+      )
+    }
+
+    vv.addEventListener('resize', onResize)
+
+    return () => {
+      vv.removeEventListener('resize', onResize)
+    }
+  }, [])
+
+  console.log('keyboardOpen: ', keyboardOpen)
+
+  if (!isBottomMenus || keyboardOpen) return null
 
   return (
     <BottomTabBar

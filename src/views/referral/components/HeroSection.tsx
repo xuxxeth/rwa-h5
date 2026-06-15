@@ -14,10 +14,10 @@ export default function HeroSection() {
             {/* 标题和说明 */}
             <div className="flex flex-col gap-[4px]">
               <div className="text-white">
-                <p className=" font-medium text-[40px] leading-[120%] px-4 text-center">
+                <p className=" font-medium text-[40px] leading-[120%] text-center">
                   <Trans 
                     i18nKey="ref.t2" 
-                    values={{ r1: '50%' }} 
+                    values={{ r1: '40%' }} 
                     components={{
                       r1: <span className="font-semibold text-[#9cff3a]" />
                     }}
@@ -47,7 +47,7 @@ export default function HeroSection() {
           {/* 右侧3D视觉效果 */}
           <div className="relative w-full mt-6">
             <img
-              src={'/images/referral/referral.png'}
+              src={'/images/referral/referral.webp'}
               alt="Tiko 3D"
               className="w-full"
             />

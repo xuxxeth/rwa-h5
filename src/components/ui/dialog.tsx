@@ -29,8 +29,8 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & { overlayClassName?: string, closeClassName?: string, closeIconClassName?: string }
->(({ className, children, overlayClassName, closeClassName, closeIconClassName, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & { overlayClassName?: string, closeClassName?: string, closeIconClassName?: string, disableOutsideClose?: boolean }
+>(({ className, children, overlayClassName, closeClassName, closeIconClassName, disableOutsideClose, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay className={overlayClassName} />
     <DialogPrimitive.Content
@@ -40,12 +40,20 @@ const DialogContent = React.forwardRef<
         className
       )}
       onPointerDownOutside={(e) => {
-        if ((e.target as HTMLElement)?.closest('#toast-root')) {
+        const _target = (e.target as HTMLElement)
+        if (_target?.closest('#toast-root')) {
+          e.preventDefault()
+        }
+        if (disableOutsideClose && _target.getAttribute('data-state') === 'open') {
           e.preventDefault()
         }
       }}
       onInteractOutside={(e) => {
-        if ((e.target as HTMLElement)?.closest('#toast-root')) {
+        const _target = (e.target as HTMLElement)
+        if (_target?.closest('#toast-root')) {
+          e.preventDefault()
+        }
+        if (disableOutsideClose && _target.getAttribute('data-state') === 'open') {
           e.preventDefault()
         }
       }}

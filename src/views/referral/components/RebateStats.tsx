@@ -191,11 +191,11 @@ export function RebateStats(props: {
   return (
     <div className='flex flex-col px-4 py-6 items-center justify-center relative'>
       {isKycFinished && canClaimRebate === false && <OnRisk />}
-      <span className='font-normal text-[16px] text-[#9da3af] leading-normal whitespace-nowrap'>
+      <span className='font-normal text-[16px]/5 text-[#9da3af] whitespace-nowrap'>
         {t('rebate.unClaimed')}
       </span>
-      <div className='flex max-w-full flex-row items-end justify-center gap-[8px] items-baseline h-[54px]'>
-        <p className='font-bold text-[32px] text-[#9cff3a] leading-none truncate'>
+      <div className='flex mt-1 max-w-full flex-row items-end justify-center gap-[8px] items-baseline h-[30px]'>
+        <p className='font-bold text-2xl/7.5 text-[#9cff3a] truncate'>
           <AmountDisplay
             amount={totalAmount !== undefined ? formatAmount(totalAmount) : undefined}
           />
@@ -451,7 +451,7 @@ function DataList(props: { inviteCodeInfo: IInviteCodeInfo | null }) {
   const { inviteCodeInfo } = props
   const { t } = useTranslation()
   return (
-    <div className='flex flex-col mt-6 w-full gap-3 h-[217px] justify-between mt-6'>
+    <div className='flex flex-col mt-6 w-full gap-3 justify-between mt-6'>
       <DataItem
         label={t('rebate.cum')}
         value={<AmountDisplay amount={inviteCodeInfo?.rebates} />}

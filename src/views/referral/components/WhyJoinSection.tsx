@@ -13,7 +13,7 @@ interface FeatureCardProps {
 function FeatureCard({ title, description, imageSrc, imagePosition, glowColor }: FeatureCardProps) {
   return (
     <div className={cn(
-      "relative rounded-[16px] w-full border border-[#383A40] overflow-hidden cursor-pointer hover:border-[#2EE4A7]",
+      "relative rounded-[16px] w-full border border-[#383A40] overflow-hidden",
     )}>
       <div className="flex items-center gap-2 pl-4">
         {/* 文字内容 */}
@@ -47,7 +47,7 @@ function FeatureCard({ title, description, imageSrc, imagePosition, glowColor }:
 function FeatureCard2({ title, description, imageSrc, imagePosition, glowColor }: FeatureCardProps) {
   return (
     <div className={cn(
-      "relative rounded-[16px] w-full border border-[#383A40] overflow-hidden cursor-pointer hover:border-[#F0B90B]",
+      "relative rounded-[16px] w-full border border-[#383A40] overflow-hidden",
     )}>
       <div className="flex items-center gap-2 pl-4">
         {/* 文字内容 */}
@@ -83,11 +83,11 @@ function FeatureCard2({ title, description, imageSrc, imagePosition, glowColor }
 function TransparencyCard() {
   const { t } = useTranslation()
   return (
-    <div className="flex-1 relative rounded-[16px] border border-[#383a40] h-full overflow-hidden hover:border-[#9CFF3A] cursor-pointer">
+    <div className="flex-1 relative rounded-[16px] border border-[#383a40] h-full overflow-hidden ">
       <div className="flex flex-col h-full">
         {/* 文字内容 */}
-        <div className="flex flex-col gap-[4px] p-4 pb-0">
-          <h3 className=" font-medium text-[16px] text-white leading-[32px]">{t("ref.t7")}</h3>
+        <div className="flex flex-col gap-[4px] p-4 pb-0 py-6">
+          <h3 className=" font-medium text-[16px] text-white leading-[120%]">{t("ref.t7")}</h3>
           <p className="font-normal text-[12px] text-[#9da3af] leading-[18px]">
             {t("ref.t71")}
           </p>
@@ -123,7 +123,7 @@ export default function WhyJoinSection() {
           {/* 功能卡片网格 */}
           <div className="flex gap-[24px] items-stretch">
             {/* 左侧两个小卡片 */}
-            <div className="flex flex-col gap-[24px]">
+            <div className="flex flex-col gap-[12px]">
               <FeatureCard
                 title={t("ref.t5")}
                 description={t("ref.t51")}

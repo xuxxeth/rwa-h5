@@ -46,27 +46,33 @@ const AutoBindDialog = memo(
       setBindLoading(true)
       bindRelationship(inviteCode)
         .then(res => {
-          if (res.code === RESPONSE_CODE.SUCCESS) {
+          if (res?.code === RESPONSE_CODE.SUCCESS) {
             toastSuccess({title: t("ref.t33")})
             bindDialog.hide()
             setTimeout(() => {
               router.push('/referral')
             }, 800)
           } else {
-            toastError({title: res.message || "Error"})
+            toastError({title: res?.message || t('appErr.signError3')})
+            bindDialog.hide()
             if (res?.code === 20003) {
               router.push('/referral')
-              bindDialog.hide()
             }
           }
         })
-        .catch(() => {
-          toastError({title: "Error"})
+        .catch((e) => {
+          
+          if (e.code === 'ERR_CANCELED') {
+            toastError({title: t('appErr.signError2')})
+          } else {
+            toastError({title: t('appErr.signError3')})
+          }
+          
         })
         .finally(() => {
           setBindLoading(false)
         })
-    }, [account, inviteCode, bindRelationship, router, toastError, toastSuccess, bindDialog])
+    }, [account, inviteCode, bindRelationship, router, toastError, toastSuccess, bindDialog, t])
 
     return (
       <DialogController
@@ -75,9 +81,10 @@ const AutoBindDialog = memo(
         overlayClassName='z-[49]'
         open={bindDialog.open}
         openChange={bindDialog.setOpen}
+        disableOutsideClose={true}
       >
         <div className='w-[90vw] max-w-[480px] px-6 font-normal'>
-          <div className=' flex justify-center'>
+          <div className=' flex justify-center min-h-[180px]'>
             <LazyImage src='/images/referral/bind.png' className='w-[327px]' />
           </div>
           <div className='my-4 font-medium text-[16px] text-white'>

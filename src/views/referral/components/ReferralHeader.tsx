@@ -13,7 +13,7 @@ export default function ReferralHeader() {
           <p className=" font-medium text-[40px] leading-[120%] text-center">
             <Trans 
               i18nKey="ref.t2" 
-              values={{ r1: '50%' }} 
+              values={{ r1: '40%' }} 
               components={{
                 r1: <span className="font-semibold text-[#9cff3a]" />
               }}

@@ -38,6 +38,7 @@ export function DialogController({
   titleClassName,
   closeClassName,
   closeIconClassName,
+  disableOutsideClose,
   openChange
 }: {
   children?: React.ReactNode;
@@ -51,20 +52,41 @@ export function DialogController({
   closeClassName?: string
   titleClassName?: string
   closeIconClassName?: string
+  disableOutsideClose?: boolean
   openChange: (open: boolean) => void
 }) {
+  const [keyboardOpen, setKeyboardOpen] = useState(false)
+
+  useEffect(() => {
+    const vv = window.visualViewport
+
+    if (!vv) return
+
+    const onResize = () => {
+      setKeyboardOpen(
+        vv.height < window.innerHeight * 0.8
+      )
+    }
+
+    vv.addEventListener("resize", onResize)
+
+    return () => {
+      vv.removeEventListener("resize", onResize)
+    }
+  }, [])
   
   // useBodyScrollLock(open)
 
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent 
+        disableOutsideClose={disableOutsideClose}
         overlayClassName={overlayClassName}
         closeClassName={closeClassName}
         closeIconClassName={closeIconClassName}
         className={cn(
         'rounded-[8px]',
-        topFixed ? 'top-[4vh] translate-y-[0]' : '',
+        (topFixed || keyboardOpen) ? 'top-[4vh] translate-y-[0]' : '',
         className
       )}
       >
