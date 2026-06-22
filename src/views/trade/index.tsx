@@ -172,7 +172,7 @@ export const TradePage = () => {
   const orderValue = useOrderBase(effectivePrice, inputSize)
 
   // ── Fee calculation ──
-  const { estimatedFee, platformFee, brokerageFee, tradingActivityFee, secFee, catFee, allOrderValue } = useCalcFee(
+  const { estimatedFee, platformFee, brokerageFee, allOrderValue } = useCalcFee(
     orderValue,
     inputSize,
     action === 'buy',
@@ -408,9 +408,6 @@ export const TradePage = () => {
             feeRate={inputToken?.feeRate ?? ''}
             platformFee={platformFee}
             brokerageFee={brokerageFee}
-            tradingActivityFee={tradingActivityFee}
-            secFee={secFee}
-            catFee={catFee}
             networkFeeInNative={marketInfo.networkFeeInNative}
             isBuy={action === 'buy'}
             decimals={inputToken?.decimals ?? 6}
@@ -452,9 +449,6 @@ export const TradePage = () => {
         orderValue={orderValue}
         platformFee={platformFee}
         brokerageFee={brokerageFee}
-        tradingActivityFee={tradingActivityFee}
-        secFee={secFee}
-        catFee={catFee}
         estimatedFee={estimatedFee}
         feeRate={inputToken?.feeRate ?? ''}
         networkFeeInNative={marketInfo.networkFeeInNative}

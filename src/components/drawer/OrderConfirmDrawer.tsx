@@ -20,9 +20,6 @@ type OrderConfirmDrawerProps = {
   orderValue?: string
   platformFee: string
   brokerageFee: string
-  tradingActivityFee: string
-  secFee: string,
-  catFee: string,
   estimatedFee: string
   action: string
   tradeType: TradeType
@@ -43,16 +40,12 @@ export const OrderConfirmDrawer = memo(
     orderValue,
     platformFee,
     brokerageFee,
-    tradingActivityFee,
-    secFee,
-    catFee,
     estimatedFee,
     networkFeeInNative,
     feeRate,
     onClick,
   }: OrderConfirmDrawerProps) => {
     const { t } = useTranslation()
-    const marketInfo = useBaseStore((state) => state.marketInfo)
     const inputToken = useTradeStore((state) => state.inputToken)
     const outputToken = useTradeStore((state) => state.outputToken)
     const limitPrice = useTradeStore((state) => state.limitPrice)
@@ -151,6 +144,7 @@ export const OrderConfirmDrawer = memo(
               <Row label={t('v3.t2')} value={`${slippage}%`} />
             )}
             
+            
             <Row
               label={
                 <TooltipWithBorder tooltip={t('v2.tx.t311')}>
@@ -158,6 +152,10 @@ export const OrderConfirmDrawer = memo(
                 </TooltipWithBorder>
               }
               value={`${orderValue} ${feeSymbol}`}
+            />
+            <Row
+              label={t('Network Fee')}
+              value={`${networkFeeInNative} BNB`}
             />
 
             {/* Estimated fee with expand */}
@@ -177,33 +175,6 @@ export const OrderConfirmDrawer = memo(
                 },
                 {
                   label: (
-                    <TooltipWithBorder tooltip={t('v2.tx.t331', {r1: feeRateConfig?.tradingActivityFeeRate?.value || '--', r2: feeRateConfig?.tradingActivityFeeRate?.minValue || '--', r3: feeRateConfig?.tradingActivityFeeRate?.maxValue || '--'})}>
-                      {t('v2.tx.t33')}
-                    </TooltipWithBorder>
-                  ),
-                  value: `${tradingActivityFee} ${feeSymbol}`,
-                  visible: action === 'sell',
-                },
-                {
-                  label: (
-                    <TooltipWithBorder tooltip={t('v2.tx.t471', {r1: feeRateConfig?.secFeeRate?.value || '--', r2: feeRateConfig?.secFeeRate?.minValue || '--'})}>
-                      {t('v2.tx.t47')}
-                    </TooltipWithBorder>
-                  ),
-                  value: `${secFee || '--'} ${feeSymbol}`,
-                  visible: action === 'sell' && !feeRateConfig?.secFeeRate?.noFee,
-                },
-                {
-                  label: (
-                    <TooltipWithBorder tooltip={t('v2.tx.t481', {r1: feeRateConfig?.catFeeRate?.value || '--', r2: feeRateConfig?.catFeeRate?.minValue || '--'})}>
-                      {t('v2.tx.t48')}
-                    </TooltipWithBorder>
-                  ),
-                  value: `${catFee || '--'} ${feeSymbol}`,
-                  visible: !feeRateConfig?.catFeeRate?.noFee,
-                },
-                {
-                  label: (
                     <TooltipWithBorder
                       tooltip={t('v2.tx.t341', { r1: feeRatePercent })}
                     >
@@ -211,10 +182,6 @@ export const OrderConfirmDrawer = memo(
                     </TooltipWithBorder>
                   ),
                   value: `${platformFee} ${feeSymbol}`,
-                },
-                {
-                  label: t('Network Fee'),
-                  value: `${networkFeeInNative} BNB`,
                 },
               ]}
             />
@@ -269,7 +236,7 @@ export const OrderConfirmDrawer = memo(
 OrderConfirmDrawer.displayName = 'OrderConfirmDrawer'
 
 /* ── Helper: single row ── */
-function Row({
+export function Row({
   label,
   value,
 }: {
