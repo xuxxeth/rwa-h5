@@ -52,8 +52,6 @@ export function BottomMenus() {
     }
   }, [])
 
-  console.log('keyboardOpen: ', keyboardOpen)
-
   if (!isBottomMenus || keyboardOpen) return null
 
   return (

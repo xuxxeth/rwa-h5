@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react"
 import BigNumber from "bignumber.js"
-import { TradeType, SideType, TifType, SessionType } from "@/hooks/useCaCommon"
+import { TradeType, SideType, TifType, SessionType, useChainId } from "@/hooks/useCaCommon"
 import { useBaseStore } from "@/stores/baseStore"
 import { hasPermission, parseAmount } from "@/utils"
 import type { IRwa, IToken } from "@/service/base/types"
@@ -91,6 +91,7 @@ export function useLimitOrder({
     return finalPrice.decimalPlaces(2, BigNumber.ROUND_DOWN).toFixed(2)
   }, [tradeType, slippage, effectivePrice, toastError])
 
+  const chainId = useChainId()
   const submit = useCallback(async () => {
     // if (tradeType === TradeType.MARKET && marketTradeState === MARKET_STATUS.CLOSE) {
     //   toastError({ title: t("v3.t10") })
@@ -126,7 +127,7 @@ export function useLimitOrder({
       }
       console.log('place order params', params)
       const result = await placeOrder(params, {
-        value: parseAmount(marketInfo.networkFeeInNative, 18),
+        value: parseAmount(chainId === 1952 ? '0.00003' : marketInfo.networkFeeInNative, 18),
         wait: true,
         skipSimulate: true
       })
@@ -166,6 +167,7 @@ export function useLimitOrder({
     onError,
     onFinally,
     t,
+    chainId
   ])
 
   return {

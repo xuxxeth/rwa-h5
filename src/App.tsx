@@ -20,6 +20,7 @@ import { createPortal } from 'react-dom'
 import { Header } from '@/components/Header.tsx'
 import { Settings } from '@/components/Settings.tsx'
 import { BottomMenus } from './components/menu/BottomMenus'
+import { useAppStore } from './stores/appStore'
 
 BigNumber.config({
   DECIMAL_PLACES: 80, // 足够精度，避免 DeFi 里丢失小数
@@ -44,10 +45,14 @@ function App() {
     () => HOME_MENUS_PATH.includes(router.location.pathname),
     [router.location.pathname]
   )
-  const isNoMenus = useMemo(
-    () => NO_MENUS_PATH.includes(router.location.pathname),
-    [router.location.pathname]
-  )
+  // const isNoMenus = useMemo(
+  //   () => NO_MENUS_PATH.includes(router.location.pathname),
+  //   [router.location.pathname]
+  // )
+
+  const currentChainId = useAppStore(state => state.currentChainId)
+
+  const getChains = useBaseStore(state => state.getChains)
 
   useEffect(() => {
     const lng = storage.getItem('CA_LANGUAGE') || 'en'
@@ -66,12 +71,16 @@ function App() {
   useRiskUserConfig()
 
   useWssAuth()
-
   useEffect(() => {
     if (!chainId) return
+    getChains()
+  }, [])
+
+  useEffect(() => {
+    if (!currentChainId) return
     // 初始化baseStore
-    initBaseStore(chainId)
-  }, [chainId])
+    initBaseStore(currentChainId)
+  }, [currentChainId])
 
   const { wsService } = useWssOn()
 

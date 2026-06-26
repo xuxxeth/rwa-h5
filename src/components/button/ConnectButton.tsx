@@ -52,7 +52,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
   const chains = useBaseStore(s => s.chainList)
   const setShowConnect = useBaseStore(s => s.setShowConnect)
   const setCurrentWallet = useBaseStore(s => s.setCurrentWallet)
-
+  const currentChainId = useAppStore(s => s.currentChainId)
   const setIsWalletConnecting = useAppStore(s => s.setIsWalletConnecting)
 
   const [status, setStatus] = useState<WalletStatus>(WalletStatus.IDLE)
@@ -75,9 +75,9 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
   const [walletSheetOpen, setWalletSheetOpen] = useState(false)
 
   const handleConnect = useCallback(
-    async (connectorType: ConnectorType, wallet: WalletConfig) => {
+    async (connectorType: ConnectorType, chainId: number,  wallet: WalletConfig) => {
       try {
-        await rwaHandleConnect(connectorType, wallet)
+        await rwaHandleConnect(connectorType, chainId, wallet)
       } catch (error) {
       } finally {
         setIsWalletConnecting(false)
@@ -156,7 +156,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
   }, [status])
 
   useEffect(() => {
-    if (!wallets.length || account || !initialized) return
+    if (!wallets.length || account || !initialized || !currentChainId) return
 
     const walletUUID = storage.getItem(WALLET_UUID)
     const connector = storage.getItem(CONNECTOR_TYPE) as ConnectorType | null
@@ -177,10 +177,12 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     setStatus(WalletStatus.CONNECTING)
     setIsWalletConnecting(true)
 
-    handleConnect(connector, wallet)
-  }, [wallets, initialized])
+    handleConnect(connector, currentChainId, wallet)
+  }, [wallets, initialized, currentChainId])
 
-  const connectWallet = async (wallet: WalletConfig) => {
+  const connectWallet = async (wallet: WalletConfig, chainId: number | null) => {
+    
+    if (!chainId) return
     isManualConnect.current = true
     setCurrentWallet(wallet)
     setIsWalletConnecting(true)
@@ -194,13 +196,13 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
 
       setConnectorType(ConnectorType.Injected)
 
-      await handleConnect(ConnectorType.Injected, wallet)
+      await handleConnect(ConnectorType.Injected, chainId, wallet)
       return
     }
 
     setConnectorType(ConnectorType.WalletConnect)
 
-    await handleConnect(ConnectorType.WalletConnect, wallet)
+    await handleConnect(ConnectorType.WalletConnect, chainId, wallet)
   }
 
   const goTo = (path: string) => {
@@ -226,7 +228,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
 
   return (
     <>
-      {!account || !isSameChain ? (
+      {!account ? (
         <div
           className={cn(
             'bg-brand px-3 rounded-[8px] text-sm/4.5 font-medium h-9 flex items-center justify-center',
@@ -238,7 +240,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
               toastError({ title: t('noInjectedWallet') })
               return
             }
-            connectWallet(injectedWallet)
+            connectWallet(injectedWallet, currentChainId)
           }}
         >
           {t('Connect Wallet')}

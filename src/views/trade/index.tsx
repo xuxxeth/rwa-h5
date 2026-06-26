@@ -17,7 +17,7 @@ import { useRouter } from '@/hooks/useRouter'
 import { MARKET_STATUS } from '@/config/constants'
 import { ConnectButtonText } from '@/components/button/ConnectButtonText'
 import SignButton from '@/components/button/SignButton'
-import { TradeType } from '@/hooks/useCaCommon'
+import { TradeType, useChainId } from '@/hooks/useCaCommon'
 import { parseAmount, truncateUP, formatTokenAmountWithCommas, INTEGER_REGEX, symbolToLower } from '@/utils'
 import { useTokenBalance } from '@/hooks/useTokenBalances'
 import { useTrading } from '@/hooks/useTrading'
@@ -49,6 +49,7 @@ import { RwaSessionStatus } from '@/components/markets/RwaSessionStatus.tsx'
 export const TradePage = () => {
   const { t, i18n } = useTranslation()
   const router = useRouter()
+  const chainId = useChainId()
   const { toastError } = useToast()
   const { account, isSameChain } = useActiveWeb3()
   const orderDialog = useShowDialog()
@@ -114,13 +115,13 @@ export const TradePage = () => {
       const _rwa = rwaList.find(rwa => rwa.symbol.toLowerCase() === router.params.symbol?.toLowerCase())
       _rwa && updateInputToken(_rwa)
     }
-  }, [rwaList.length, inputToken, router.params])
+  }, [rwaList.length, inputToken, router.params, chainId])
 
   useEffect(() => {
     if (tokenList[0]) {
       updateOutputToken(tokenList[0])
     }
-  }, [tokenList.length])
+  }, [tokenList.length, chainId])
 
   const marketTradeState = useBaseStore(state => state.marketTradeState)
   const tradeType = useTradeStore(state => state.tradeType)

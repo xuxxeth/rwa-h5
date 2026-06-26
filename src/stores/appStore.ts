@@ -5,6 +5,8 @@ export interface AppStore {
   setIsWalletConnecting: (connecting: boolean) => void
   favorites: number[]
   setFavorites: (favorites: number[]) => void
+  currentChainId: number | null
+  setCurrentChainId: (chainId: number | null) => void
 }
 
 export const useAppStore = create<AppStore>()((set, get) => ({
@@ -15,5 +17,9 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   favorites: [],
   setFavorites: (favorites: number[]) => {
     set({ favorites })
+  },
+  currentChainId: null,
+  setCurrentChainId: (chainId: number | null) => {
+    set({ currentChainId: chainId })
   },
 }))
