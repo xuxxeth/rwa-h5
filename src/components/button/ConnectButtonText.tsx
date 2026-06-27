@@ -8,20 +8,26 @@ import { useBaseStore } from '@/stores/baseStore'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/useToast'
 import { ConnectorType } from '@/hooks/useCaCommon'
+import { useAppStore } from '@/stores/appStore'
 
 const ConnectButtonText = memo(({ className }: { className?: string }) => {
   const { wallets, handleConnect } = useActiveWeb3()
   const { toastError } = useToast()
   const { t } = useTranslation()
+  
+  const currentChainId = useAppStore(state => state.currentChainId)
 
-  const connectWallet = async () => {
+  const connectWallet = async (chainId: number | null) => {
     try {
+      if (!chainId) {
+        return
+      }
       const injectedWallet = wallets.find(w => w.detected)
       if (!injectedWallet) {
         toastError({ title: t('noInjectedWallet') })
         return
       }
-      await handleConnect(ConnectorType.Injected, injectedWallet)
+      await handleConnect(ConnectorType.Injected, chainId, injectedWallet)
     } catch (error) {
       toastError({ title: 'Connect Wallet Failed' })
     }
@@ -34,7 +40,7 @@ const ConnectButtonText = memo(({ className }: { className?: string }) => {
       className={cn('bg-brand text-black w-full h-[40px] text-[14px]', className)}
       onClick={async () => {
         setShowConnect(true)
-        await connectWallet()
+        await connectWallet(currentChainId)
         // const latestWalletUUID = storage.getItem(LATEST_WALLET_UUID)
         // let wallet = wallets[0]
         // if (latestWalletUUID) {

@@ -72,7 +72,7 @@ function App() {
 
   useWssAuth()
   useEffect(() => {
-    if (!chainId) return
+    // if (!chainId) return
     getChains()
   }, [])
 
