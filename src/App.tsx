@@ -72,7 +72,6 @@ function App() {
 
   useWssAuth()
   useEffect(() => {
-    // if (!chainId) return
     getChains()
   }, [])
 
