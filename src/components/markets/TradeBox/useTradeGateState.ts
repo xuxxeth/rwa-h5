@@ -63,7 +63,7 @@ export function useTradeGateState({
 
   const isPageReady = useTradePageReady({
     account,
-    isSameChain,
+    // isSameChain,
     inputToken,
     outputToken,
     inputTokenBalance,
