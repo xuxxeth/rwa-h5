@@ -6,24 +6,14 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { useRouter } from '@/hooks/useRouter'
 import { useToast } from '@/hooks/useToast'
 import { useActiveWeb3 } from '@/hooks/useActiveWe3'
-import { ConnectorType, useQrCodeData, type WalletConfig } from '@/hooks/useCaCommon'
+import { ConnectorType, type WalletConfig } from '@/hooks/useCaCommon'
 import { useBaseStore } from '@/stores/baseStore'
 import { useAppStore } from '@/stores/appStore'
-import { DialogController } from '@/components/dialog/DialogController'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
-import { Divide } from '../divide'
+
 import { LazyImage } from '../image/LazyImage'
-import CopyButton from './copyButton'
 import { shortenAddress } from '@/utils'
-import { useVerifyTip } from '../market-trading/VerifyIdentity'
-import { useSignatureValidStatus } from '@/hooks/useSignature'
-import { CircleLoading } from '@/components/loading'
-import QRCode from '@/components/qrcode'
-import { useKycStatus } from '@/hooks/useKycStatus'
-import { KYC_OVERALL_STATUS } from '@/service/kyc/types'
-import { usePendingStep } from '@/hooks/usePendingStep'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { WalletDrawer } from '@/components/drawer/WalletDrawer.tsx'
+import { SwitchChainDrawer } from '../drawer/SwitchChainDrawer'
 
 const WalletStatus = {
   IDLE: 'IDLE',
@@ -66,24 +56,22 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
 
   const networkText = useMemo(() => chains.map(c => c.displayName).join(' / '), [chains])
 
-  const { verifyTip } = useVerifyTip()
-  const [isSignatureValid] = useSignatureValidStatus()
-
-  const { kycStatus } = useKycStatus()
-  const pendingStep = usePendingStep()
-
   const [walletSheetOpen, setWalletSheetOpen] = useState(false)
+  const [switchSheetOpen, setSwitchSheetOpen] = useState(false)
 
   const handleConnect = useCallback(
     async (connectorType: ConnectorType, chainId: number,  wallet: WalletConfig) => {
       try {
         await rwaHandleConnect(connectorType, chainId, wallet)
       } catch (error) {
+        toastError({
+          title: t('switchNetwork', { network: networkText }),
+        })
       } finally {
         setIsWalletConnecting(false)
       }
     },
-    [rwaHandleConnect]
+    [rwaHandleConnect, networkText]
   )
 
   useEffect(() => {
@@ -124,23 +112,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         break
 
       case WalletStatus.WRONG_NETWORK:
-        if (chains[0]) {
-          handleSwitchChain(chains[0].id).then(res => {
-            if (res) {
-              // window.location.reload()
-            } else {
-              toastError({
-                title: t('switchNetwork', { network: networkText }),
-              })
-            }
-          })
-        } else {
-          toastError({
-            title: t('switchNetwork', { network: networkText }),
-          })
-        }
-
-        // handleDisConnect()
+        setSwitchSheetOpen(true)
         break
 
       // case WalletStatus.IDLE:
@@ -210,22 +182,6 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     router.push(path)
   }
 
-  // const isShowingQrCode = connectorType === ConnectorType.WalletConnect
-
-  // const dialogTitle =
-  //   isShowingQrCode && currentWallet ? (
-  //     <div className='flex items-center justify-center relative'>
-  //       <LazyImage
-  //         onClick={() => setConnectorType(undefined)}
-  //         className='w-6 h-6 absolute left-0 top-0 cursor-pointer'
-  //         src='/images/icons/back.png'
-  //       />
-  //       <span className='text-base font-semibold'>{currentWallet.info.name}</span>
-  //     </div>
-  //   ) : (
-  //     <span className='text-base font-semibold'>{t('Connect Wallet')}</span>
-  //   )
-
   return (
     <>
       {!account ? (
@@ -240,7 +196,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
               toastError({ title: t('noInjectedWallet') })
               return
             }
-            connectWallet(injectedWallet, currentChainId)
+            connectWallet(injectedWallet, chains[0]?.id)
           }}
         >
           {t('Connect Wallet')}
@@ -257,35 +213,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         </button>
       )}
       <WalletDrawer open={walletSheetOpen} onOpenChange={open => setWalletSheetOpen(open)} />
-
-      {/*<Dialog open={walletSheetOpen} onOpenChange={setWalletSheetOpen}>
-        <DialogContent
-          overlayClassName='bg-[#131416B2]'
-          className='left-0 bg-gray-900 gap-0 px-0 border border-gray-700  bottom-0 top-auto translate-x-0 translate-y-0 w-full min-w-0 rounded-t-[24px] rounded-b-none pb-[calc(env(safe-area-inset-bottom)+16px)] pt-0'
-          closeClassName='right-5 top-5'
-        >
-          <DialogTitle className='px-5 py-4 border-b border-b-gray-700 text-base/5 font-normal'>
-            {t('wallet')}
-          </DialogTitle>
-          <div className='flex flex-row items-center text-base/5 font-medium justify-between px-5 py-5'>
-            <div>{t('addr')}</div>
-            <div className='flex flex-row items-center gap-1'>
-              {shortenAddress(account!)}
-              <CopyButton copyText={account!} />
-            </div>
-          </div>
-          <div
-            onClick={async () => {
-              await handleDisConnect()
-              setWalletSheetOpen(false)
-            }}
-            className='flex flex-row items-center justify-center py-4 gap-2'
-          >
-            <LazyImage src='/images/h5/disconnect.svg' />
-            <span className='text-base/4.5 font-medium'>{t('Disconnect')}</span>
-          </div>
-        </DialogContent>
-      </Dialog>*/}
+      <SwitchChainDrawer open={switchSheetOpen} onOpenChange={open => setSwitchSheetOpen(open)} />
     </>
   )
 }

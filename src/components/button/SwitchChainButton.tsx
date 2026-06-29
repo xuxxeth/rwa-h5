@@ -70,14 +70,15 @@ export function SwitchButton() {
 
   useEffect(() => {
     if (chains[0]) {
-      const _chainId = Number(storage.getItem(LAST_CONNECTED_CHAIN_ID) || chains[0].id)
-      const chain = chains.find(chain => chain.id === _chainId)
-      if (chain && currentChainId !== _chainId) {
+      // h5端，页面加载要使用注入的第一个链作为默认链
+      const chain = chains[0]
+      if (chain) {
+        storage.setItem(LAST_CONNECTED_CHAIN_ID, String(chain.id))
         handleSwitchChain(chain.id)
       }
 
     }
-  }, [chains, currentChainId])
+  }, [chains])
 
     // 如果真实钱包chain切换，则更新当前链
   useEffect(() => {
