@@ -59,6 +59,10 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
   const [walletSheetOpen, setWalletSheetOpen] = useState(false)
   const [switchSheetOpen, setSwitchSheetOpen] = useState(false)
 
+  const currentChain = useMemo(() => {
+    return chains.find(chain => chain.id === currentChainId)
+  }, [chains, currentChainId])
+
   const handleConnect = useCallback(
     async (connectorType: ConnectorType, chainId: number,  wallet: WalletConfig) => {
       try {
@@ -207,7 +211,10 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
           className='flex flex-row items-center gap-1 text-white text-sm/4.5 font-medium'
           onClick={() => setWalletSheetOpen(true)}
         >
-          <LazyImage src='/images/h5/bsc.svg' />
+          <div className='w-5 h-5'>
+            {currentChain?.icon && <LazyImage src={currentChain?.icon} className='w-5 h-5' />}
+          </div>
+          
           <span>{shortenAddress(account)}</span>
           <LazyImage src='/images/h5/arrow-down.svg' />
         </button>
