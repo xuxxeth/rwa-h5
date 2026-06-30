@@ -17,7 +17,7 @@ import { xplayerTokens } from "./xlayerRwas";
 export const baseApi = {
   getChains: () => client.get<ApiResponse<IChain[]>>('/v1/base/public/chains'),
   // getTokens: (chainId?: number) => client.get<ApiResponse<IToken[]>>('/v1/base/public/tokens', { chainId }),
-  getTokens: (chainId?: number) => chainId === 1952 ? xplayerTokens : client.get<ApiResponse<IToken[]>>('/v1/base/public/tokens'),
+  getTokens: (chainId?: number) => client.get<ApiResponse<IToken[]>>('/v1/base/public/tokens'),
   getBaseRwas: (chainId?: number) => client.get<ApiResponse<IRwa[]>>('/v1/base/public/rwas', { chainId }),
   getStocks: () => client.get<ApiResponse<IStock[]>>('/v1/base/public/stocks'),
   getMarket: () => client.get<ApiResponse<IMarket[]>>('/v1/base/public/market'),
