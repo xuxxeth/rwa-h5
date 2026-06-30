@@ -33,7 +33,7 @@ export const ChainListDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerPr
     return supportedChains
   }, [supportedChains])
 
-  const networkText = useMemo(() => chains.map(chain => chain.displayName).join(' / '), [chains])
+  const networkText = useMemo(() => chains.filter(c => c.state === 1).map(chain => chain.displayName).join(' / '), [chains])
 
   const handleSwitch = useCallback(
     async (targetChainId: number) => {
