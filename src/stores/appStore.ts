@@ -7,6 +7,8 @@ export interface AppStore {
   setFavorites: (favorites: number[]) => void
   currentChainId: number | null
   setCurrentChainId: (chainId: number | null) => void
+  isSwitchingChain: boolean
+  setIsSwitchingChain: (isSwitching: boolean) => void
 }
 
 export const useAppStore = create<AppStore>()((set, get) => ({
@@ -14,12 +16,16 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   setIsWalletConnecting: (connecting: boolean) => {
     set({ isWalletConnecting: connecting })
   },
+  currentChainId: null,
   favorites: [],
   setFavorites: (favorites: number[]) => {
     set({ favorites })
   },
-  currentChainId: null,
   setCurrentChainId: (chainId: number | null) => {
     set({ currentChainId: chainId })
+  },
+  isSwitchingChain: false,
+  setIsSwitchingChain: (isSwitching: boolean) => {
+    set({ isSwitchingChain: isSwitching })
   },
 }))
