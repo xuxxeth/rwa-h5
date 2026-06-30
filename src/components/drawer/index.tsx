@@ -10,9 +10,10 @@ interface DrawerProps {
   children: ReactNode
   /** 额外的 content className */
   className?: string
+  disableOutsideClose?: boolean
 }
 
-export const Drawer = ({ open, onOpenChange, title, children, className }: DrawerProps) => {
+export const Drawer = ({ open, onOpenChange, title, children, className, disableOutsideClose }: DrawerProps) => {
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
@@ -26,6 +27,24 @@ export const Drawer = ({ open, onOpenChange, title, children, className }: Drawe
             'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
             className
           )}
+          onPointerDownOutside={(e) => {
+            const _target = (e.target as HTMLElement)
+            if (_target?.closest('#toast-root')) {
+              e.preventDefault()
+            }
+            if (disableOutsideClose && _target.getAttribute('data-state') === 'open') {
+              e.preventDefault()
+            }
+          }}
+          onInteractOutside={(e) => {
+            const _target = (e.target as HTMLElement)
+            if (_target?.closest('#toast-root')) {
+              e.preventDefault()
+            }
+            if (disableOutsideClose && _target.getAttribute('data-state') === 'open') {
+              e.preventDefault()
+            }
+          }}
         >
           {/* 无障碍 */}
           <DialogPrimitive.Title className='sr-only font-normal'>{title}</DialogPrimitive.Title>
@@ -34,9 +53,14 @@ export const Drawer = ({ open, onOpenChange, title, children, className }: Drawe
           {/* 标题栏 */}
           <div className='flex items-center justify-between px-5 py-3 font-normal rounded-t-[24px] border border-[#41464F] '>
             <span className='text-[16px] text-white'>{title}</span>
-            <DialogPrimitive.Close className='flex items-center justify-center text-white'>
-              <CloseX size={20} />
-            </DialogPrimitive.Close>
+            {
+              !disableOutsideClose && (
+                <DialogPrimitive.Close className='flex items-center justify-center text-white'>
+                  <CloseX size={20} />
+                </DialogPrimitive.Close>
+              )
+            }
+            
           </div>
 
           {/* 内容 */}

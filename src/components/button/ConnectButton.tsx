@@ -220,7 +220,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         </button>
       )}
       <WalletDrawer open={walletSheetOpen} onOpenChange={open => setWalletSheetOpen(open)} />
-      <SwitchChainDrawer open={switchSheetOpen} onOpenChange={open => setSwitchSheetOpen(open)} />
+      <SwitchChainDrawer open={switchSheetOpen} onOpenChange={open => setSwitchSheetOpen(open)} disableOutsideClose={true} />
     </>
   )
 }

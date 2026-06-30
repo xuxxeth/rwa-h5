@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 interface SwitchChainDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  disableOutsideClose?: boolean
 }
 
 function ChainItem({
@@ -50,7 +51,7 @@ function ChainItem({
   )
 }
 
-export const SwitchChainDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerProps) => {
+export const SwitchChainDrawer = memo(({ open, onOpenChange, disableOutsideClose }: SwitchChainDrawerProps) => {
   const { t } = useTranslation()
   const { toastError } = useToast()
   const setCurrentChain = useBaseStore(state => state.setCurrentChain)
@@ -111,7 +112,7 @@ export const SwitchChainDrawer = memo(({ open, onOpenChange }: SwitchChainDrawer
 
   return (
     <>
-      <Drawer open={open} onOpenChange={onOpenChange} title={t('multiChain.t1')}>
+      <Drawer open={open} onOpenChange={onOpenChange} title={t('multiChain.t1')} disableOutsideClose={true}>
         <div className='text-[14px] font-normal text-[#C7CCD6] py-6 px-4'>{t('multiChain.t2')}</div>
         <div className='flex flex-col px-4'>
           <div className='flex flex-col gap-5'>

@@ -62,7 +62,7 @@ export const ChainListDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerPr
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange} title={t('multiChain.t1')}>
-        <div className='flex flex-col'>
+        <div className='flex flex-col pb-11'>
           {
             chains.map(chain => (
               <div key={chain.id} className='flex items-center justify-between px-4 py-4'
