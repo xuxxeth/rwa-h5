@@ -51,6 +51,7 @@ function App() {
   // )
 
   const currentChainId = useAppStore(state => state.currentChainId)
+  const setIsSwitchingChain = useAppStore(state => state.setIsSwitchingChain)
 
   const getChains = useBaseStore(state => state.getChains)
 
@@ -77,10 +78,13 @@ function App() {
 
   useEffect(() => {
     if (!currentChainId) return
+    setIsSwitchingChain(true)
     // 初始化baseStore
-    initBaseStore(currentChainId)
+    initBaseStore(currentChainId).finally(() => {
+      setIsSwitchingChain(false)
+    })
   }, [currentChainId])
-
+  
   const { wsService } = useWssOn()
 
   useEffect(() => {
