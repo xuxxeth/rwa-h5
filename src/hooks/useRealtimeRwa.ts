@@ -15,6 +15,7 @@ export function useRealtimeRwa(inputToken: IRwa | null) {
     if (inputToken?.symbol) {
       onKey = `realtime.${inputToken.symbol}`
       listener = (rwa: ISummaryDataItem) => {
+        console.log('realtime rwa', inputToken.symbol, rwa.p)
         const precision = inputToken?.precision
         const _data = {
           ...rwa,
