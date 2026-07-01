@@ -15,7 +15,6 @@ export function useRealtimeRwa(inputToken: IRwa | null) {
     if (inputToken?.symbol) {
       onKey = `realtime.${inputToken.symbol}`
       listener = (rwa: ISummaryDataItem) => {
-        console.log('realtime rwa', inputToken.symbol, rwa.p)
         const precision = inputToken?.precision
         const _data = {
           ...rwa,
@@ -26,7 +25,9 @@ export function useRealtimeRwa(inputToken: IRwa | null) {
           c: truncate(rwa.c || 0, precision), // 当日收盘价
           pc: truncate(rwa.pc || 0, precision), // 昨日收盘价
         } as any
-        setRealtimeData(_data)
+        if (inputToken?.stockId === rwa.s) {
+          setRealtimeData(_data)
+        }
       }
       // @ts-ignore
       wsService.on(onKey, listener)

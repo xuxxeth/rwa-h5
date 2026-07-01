@@ -4,12 +4,13 @@ import { truncateUP } from "@/utils"
 import { useRealtimeRwa } from "@/hooks/useRealtimeRwa"
 import { TradeType } from "@/hooks/useCaCommon"
 import type { IRwa, ITokenWithPrice } from "@/service/base/types"
+import type { ISummaryDataItem } from "@/service/webSocket/types"
 
 interface UseRealtimePriceSyncParams {
   currentChainId?: number | null
   inputToken?: IRwa | null
   rwaPrice?: Record<string, any> | null
-  realtimeData?: { p?: string | number } | null
+  realtimeData?: ISummaryDataItem | null
   tradeType: TradeType
   limitPrice: string
   updateLimitPrice: (price: string) => void
@@ -55,7 +56,7 @@ export function useRealtimePriceSync({
   }, [rwaPrice, realtimeData, tradeType])
 
   useEffect(() => {
-    if (inputToken && realtimeData && preToken.current?.symbol !== inputToken.symbol) {
+    if (inputToken && realtimeData && preToken.current?.symbol !== inputToken.symbol && inputToken.stockId === realtimeData.s) {
       preToken.current = inputToken
       if (rwaPrice) {
         setInputTokenPrice({ ...rwaPrice, price: String(realtimeData.p ?? 0) })
