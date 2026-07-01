@@ -146,6 +146,7 @@ export const TradePage = () => {
 
   // ── Realtime price sync ──
   const { inputTokenPrice, handlePriceInput, handleChangePrice } = useRealtimePriceSync({
+    chainId,
     inputToken,
     rwaPrice: inputTokenBalance,
     realtimeData,
