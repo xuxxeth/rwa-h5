@@ -25,7 +25,7 @@ export const ChainListDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerPr
 
   const supportedChains = useMemo(
     () =>
-      chainList.filter(chain => chain.state === 1),
+      chainList,
     [chainList]
   )
 

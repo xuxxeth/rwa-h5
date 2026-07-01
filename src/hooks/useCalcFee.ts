@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react'
 import { useActiveWeb3 } from './useActiveWe3'
 import type { Address } from '@/config/constants'
 import { useTradeStore } from '@/stores/tradeStore'
+import { useAppStore } from '@/stores/appStore'
 
 export function formatFeeRate(
   value: BigNumber.Value,
@@ -31,14 +32,13 @@ export function calcFeeRateValue(feeItem: CommissionConfig) {
 // 获取合约费用
 
 export function useFetchFeeConfig() {
-  const { chainId } = useActiveWeb3()
-  const setFeeConfig = useTradeStore(state => state.setFeeConfig)
+  const currentChainId = useAppStore(state => state.currentChainId)
   const chainList = useBaseStore(state => state.chainList)
 
   const trading = useMemo(() => {
-    const chain = chainList.find(chain => chain.id === chainId)
+    const chain = chainList.find(chain => chain.id === currentChainId)
     return chain?.contract as Address
-  }, [chainId, chainList])
+  }, [currentChainId, chainList])
 
   const { getFeeConfig } = useMarket(trading)
   const defaultFeeRate = { value: '0.00', minValue: '0.00', noFee: true }
@@ -70,7 +70,7 @@ export function useFetchFeeConfig() {
       }
     }
     fetchFeeConfig()
-  }, [getFeeConfig])
+  }, [getFeeConfig, currentChainId])
 }
 
 
