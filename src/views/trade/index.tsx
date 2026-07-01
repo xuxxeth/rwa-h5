@@ -77,6 +77,7 @@ export const TradePage = () => {
     action,
     realtimeData,
     slippage,
+    currentChainId,
   } = useTradeStoreBindings()
 
   const updateInputToken = useTradeStore(state => state.updateInputToken)
@@ -115,13 +116,13 @@ export const TradePage = () => {
       const _rwa = rwaList.find(rwa => rwa.symbol.toLowerCase() === router.params.symbol?.toLowerCase())
       _rwa && updateInputToken(_rwa)
     }
-  }, [rwaList.length, router.params, chainId])
+  }, [rwaList.length, router.params, currentChainId])
 
   useEffect(() => {
     if (tokenList[0]) {
       updateOutputToken(tokenList[0])
     }
-  }, [tokenList.length, chainId])
+  }, [tokenList.length, currentChainId])
 
   const marketTradeState = useBaseStore(state => state.marketTradeState)
   const tradeType = useTradeStore(state => state.tradeType)
@@ -146,7 +147,6 @@ export const TradePage = () => {
 
   // ── Realtime price sync ──
   const { inputTokenPrice, handlePriceInput, handleChangePrice } = useRealtimePriceSync({
-    chainId,
     inputToken,
     rwaPrice: inputTokenBalance,
     realtimeData,

@@ -6,7 +6,6 @@ import { TradeType } from "@/hooks/useCaCommon"
 import type { IRwa, ITokenWithPrice } from "@/service/base/types"
 
 interface UseRealtimePriceSyncParams {
-  chainId: number | null
   inputToken?: IRwa | null
   rwaPrice?: Record<string, any> | null
   realtimeData?: { p?: string | number } | null
@@ -22,7 +21,6 @@ export function useRealtimePriceSync({
   tradeType,
   limitPrice,
   updateLimitPrice,
-  chainId
 }: UseRealtimePriceSyncParams) {
   const initPrice = useRef(false)
   const preToken = useRef<IRwa | null>(null)
@@ -74,10 +72,6 @@ export function useRealtimePriceSync({
       initPrice.current = false
     }
   }, [inputToken])
-
-  useEffect(() => {
-    initPrice.current = false
-  }, [chainId])
 
   const handlePriceInput = useCallback((value: string) => {
     safeUpdateLimitPrice(value)
