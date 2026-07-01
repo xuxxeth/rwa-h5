@@ -114,7 +114,11 @@ export const TradePage = () => {
       rwaList[0] && updateInputToken(rwaList[0])
     } else {
       const _rwa = rwaList.find(rwa => rwa.symbol.toLowerCase() === router.params.symbol?.toLowerCase())
-      _rwa && updateInputToken(_rwa)
+      if (_rwa) {
+        updateInputToken(_rwa)
+      } else {
+        rwaList[0] && router.push('/trade/' + rwaList[0].symbol)
+      }
     }
   }, [rwaList.length, router.params, currentChainId])
 
