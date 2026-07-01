@@ -32,6 +32,7 @@ export function calcFeeRateValue(feeItem: CommissionConfig) {
 // 获取合约费用
 
 export function useFetchFeeConfig() {
+  const setFeeConfig = useTradeStore(state => state.setFeeConfig)
   const currentChainId = useAppStore(state => state.currentChainId)
   const chainList = useBaseStore(state => state.chainList)
 
@@ -61,7 +62,7 @@ export function useFetchFeeConfig() {
             platformFeeRate: { value: platformFeeRate, minValue: '0.00', maxValue: '0.00' },
             brokerageFeeRate: sellRuleId1FeeItem ? calcFeeRateValue(sellRuleId1FeeItem) : defaultFeeRate,
           }
-          // setFeeConfig({...feeConfig, buyFeeRate: buyFeeRate, sellFeeRate: sellFeeRate})
+          setFeeConfig({...feeConfig, buyFeeRate: buyFeeRate, sellFeeRate: sellFeeRate})
         }
         
         
