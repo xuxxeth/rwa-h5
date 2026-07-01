@@ -61,7 +61,7 @@ export function useFetchFeeConfig() {
             platformFeeRate: { value: platformFeeRate, minValue: '0.00', maxValue: '0.00' },
             brokerageFeeRate: sellRuleId1FeeItem ? calcFeeRateValue(sellRuleId1FeeItem) : defaultFeeRate,
           }
-          setFeeConfig({...feeConfig, buyFeeRate: buyFeeRate, sellFeeRate: sellFeeRate})
+          // setFeeConfig({...feeConfig, buyFeeRate: buyFeeRate, sellFeeRate: sellFeeRate})
         }
         
         
@@ -94,8 +94,8 @@ export const FEE_RATE_SCALE_6 = 1000000 // 万分比
 export const FEE_RATE_SCALE_8 = 100000000 // 亿分比
 
 export function calcFeeByConfig(orderValue: number | string, feeConfig: CommissionConfig) {
-  let minFee = new BigNumber(feeConfig.min).dividedBy(FEE_RATE_SCALE_6)
-  let rateFee = new BigNumber(orderValue).multipliedBy(Number(feeConfig.rate)).dividedBy(FEE_RATE_SCALE_6)
+  let minFee = new BigNumber(feeConfig.min || '0').dividedBy(FEE_RATE_SCALE_6)
+  let rateFee = new BigNumber(orderValue || '0').multipliedBy(Number(feeConfig.rate || '0')).dividedBy(FEE_RATE_SCALE_6)
   let fee = rateFee.isLessThan(minFee) ? minFee : rateFee
   return {
     brokerageFee: Number(orderValue) > 0 ? fee.decimalPlaces(2, BigNumber.ROUND_HALF_UP).toFixed(2) : '0',
@@ -123,7 +123,7 @@ export function useCalcFee(
   if (feeConfig && orderValue) {
     const { platformFee, buyFeeConfigs, sellFeeConfigs } = feeConfig
     
-    let _feeRate = platformFee
+    let _feeRate = Number(platformFee)
     if (feeRate && Number(feeRate) > 0) { 
       _feeRate = new BigNumber(feeRate).multipliedBy(FEE_RATE_SCALE_6).toNumber()
     }
