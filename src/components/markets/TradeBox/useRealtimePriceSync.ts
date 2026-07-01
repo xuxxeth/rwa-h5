@@ -7,7 +7,6 @@ import type { IRwa, ITokenWithPrice } from "@/service/base/types"
 import type { ISummaryDataItem } from "@/service/webSocket/types"
 
 interface UseRealtimePriceSyncParams {
-  currentChainId?: number | null
   inputToken?: IRwa | null
   rwaPrice?: Record<string, any> | null
   realtimeData?: ISummaryDataItem | null
@@ -17,7 +16,6 @@ interface UseRealtimePriceSyncParams {
 }
 
 export function useRealtimePriceSync({
-  currentChainId,
   inputToken,
   rwaPrice,
   realtimeData,
@@ -76,9 +74,6 @@ export function useRealtimePriceSync({
     }
   }, [inputToken])
 
-  useEffect(() => {
-    initPrice.current = false
-  }, [currentChainId])
 
   const handlePriceInput = useCallback((value: string) => {
     safeUpdateLimitPrice(value)
