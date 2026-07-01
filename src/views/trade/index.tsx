@@ -110,14 +110,17 @@ export const TradePage = () => {
 
   // ── Token initialization from route param (same logic as CurrencyInputPanel) ──
   useEffect(() => {
+    const _rwa0 = rwaList[0]
     if (!router.params.symbol) {
-      rwaList[0] && updateInputToken(rwaList[0])
+      if (_rwa0 && _rwa0.chainId === currentChainId) {
+        updateInputToken(_rwa0)
+      }
     } else {
       const _rwa = rwaList.find(rwa => rwa.symbol.toLowerCase() === router.params.symbol?.toLowerCase())
-      if (_rwa) {
+      if (_rwa && _rwa.chainId === currentChainId) {
         updateInputToken(_rwa)
       } else {
-        rwaList[0] && router.push('/trade/' + rwaList[0].symbol)
+        (_rwa0 && _rwa0.chainId === currentChainId) && router.push('/trade/' + _rwa0.symbol)
       }
     }
   }, [rwaList.length, router.params, currentChainId])
@@ -151,6 +154,7 @@ export const TradePage = () => {
 
   // ── Realtime price sync ──
   const { inputTokenPrice, handlePriceInput, handleChangePrice } = useRealtimePriceSync({
+    currentChainId,
     inputToken,
     rwaPrice: inputTokenBalance,
     realtimeData,

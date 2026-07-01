@@ -152,16 +152,21 @@ export const useBaseStore = create<BaseStore>()(
         }
         if (rwaTokenRes.code === RESPONSE_CODE.SUCCESS) {
           // @ts-ignore
-          newRwaList = (rwaTokenRes.data || []).map(rwa => ({
-            ...rwa,
-            is24H: rwa.sessionMask === 15,
-            sessionMaskList: numberToBinaryArray(rwa.sessionMask ?? 0),
-          })) 
+          const rwaList = rwaTokenRes.data || []
+          if (rwaList[0]?.chainId === chainId) {
+            newRwaList = rwaList.map(rwa => ({
+              ...rwa,
+              is24H: rwa.sessionMask === 15,
+              sessionMaskList: numberToBinaryArray(rwa.sessionMask ?? 0),
+            })) 
+          }
+          set({
+            rwaList: newRwaList,
+          })
         }
         
         set({
           tokenList: newStableTokenList,
-          rwaList: newRwaList,
         })
       },
       getStocks: async () => {
