@@ -33,10 +33,8 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     account,
     chainId,
     handleConnect: rwaHandleConnect,
-    handleDisConnect,
-    handleSwitchChain,
+    isChainSupported,
     initialized,
-    isSameChain,
   } = useActiveWeb3()
 
   const chains = useBaseStore(s => s.chainList)
@@ -77,21 +75,14 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     },
     [rwaHandleConnect, networkText]
   )
-
   useEffect(() => {
     if (!account || !chainId) {
       setStatus(WalletStatus.IDLE)
       return
     }
-
-    const supported = chains.some(c => c.id === chainId)
-    
-    if (supported) {
-      storage.setItem(CONNECT_ACCOUNT, account)
-    }
-
-    setStatus(supported ? WalletStatus.CONNECTED : WalletStatus.WRONG_NETWORK)
-  }, [account, chainId, chains])
+    // const supported = chains.some(c => c.id === chainId)
+    setStatus(isChainSupported ? WalletStatus.CONNECTED : WalletStatus.WRONG_NETWORK)
+  }, [account, chainId, isChainSupported])
 
   const hasInitializedRef = useRef(false)
   useEffect(() => {
@@ -107,6 +98,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
       case WalletStatus.CONNECTED:
         setIsWalletConnecting(false)
         setShowConnect(false)
+        setSwitchSheetOpen(false)
         storage.setItem(CONNECT_ACCOUNT, account!)
 
         if (isManualConnect.current) {

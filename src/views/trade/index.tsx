@@ -115,7 +115,7 @@ export const TradePage = () => {
       const _rwa = rwaList.find(rwa => rwa.symbol.toLowerCase() === router.params.symbol?.toLowerCase())
       _rwa && updateInputToken(_rwa)
     }
-  }, [rwaList.length, inputToken, router.params, chainId])
+  }, [rwaList.length, router.params, chainId])
 
   useEffect(() => {
     if (tokenList[0]) {
