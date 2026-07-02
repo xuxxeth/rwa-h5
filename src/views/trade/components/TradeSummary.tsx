@@ -115,7 +115,7 @@ export const TradeSummary = ({
           {t('Network Fee')}
         </span>
         <div className="flex items-center gap-1 text-white">
-          <div className='max-w-[140px] truncate text-[14px]' >{networkFeeInNative}</div> BNB
+          <div className='max-w-[140px] truncate text-[14px]' >{networkFeeInNative}</div>
         </div>
       </div>
       {/* 预估交易费用 - Accordion */}

@@ -44,6 +44,7 @@ import { cn } from '@/utils'
 import { RateDisplay } from './components/RateDisplay.tsx'
 import { MarketStatus } from '@/components/markets/MarketStatus.tsx'
 import { RwaSessionStatus } from '@/components/markets/RwaSessionStatus.tsx'
+import { useCurrentChain } from '@/hooks/useChain.ts'
 
 
 export const TradePage = () => {
@@ -302,7 +303,7 @@ export const TradePage = () => {
   const outputBalanceDisplay = account
     ? `${formatTokenAmountWithCommas(outputTokenBalance?.balance || '0')} ${outputToken?.symbol || ''}`
     : undefined
-
+  const currentChain = useCurrentChain()
   return (
     <div className='flex min-h-screen flex-col bg-gray-950 font-normal'>
       <div className='flex flex-col gap-3 px-5 py-[10px]'>
@@ -417,7 +418,7 @@ export const TradePage = () => {
             feeRate={inputToken?.feeRate ?? ''}
             platformFee={platformFee}
             brokerageFee={brokerageFee}
-            networkFeeInNative={marketInfo.networkFeeInNative}
+            networkFeeInNative={marketInfo.networkFeeInNative + ' ' + (currentChain?.nativeToken || '')}
             isBuy={action === 'buy'}
             decimals={inputToken?.decimals ?? 6}
           />}
@@ -460,7 +461,7 @@ export const TradePage = () => {
         brokerageFee={brokerageFee}
         estimatedFee={estimatedFee}
         feeRate={inputToken?.feeRate ?? ''}
-        networkFeeInNative={marketInfo.networkFeeInNative}
+        networkFeeInNative={marketInfo.networkFeeInNative + ' ' + (currentChain?.nativeToken || '')}
         onClick={() => {
           orderDialog.hide()
           order.submit()
