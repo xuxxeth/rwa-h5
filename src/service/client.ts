@@ -74,6 +74,7 @@ const axiosInstance: AxiosInstance = axios.create({
 
 const AUTH_URL_PREFIX = ['/scan/api/', '/kyc/api/', '/uc/api', '/risk/api/', '/ref/api/'] // 需要授权的接口前缀列表
 const NO_CHAIN_ID_HEADER_URL_SUFFIX = ['/base/public/chains']
+const NO_SUPPORTED_CHAIN_URL_SUFFIX = ['/v1/uc/api/agreements/accept'] // 不需要验证支持链
 
 function handleReqSignature(req: InternalAxiosRequestConfig, controller: AbortController, account: string) {
   const url = req.url || ''
@@ -123,7 +124,7 @@ axiosInstance.interceptors.request.use((req: InternalAxiosRequestConfig) => {
   const { account, chainId, isChainSupported } = getConnectStateFromStorage()
 
   // 拦截住不支持的 chain 的请求
-  if (chainId && !isChainSupported) {
+  if (chainId && !isChainSupported && !NO_SUPPORTED_CHAIN_URL_SUFFIX.some(suffix => url.includes(suffix))) {
     controller.abort()
     return Promise.reject(new axios.Cancel(`Chain ID ${chainId} is not supported`))
   }

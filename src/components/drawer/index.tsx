@@ -10,15 +10,27 @@ interface DrawerProps {
   children: ReactNode
   /** 额外的 content className */
   className?: string
+  /** 额外的 overlay className */
+  overlayClassName?: string
+  modal?: boolean
   disableOutsideClose?: boolean
 }
 
-export const Drawer = ({ open, onOpenChange, title, children, className, disableOutsideClose }: DrawerProps) => {
+export const Drawer = ({
+  open,
+  onOpenChange,
+  title,
+  children,
+  className,
+  overlayClassName,
+  modal = true,
+  disableOutsideClose,
+}: DrawerProps) => {
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange} modal={modal}>
       <DialogPrimitive.Portal>
         {/* 遮罩 */}
-        <DialogPrimitive.Overlay className='fixed inset-0 z-[200] bg-[rgba(19,20,22,0.7)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0' />
+        <DialogPrimitive.Overlay className={cn('fixed inset-0 z-[200] bg-[rgba(19,20,22,0.7)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0', overlayClassName)} />
 
         {/* 底部面板 */}
         <DialogPrimitive.Content
