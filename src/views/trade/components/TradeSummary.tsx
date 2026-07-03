@@ -9,6 +9,7 @@ import { TradeType } from '@/hooks/useCaCommon'
 import { EstimatedFeeAccordion } from './EstimatedFeeAccordion'
 import { divide, toFixed, truncate } from '@/utils'
 import IconWithTooltip from '@/components/icon-tooltip'
+import { Row } from '@/components/drawer/OrderConfirmDrawer'
 
 
 interface TradeSummaryProps {
@@ -32,10 +33,6 @@ interface TradeSummaryProps {
   platformFee: string
   /** 经纪费 */
   brokerageFee: string
-  /** 交易活动费 */
-  tradingActivityFee: string
-  secFee: string,
-  catFee: string,
   feeRate: string,
   /** 网络费(原生币) */
   networkFeeInNative: string
@@ -56,9 +53,6 @@ export const TradeSummary = ({
   estimatedFee,
   platformFee,
   brokerageFee,
-  tradingActivityFee,
-  secFee,
-  catFee,
   feeRate,
   networkFeeInNative,
   isBuy,
@@ -116,7 +110,14 @@ export const TradeSummary = ({
           </div>
         </div>
       )}
-
+      <div className="flex items-center justify-between">
+        <span className="border-b border-dashed border-gray-400 text-[14px] text-gray-400 cursor-pointer">
+          {t('Network Fee')}
+        </span>
+        <div className="flex items-center gap-1 text-white">
+          <div className='max-w-[140px] truncate text-[14px]' >{networkFeeInNative}</div> BNB
+        </div>
+      </div>
       {/* 预估交易费用 - Accordion */}
       <EstimatedFeeAccordion
         feeLabel={t('v2.tx.t28')}
@@ -128,29 +129,10 @@ export const TradeSummary = ({
             value: <><div className='max-w-[140px] truncate'>{brokerageFee} </div> {feeSymbol}</>,
           },
           {
-            label: t('v2.tx.t33'),
-            value: <><div className='max-w-[140px] truncate'>{tradingActivityFee} </div> {feeSymbol}</>,
-            visible: !isBuy as boolean,
-          },
-          {
-            label: t('v2.tx.t47'),
-            value: `${secFee || '--'} ${feeSymbol}`,
-            visible: !isBuy && !feeRateConfig?.secFeeRate?.noFee,
-          },
-          {
-            label: t('v2.tx.t48'),
-            value: `${catFee || '--'} ${feeSymbol}`,
-            visible: !feeRateConfig?.catFeeRate?.noFee,
-          },
-          {
             label: t('v2.tx.t34'),
             value: <><div className='max-w-[140px] truncate'>{platformFee} </div> {feeSymbol}</>,
           },
-          {
-            label: t('Network Fee'),
-            // value: `${networkFeeInNative} BNB`,
-            value: <><div className='max-w-[140px] truncate'>{networkFeeInNative}</div> BNB</>,
-          },
+          
         ]}
       />
 
