@@ -24,8 +24,7 @@ export const ChainListDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerPr
   const { handleSwitchChain } = useActiveWeb3()
 
   const supportedChains = useMemo(
-    () =>
-      chainList,
+    () => chainList.filter(chain => chain.state === 1),
     [chainList]
   )
 

@@ -70,28 +70,26 @@ export function SwitchButton() {
 
   useEffect(() => {
     if (chains[0]) {
-      // h5端，页面加载要使用注入的第一个链作为默认链
-      const chain = chains[0]
-      if (chain) {
-        storage.setItem(LAST_CONNECTED_CHAIN_ID, String(chain.id))
-        handleSwitchChain(chain.id)
+      const _chainId = Number(storage.getItem(LAST_CONNECTED_CHAIN_ID) || chains[0].id)
+      const chain = chains.filter(chain => chain.state === 1).find(chain => chain.id === _chainId)
+      if (chain && currentChainId !== _chainId) {
+        handleSwitchChain(chain.state === 1 ? chain.id : chains[0].id)
       }
-
     }
-  }, [chains])
+  }, [chains, currentChainId])
 
-    // 如果真实钱包chain切换，则更新当前链
+  // 如果真实钱包chain切换，则更新当前链
   useEffect(() => {
-    if (chainId && isChainSupported) {
-      const chain = chains.find(chain => chain.id === chainId)
+    if (chainId && isChainSupported && chains[0]) {
+      const chain = (chains.filter(chain => chain.state === 1).find(chain => chain.id === chainId)) || chains[0]
+
       if (chain) {
         storage.setItem(LAST_CONNECTED_CHAIN_ID, String(chain.id))
         setCurrentChainId(chainId)
         setCurrentChain(chain)
       }
     }
-    
-  }, [chainId, isChainSupported])
+  }, [chains, chainId, isChainSupported])
 
   return null
 }
