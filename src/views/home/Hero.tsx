@@ -3,49 +3,37 @@ import { Button } from './ui/Button'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useRouter } from '@/hooks/useRouter'
 import { LazyImage } from '@/components/image/LazyImage'
-import { useRwaTokens } from '@/hooks/useTokens'
-import {
-  symbolToLower,
-  textPrefix,
-  formatUp,
-  getUpColor,
-  truncate,
-  type Change,
-} from '@/utils/index'
-import type { IRwa } from '@/service/base/types'
-import useRwaWithPriceAndUp from '@/hooks/useRwaWithPriceAndUp'
+import { useStockList } from '@/hooks/useTokens'
+import { textPrefix, formatUp, getUpColor, truncate, getSymbol, type Change } from '@/utils/index'
+import type { IStock } from '@/service/base/types'
+import { useStockWithPriceAndUp } from '@/hooks/useRwaWithPriceAndUp'
 import { HighlightText } from './ui/HighlightText'
 
 // --- Types ---
 interface StockData {
   icon: string
-  name: string
-  symbol: string
+  stockName: string
+  stockCode: string
+  // symbol: string
   price: number | undefined
+  precision?: number
   up: string | undefined
   color?: string
   change: Change
-  precision: number
+  // precision: number
 }
 
 // --- Constants ---
-const SHOWN_STOCK_SYMBOL_PREFIX = ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'TSLA', 'NFLX', 'META']
+// const SHOWN_STOCK_SYMBOL_PREFIX = ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'TSLA', 'NFLX', 'META']
+const SHOWN_STOCK_ID_LIST = [1, 8, 18, 7, 4, 15, 6]
 
 function useStockData() {
-  const rwaList = useRwaTokens()
+  const stockList = useStockList(false)
+  const filteredStockList = stockList.filter(stock => SHOWN_STOCK_ID_LIST.includes(stock.id))
 
-  const rwaMap = useMemo(() => {
-    return new Map(rwaList.map(rwa => [symbolToLower(rwa.symbol).slice(0, -1), rwa]))
-  }, [rwaList])
+  const stockWithPriceAndUP = useStockWithPriceAndUp(filteredStockList)
 
-  const filteredRwaList = useMemo(() => {
-    return SHOWN_STOCK_SYMBOL_PREFIX.map(prefix => rwaMap.get(symbolToLower(prefix))).filter(
-      rwa => rwa !== undefined
-    ) as IRwa[]
-  }, [rwaMap])
-
-  const rwaWithPriceAndUp = useRwaWithPriceAndUp(filteredRwaList)
-  return rwaWithPriceAndUp.map(item => ({
+  return stockWithPriceAndUP.map(item => ({
     ...item,
     color: getUpColor(item.change),
   }))
@@ -144,19 +132,19 @@ const StockCard: React.FC<{
       >
         <div className='flex items-center gap-4'>
           <div className='w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm'>
-            <LazyImage src={stock.icon} alt={stock.name} />
+            <LazyImage src={stock.icon} alt={stock.icon} />
           </div>
           <div className='text-left'>
-            <div className='font-bold text-gray-900 text-lg'>{stock.name}</div>
-            <div className='text-xs text-gray-400 font-medium'>{stock.symbol}</div>
+            <div className='font-bold text-gray-900 text-lg'>{getSymbol(stock.stockCode)}</div>
+            <div className='text-xs text-gray-400 font-medium'>{stock.stockName}</div>
           </div>
         </div>
         <div className='flex justify-between items-end'>
           <div className={`text-3xl font-medium ${stock.color} text-gray-900 tracking-tight`}>
-            {stock.price ? textPrefix(truncate(stock.price, stock.precision), '$') : ''}
+            {stock.price ? textPrefix(truncate(stock.price, stock.precision ?? 2), '$') : '--'}
           </div>
           <div className={`text-sm font-bold ${stock.color} bg-white/50 px-2 py-1 rounded-lg`}>
-            {stock.up !== undefined ? formatUp(stock.up) : ''}
+            {stock.up !== undefined ? formatUp(stock.up) : '--'}
           </div>
         </div>
         <div
@@ -184,12 +172,13 @@ export const Hero: React.FC = () => {
 
   const centerIndex = Math.floor(stockData.length / 2)
 
-  const handleClick = useCallback((rwa: IRwa) => {
-    router.push('/trade/' + rwa.symbol)
+  const handleClick = useCallback((stock: IStock) => {
+    const symbol = getSymbol(stock.stockCode)
+    router.push('/trade/' + symbol)
   }, [])
 
   return (
-    <div className='relative z-20 pt-24 pb-10 md:pt-42 md:pb-10 px-6 overflow-hidden'>
+    <div className='relative z-20 pt-24 pb-10 md:pt-42 md:pb-10 px-6 !overflow-visible'>
       <div className='max-w-7xl mx-auto flex flex-col items-center text-center'>
         <HeroTitle t={t} />
 
@@ -205,11 +194,11 @@ export const Hero: React.FC = () => {
           </a>
         </div>
 
-        {/* Desktop Cards Container */}
-        <div className='mt-[-190px] relative w-full h-[450px] hidden md:flex justify-center items-end perspective-1000 pointer-events-none origin-bottom'>
+        {/* Desktop Cards */}
+        <div className='mt-[-190px] relative w-full h-[450px] flex justify-center items-end hidden md:flex perspective-1000 pointer-events-none'>
           {stockData.map((stock, idx) => (
             <StockCard
-              key={stock.name}
+              key={stock.stockCode}
               stock={stock}
               index={idx}
               centerIndex={centerIndex}
@@ -218,49 +207,6 @@ export const Hero: React.FC = () => {
               isLoaded={isLoaded}
               onClick={() => handleClick(stock)}
             />
-          ))}
-        </div>
-
-        {/* Mobile Cards Container */}
-        <div className='mt-10 w-full flex flex-col gap-4 md:hidden'>
-          {stockData.slice(0, 3).map(stock => (
-            <div
-              key={stock.name}
-              onClick={() => handleClick(stock as IRwa)}
-              className={`
-                w-full glass-card rounded-[1.5rem] p-4 
-                border border-white/60 flex justify-between items-center
-                cursor-pointer transition-transform active:scale-[0.98]
-              `}
-              style={{
-                boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.05)',
-              }}
-            >
-              {/* Left side: Icon, Name, Symbol */}
-              <div className='flex items-center gap-3'>
-                <div className='w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm'>
-                  <LazyImage src={stock.icon} alt={stock.name} />
-                </div>
-                <div className='text-left'>
-                  <div className='font-bold text-gray-900 text-base leading-tight'>
-                    {stock.name}
-                  </div>
-                  <div className='text-xs text-gray-400 font-medium mt-0.5'>{stock.symbol}</div>
-                </div>
-              </div>
-
-              {/* Right side: Price and Change */}
-              <div className='flex flex-col items-end'>
-                <div
-                  className={`text-xl font-semibold ${stock.color} text-gray-900 tracking-tight leading-tight`}
-                >
-                  {stock.price ? textPrefix(truncate(stock.price, stock.precision), '$') : '--'}
-                </div>
-                <div className={`text-xs font-bold ${stock.color} mt-1`}>
-                  {stock.up !== undefined ? formatUp(stock.up) : '--'}
-                </div>
-              </div>
-            </div>
           ))}
         </div>
       </div>

@@ -274,8 +274,6 @@ export const useBaseStore = create<BaseStore>()(
 
         await Promise.all([
           get().getAllTokens(chainId),
-
-          get().getStocks(),
           get().getMarket(),
         ])
         set(() => ({
@@ -284,10 +282,8 @@ export const useBaseStore = create<BaseStore>()(
         }))
       },
       refreshByLanguage: async () => {
-        const chainId = get().lastChainId
-        if (chainId) {
-          await get().getBaseRwas(chainId)
-        }
+        await get().getBaseRwas()
+        await get().getStocks()
       },
       updateRwasPrice: (priceList: IRwaPrice[]) => {
         const rwaList = get().rwaList.map(rwa => {
