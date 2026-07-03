@@ -169,7 +169,7 @@ export const Footer: React.FC = () => {
               >
                 <div className='py-2 flex flex-col'>
                   <H5PdfLink
-                    href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Cyberalpha+Protocol+Phase3+-+SlowMist+Audit+Report+(2).pdf'
+                    href='https://ca-public-s3.s3.ap-southeast-1.amazonaws.com/web/Cyberalpha+Protocol+Phase4+-+SlowMist+Audit+Report.pdf'
                     className='px-4 py-2 text-xs md:text-sm text-gray-400 hover:text-[#9CFF3A] hover:bg-white/5 transition-colors whitespace-nowrap'
                     onClick={() => {
                       setAuditOpen(false)
