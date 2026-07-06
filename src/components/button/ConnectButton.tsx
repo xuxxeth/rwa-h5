@@ -62,13 +62,32 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
   }, [chains, currentChainId])
 
   const handleConnect = useCallback(
-    async (connectorType: ConnectorType, chainId: number,  wallet: WalletConfig) => {
+    async (connectorType: ConnectorType, chainId: number,  wallet: WalletConfig, retry?: boolean) => {
       try {
         await rwaHandleConnect(connectorType, chainId, wallet)
       } catch (error) {
-        toastError({
-          title: t('switchNetwork', { network: networkText }),
-        })
+        let connected = false
+        if (retry) {
+          for (const chain of chains) {
+            // 跳过第一次已经尝试过的 chain（可选）
+            if (chain.id === chainId) continue
+
+            try {
+              await rwaHandleConnect(connectorType, chain.id, wallet)
+              connected = true
+              break
+            } catch {
+              // 继续尝试下一条链
+            }
+          }
+        }
+        
+
+        if (!connected) {
+          toastError({
+            title: t('switchNetwork', { network: networkText }),
+          })
+        }
       } finally {
         setIsWalletConnecting(false)
       }
@@ -164,13 +183,13 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
 
       setConnectorType(ConnectorType.Injected)
 
-      await handleConnect(ConnectorType.Injected, chainId, wallet)
+      await handleConnect(ConnectorType.Injected, chainId, wallet, true)
       return
     }
 
     setConnectorType(ConnectorType.WalletConnect)
 
-    await handleConnect(ConnectorType.WalletConnect, chainId, wallet)
+    await handleConnect(ConnectorType.WalletConnect, chainId, wallet, true)
   }
 
   const goTo = (path: string) => {
