@@ -92,7 +92,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         setIsWalletConnecting(false)
       }
     },
-    [rwaHandleConnect, networkText]
+    [rwaHandleConnect, networkText, chains, setIsWalletConnecting, toastError, t]
   )
   useEffect(() => {
     if (!account || !chainId) {
