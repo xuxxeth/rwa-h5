@@ -178,7 +178,7 @@ export const Hero: React.FC = () => {
   }, [])
 
   return (
-    <div className='relative z-20 pt-24 pb-10 md:pt-42 md:pb-10 px-6 !overflow-visible'>
+    <div className='relative z-20 pt-24 pb-10 md:pt-42 md:pb-10 px-6 overflow-hidden'>
       <div className='max-w-7xl mx-auto flex flex-col items-center text-center'>
         <HeroTitle t={t} />
 
@@ -194,8 +194,8 @@ export const Hero: React.FC = () => {
           </a>
         </div>
 
-        {/* Desktop Cards */}
-        <div className='mt-[-190px] relative w-full h-[450px] flex justify-center items-end hidden md:flex perspective-1000 pointer-events-none'>
+        {/* Desktop Cards Container */}
+        <div className='mt-[-190px] relative w-full h-[450px] hidden md:flex justify-center items-end perspective-1000 pointer-events-none origin-bottom'>
           {stockData.map((stock, idx) => (
             <StockCard
               key={stock.stockCode}
@@ -207,6 +207,49 @@ export const Hero: React.FC = () => {
               isLoaded={isLoaded}
               onClick={() => handleClick(stock)}
             />
+          ))}
+        </div>
+
+        {/* Mobile Cards Container */}
+        <div className='mt-10 w-full flex flex-col gap-4 md:hidden'>
+          {stockData.slice(0, 3).map(stock => (
+            <div
+              key={stock.stockCode}
+              onClick={() => handleClick(stock)}
+              className={`
+                w-full glass-card rounded-[1.5rem] p-4 
+                border border-white/60 flex justify-between items-center
+                cursor-pointer transition-transform active:scale-[0.98]
+              `}
+              style={{
+                boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.05)',
+              }}
+            >
+              {/* Left side: Icon, Name, Symbol */}
+              <div className='flex items-center gap-3'>
+                <div className='w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm'>
+                  <LazyImage src={stock.icon} alt={stock.stockCode} />
+                </div>
+                <div className='text-left'>
+                  <div className='font-bold text-gray-900 text-base leading-tight'>
+                    {stock.stockName}
+                  </div>
+                  <div className='text-xs text-gray-400 font-medium mt-0.5'>{getSymbol(stock.stockCode)}</div>
+                </div>
+              </div>
+
+              {/* Right side: Price and Change */}
+              <div className='flex flex-col items-end'>
+                <div
+                  className={`text-xl font-semibold ${stock.color} text-gray-900 tracking-tight leading-tight`}
+                >
+                  {stock.price ? textPrefix(truncate(stock.price, stock.precision ?? 2), '$') : '--'}
+                </div>
+                <div className={`text-xs font-bold ${stock.color} mt-1`}>
+                  {stock.up !== undefined ? formatUp(stock.up) : '--'}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
