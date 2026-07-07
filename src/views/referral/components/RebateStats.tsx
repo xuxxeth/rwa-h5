@@ -388,7 +388,7 @@ function ClaimRebateDialog(props: {
       openChange={props.dialog.setOpen}
       title={t('rebate.unClaimed')}
       overlayClassName='bg-gray-900/60'
-      className='w-[420px] top-[20vh] [@media(min-height:900px)]:top-[197px] bg-gray-950 border border-gray-850 rounded-2xl p-0 gap-0'
+      className='w-[calc(100vw-48px)] max-w-[400px] top-[20vh] [@media(min-height:900px)]:top-[197px] bg-gray-950 border border-gray-850 rounded-2xl p-0 gap-0'
     >
       <div className='px-6 py-5 flex flex-col font-normal'>
         <div className='flex flex-row justify-between text-sm/4.5 font-medium px-1'>
