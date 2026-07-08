@@ -14,6 +14,7 @@ function processType(type: string) {
     return {
       original: type,
       replaced: type,
+      chainId: parts[1] || '97',
       extracted: parts[parts.length - 1] || ''
     };
   }
@@ -26,6 +27,7 @@ function processType(type: string) {
   return {
     original: type,
     replaced: replaced,
+    chainId: parts[1] || '97',
     extracted: extracted
   };
 }
@@ -283,7 +285,8 @@ class WebSocketService {
       const listenersOrder = this.listeners.get(typeInfo.replaced as SubscribedEventType)
 
       if (listenersOrder) {
-        (data.data as IOrderData).sl = typeInfo.extracted
+        (data.data as IOrderData).sl = typeInfo.extracted;
+        (data.data as IOrderData).chi = typeInfo.chainId
         listenersOrder.forEach(cb => cb(data.data))
       }
     }
