@@ -318,7 +318,7 @@ export const useBaseStore = create<BaseStore>()(
       partialize: state => ({
         tokenList: state.tokenList,
         rwaList: state.rwaList,
-        chainList: state.chainList,
+        // chainList: state.chainList,
         stocksList: state.stocksList,
         marketInfo: state.marketInfo,
         lastInitTime: state.lastInitTime,
