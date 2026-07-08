@@ -137,7 +137,6 @@ export function useGetTokenBalances() {
       const filteredTokenList = tokenList.filter(token => token.chainId === chainId)
       if (filteredTokenList.length > 0) {
         const balancesRes = await getTokenBalances(
-          // '0x00000000000000000000000000000000',
           contractAddr,
           account as `0x${string}`,
           filteredTokenList.map(token => token.address as `0x${string}`)
