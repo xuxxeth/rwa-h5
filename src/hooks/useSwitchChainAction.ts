@@ -14,8 +14,11 @@ export function useSwitchChainAction() {
   const switchToChain = useCallback(
     async (targetChainId: number) => {
       const isSupported = chains.some(chain => chain.id === targetChainId && chain.state === 1)
+      console.log('===>isSupported', isSupported)
       if (!isSupported) return false
+      console.log('===> switchToChain targetChainId', targetChainId)
       const ok = await handleSwitchChain(targetChainId)
+      console.log('===>ok', ok)
       if (!ok) {
         const nextChain = chains.find(chain => chain.id === targetChainId)
         if (nextChain) {
