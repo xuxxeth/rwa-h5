@@ -121,7 +121,6 @@ const MarketStatus = memo(
       return null
     }, [t, i18n, inputToken])
 
-    console.log(stateLabel, tokenLabel, 'stateLabel, tokenLabel')
     if (!stateLabel) {
       return null;
     }

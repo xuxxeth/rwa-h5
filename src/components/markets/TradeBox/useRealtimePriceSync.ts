@@ -54,11 +54,10 @@ export function useRealtimePriceSync({
   }, [rwaPrice, realtimeData, tradeType])
 
   useEffect(() => {
-    if (inputToken && realtimeData && preToken.current?.symbol !== inputToken.symbol && inputToken.stockId === realtimeData.s) {
+
+    if (inputToken && realtimeData?.p && preToken.current?.symbol !== inputToken.symbol && inputToken.id === realtimeData.s) {
       preToken.current = inputToken
-      if (rwaPrice) {
-        setInputTokenPrice({ ...rwaPrice, price: String(realtimeData.p ?? 0) })
-      }
+      setInputTokenPrice({ ...(rwaPrice ?? {}), price: String(realtimeData.p ?? 0) })
     }
   }, [inputToken, rwaPrice, realtimeData])
 
