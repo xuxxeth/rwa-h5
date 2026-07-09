@@ -47,7 +47,7 @@ export function useRealtimePriceSync({
       return
     }
 
-    if (!initPrice.current) {
+    if (!initPrice.current && realtimeData.p) {
       initPrice.current = true
       setInputTokenPrice({ ...rwaPrice, price: String(realtimeData.p ?? 0) })
     }
@@ -57,6 +57,7 @@ export function useRealtimePriceSync({
 
     if (inputToken && realtimeData?.p && preToken.current?.symbol !== inputToken.symbol && inputToken.id === realtimeData.s) {
       preToken.current = inputToken
+      initPrice.current = true
       setInputTokenPrice({ ...(rwaPrice ?? {}), price: String(realtimeData.p ?? 0) })
     }
   }, [inputToken, rwaPrice, realtimeData])
@@ -72,6 +73,8 @@ export function useRealtimePriceSync({
       initPrice.current = false
     }
   }, [inputToken])
+
+  // console.log(inputTokenPrice, initPrice.current, limitPrice, realtimeData?.p, 11111)
 
 
   const handlePriceInput = useCallback((value: string) => {
