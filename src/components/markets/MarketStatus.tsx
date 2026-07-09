@@ -21,8 +21,7 @@ const MarketStatus = memo(
 
     const stateLabel = useMemo(() => {
       // 获取本地的语言环境
-      const locale = storage.getItem(CA_LANGUAGE);
-      
+      const locale = storage.getItem(CA_LANGUAGE) || 'en';
       // 如果 i18n 中的语言和本地存储的语言不一致，返回空
       if (i18n.language !== locale || !tradingTime) {
         return null;
@@ -95,7 +94,7 @@ const MarketStatus = memo(
 
     const tokenLabel = useMemo(() => {
       // 获取本地的语言环境
-      const locale = storage.getItem(CA_LANGUAGE);
+      const locale = storage.getItem(CA_LANGUAGE) || 'en';
       
       // 如果 i18n 中的语言和本地存储的语言不一致，返回空
       if (i18n.language !== locale && !inputToken) {
@@ -122,7 +121,7 @@ const MarketStatus = memo(
       return null
     }, [t, i18n, inputToken])
 
-
+    console.log(stateLabel, tokenLabel, 'stateLabel, tokenLabel')
     if (!stateLabel) {
       return null;
     }

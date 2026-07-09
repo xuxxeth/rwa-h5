@@ -1,4 +1,4 @@
-import { MARKET_STATUS } from "@/config/constants";
+import { MARKET_STATUS, RWA_STATUS } from "@/config/constants";
 import type { IRwa } from "@/service/base/types";
 import { useMemo } from "react";
 import { useTranslation } from "./useTranslation";
@@ -7,7 +7,7 @@ export function useNotSupportSession(marketTradeState: number, inputToken: IRwa 
   const { t } = useTranslation()
   
   const notSupportBeforeOrAfter = useMemo(() => {
-    if (!inputToken) {
+    if (!inputToken || inputToken?.state === RWA_STATUS.HALT) {
       return {
         notSupport: false,
         session: ''
@@ -27,7 +27,7 @@ export function useNotSupportSession(marketTradeState: number, inputToken: IRwa 
   }, [inputToken, marketTradeState, t])
 
   const notSupportOvernight = useMemo(() => {
-    if (!inputToken) {
+    if (!inputToken || inputToken?.state === RWA_STATUS.HALT) {
       return {
         notSupport: false,
         session: ''
