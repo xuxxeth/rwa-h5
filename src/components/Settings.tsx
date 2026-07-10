@@ -7,6 +7,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import storage from '@/utils/storage'
 import { CA_LANGUAGE } from '@/config/constants'
 import { useSettingStore } from '@/stores/settingStore'
+import { useCurrentChain } from '@/hooks/useChain'
 
 const languageOptions = [
   { code: 'zh', label: '繁体中文' },
@@ -19,7 +20,7 @@ export const Settings = () => {
   const setOpen = useSettingStore(s => s.setOpen)
   const showConfirm = useSettingStore(s => s.showConfirm)
   const setShowConfirm = useSettingStore(s => s.setShowConfirm)
-
+  const currentChain = useCurrentChain()
   const handleLanguageChange = (code: string) => {
     storage.setItem(CA_LANGUAGE, code)
     i18n.changeLanguage(code)
@@ -60,8 +61,13 @@ export const Settings = () => {
               {/* 网络费代币 */}
               <SettingItem label={t('v2.hd.h4')}>
                 <div className='flex items-center gap-2'>
-                  <img src='/images/tokens/bnb.png' alt='BNB' className='h-5 w-5 rounded-full' />
-                  <span className='text-[14px] text-white font-normal'>BNB</span>
+                  <div className="w-5 h-5">
+                    {
+                      currentChain?.icon && <img src={currentChain.icon} alt='BNB' className='h-5 w-5 rounded-full' /> 
+                    }
+                  </div>
+                  
+                  <span className='text-[14px] text-white font-normal'>{currentChain?.nativeToken}</span>
                 </div>
               </SettingItem>
             </div>
