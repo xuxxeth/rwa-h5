@@ -19,7 +19,7 @@ function Root() {
   const chains = useMemo(() => {
     if (!chainList || chainList.length === 0) return []
     // 按 chainList 的顺序查找
-    return chainList
+    return chainList.filter(chain => chain.state === 1)
       .map(chain => {
         const _chain = CHAIN_CONFIG.find(configChain => configChain.id === chain.id)
         if (_chain) {
@@ -28,7 +28,7 @@ function Root() {
             name: chain.displayName,
             rpcUrls: {
               ..._chain.rpcUrls,
-              public: { http: [..._chain.rpcUrls.public.http, chain.rpc] },
+              public: { http: [..._chain.rpcUrls.public.http, ...(chain.rpcUrls || [])] },
             },
             blockExplorers: {
               default: { name: chain.displayName, url: chain.scan },

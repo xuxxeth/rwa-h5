@@ -14,6 +14,8 @@ import { LazyImage } from '../image/LazyImage'
 import { shortenAddress } from '@/utils'
 import { WalletDrawer } from '@/components/drawer/WalletDrawer.tsx'
 import { SwitchChainDrawer } from '../drawer/SwitchChainDrawer'
+import { LAST_CONNECTED_CHAIN_ID } from '@/config/storage'
+import { useSwitchChainAction } from '@/hooks/useSwitchChainAction'
 
 const WalletStatus = {
   IDLE: 'IDLE',
@@ -57,6 +59,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
   const [walletSheetOpen, setWalletSheetOpen] = useState(false)
   const [switchSheetOpen, setSwitchSheetOpen] = useState(false)
   const agreementsAccepted = useAppStore(state => state.agreementsAccepted)
+  const { switchToChain } = useSwitchChainAction()
 
 
   const currentChain = useMemo(() => {
@@ -75,6 +78,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
             if (chain.id === chainId) continue
 
             try {
+              await switchToChain(chain.id)
               await rwaHandleConnect(connectorType, chain.id, wallet)
               connected = true
               break
