@@ -4,21 +4,32 @@ import { Navigate, type RouteObject } from 'react-router-dom'
 // 懒加载页面
 const Components = lazy(() => import('../views/components'))
 // Markets children routes
+const IndexPage = lazy(() => import('../views/index'))
 const MarketTrading = lazy(() => import('../views/trade'))
 const Identity = lazy(() => import('../views/identity'))
 const Orders = lazy(() => import('../views/orders'))
 const Home = lazy(() => import('../views/home'));
 const Referral = lazy(() => import('../views/referral'))
+const Kline = lazy(() => import('../views/kline'))
+const Assets = lazy(() => import('../views/assets'))
 
 // 路由表
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <MarketTrading />,
+    element: <IndexPage />,
   },
   {
     path: '/home',
     element: <Home />
+  },
+  {
+    path: '/kline',
+    element: <Kline />
+  },
+  {
+    path: '/assets',
+    element: <Assets />
   },
   {
     path: '/trade/:symbol?',

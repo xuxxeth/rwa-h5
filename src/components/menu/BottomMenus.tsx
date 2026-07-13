@@ -9,7 +9,7 @@ import HomeIcon from "./HomeIcon"
 import AssetsIcon from "./AssetsIcon"
 import KlineIcon from "./KlineIcon"
 
-const BOTTOM_MENUS_PATH = ['/referral', '/trade']
+const BOTTOM_MENUS_PATH = ['/kline', '/trade', '/assets']
 
 export function BottomMenus() {
   const { t } = useTranslation()
@@ -62,15 +62,19 @@ export function BottomMenus() {
       activeKey={active}
       onChange={(key) => {
         setActive(key)
-        if (key === 'trade') {
+        if (key === 'index') {
+          router.push('/')
+        } else if (key === 'kline') {
+          router.push('/kline')
+        } else if (key === 'trade') {
           router.push('/trade')
-        } else if (key === 'ref') {
-          router.push('/referral')
+        } else if (key === 'assets') {
+          router.push('/assets')
         }
       }}
       tabs={[
         {
-          key: "Homepage",
+          key: "index",
           label: t("Homepage"),
           icon: <HomeIcon />,
         },
