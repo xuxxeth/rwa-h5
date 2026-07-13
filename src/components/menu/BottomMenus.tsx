@@ -5,6 +5,9 @@ import CandleIcon from "./CandleIcon"
 import RefIcon from "./RefIcon"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useRouter } from "@/hooks/useRouter"
+import HomeIcon from "./HomeIcon"
+import AssetsIcon from "./AssetsIcon"
+import KlineIcon from "./KlineIcon"
 
 const BOTTOM_MENUS_PATH = ['/referral', '/trade']
 
@@ -67,15 +70,25 @@ export function BottomMenus() {
       }}
       tabs={[
         {
+          key: "Homepage",
+          label: t("Homepage"),
+          icon: <HomeIcon />,
+        },
+        {
+          key: "kline",
+          label: "行情",
+          icon: <KlineIcon />,
+        },
+        {
           key: "trade",
           label: t("Trade"),
           icon: <CandleIcon />,
         },
         {
-          key: "ref",
-          label: t("ref.t34"),
+          key: "assets",
+          label: t("portfolio.assets"),
           icon: (
-            <RefIcon />
+            <AssetsIcon />
           ),
         },
         

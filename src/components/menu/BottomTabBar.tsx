@@ -84,7 +84,7 @@ export function BottomTabBar({
       >
         <div
           className={cn(
-            "grid h-16 grid-cols-2",
+            "grid h-16 grid-cols-4",
             
           )}
           style={{
@@ -128,8 +128,8 @@ function renderTab(
         transition-colors
         `,
         active
-          ? "text-white"
-          : "text-[#9DA3AF]"
+          ? "text-[#9CFF3A]"
+          : "text-[#737A87]"
       )}
     >
       {tab.icon}
