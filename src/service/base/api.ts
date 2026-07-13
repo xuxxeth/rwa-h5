@@ -11,16 +11,18 @@ import type {
   IProfile,
   IIndicators
 } from "./types"
+import { xplayerTokens } from "./xlayerRwas";
 
 
 export const baseApi = {
   getChains: () => client.get<ApiResponse<IChain[]>>('/v1/base/public/chains'),
-  getTokens: (chainId?: number) => client.get<ApiResponse<IToken[]>>('/v1/base/public/tokens', { chainId }),
+  // getTokens: (chainId?: number) => client.get<ApiResponse<IToken[]>>('/v1/base/public/tokens', { chainId }),
+  getTokens: (chainId?: number) => client.get<ApiResponse<IToken[]>>('/v1/base/public/tokens'),
   getBaseRwas: (chainId?: number) => client.get<ApiResponse<IRwa[]>>('/v1/base/public/rwas', { chainId }),
   getStocks: () => client.get<ApiResponse<IStock[]>>('/v1/base/public/stocks'),
-  getMarket: () => client.get<ApiResponse<IMarket>>('/v1/base/public/market'),
+  getMarket: () => client.get<ApiResponse<IMarket[]>>('/v1/base/public/market'),
   getMarketState: () => client.get<ApiResponse<IMarketState>>('/v1/base/public/market/state'),
-   getMarketFeeConfig: () => client.get<ApiResponse<IFeeRuleI18nByLang>>('/v1/base/public/market/feeConfig'),
+  getMarketFeeConfig: () => client.get<ApiResponse<IFeeRuleI18nByLang>>('/v1/base/public/market/feeConfig'),
 
   // 公司财务相关接口
   getStatistic: (stockId: number) => client.get<ApiResponse<IStatistic>>('/v1/base/public/stock/statistic', { stockId }),

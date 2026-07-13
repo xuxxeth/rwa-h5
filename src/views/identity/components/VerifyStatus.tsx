@@ -10,7 +10,7 @@ import type { ApiResponse } from '@/service/client'
 import type { IKycDetail } from '@/service/kyc/types'
 
 import { symbolToLower, cn, getUpColor } from '@/utils'
-import useRwaWithPriceAndUp from '@/hooks/useRwaWithPriceAndUp'
+import { useRwaWithPriceAndUp } from '@/hooks/useRwaWithPriceAndUp'
 import { useTradeStore } from '@/stores/tradeStore'
 import { useKycStore } from '@/stores/kycStore'
 

@@ -131,7 +131,7 @@ export const useBaseStore = create<BaseStore>()(
       getBaseRwas: async (chainId?: number) => {
         const res = await baseApi.getBaseRwas(chainId)
         if (res.code === RESPONSE_CODE.SUCCESS) {
-          const rwaList = (res.data || []).map(rwa => ({
+          const rwaList = (res.data || []).filter(rwa => rwa.showState).map(rwa => ({
             ...rwa,
             is24H: rwa.sessionMask === 15,
             sessionMaskList: numberToBinaryArray(rwa.sessionMask ?? 0),
@@ -140,6 +140,35 @@ export const useBaseStore = create<BaseStore>()(
         }
         return res
       },
+      getAllTokens: async (chainId?: number) => {
+        const stableTokenRes =  await baseApi.getTokens(chainId)
+        const rwaTokenRes = await baseApi.getBaseRwas(chainId)
+
+        let newStableTokenList: IToken[] = []
+        let newRwaList: IRwa[] = []
+
+        if (stableTokenRes.code === RESPONSE_CODE.SUCCESS) {
+          newStableTokenList = stableTokenRes.data || []
+        }
+        if (rwaTokenRes.code === RESPONSE_CODE.SUCCESS) {
+          // @ts-ignore
+          const rwaList = (rwaTokenRes.data || []).filter(rwa => rwa.showState)
+          if (rwaList[0]?.chainId === chainId) {
+            newRwaList = rwaList.map(rwa => ({
+              ...rwa,
+              is24H: rwa.sessionMask === 15,
+              sessionMaskList: numberToBinaryArray(rwa.sessionMask ?? 0),
+            })) 
+          }
+          set({
+            rwaList: newRwaList,
+          })
+        }
+        
+        set({
+          tokenList: newStableTokenList,
+        })
+      },
       getStocks: async () => {
         const res = await baseApi.getStocks()
         if (res.code === RESPONSE_CODE.SUCCESS) {
@@ -147,6 +176,7 @@ export const useBaseStore = create<BaseStore>()(
         }
         return res
       },
+      // @ts-ignore
       getMarket: async () => {
         const res = await baseApi.getMarket()
         if (res.code === RESPONSE_CODE.SUCCESS) {
@@ -194,10 +224,6 @@ export const useBaseStore = create<BaseStore>()(
         set({ marketState: _marketState, marketTradeState: marketState })
       },
       getMarketState: async () => {
-        const marketState = get().marketState
-        if (marketState && marketState.status !== MARKET_STATUS.DEFAULT) {
-          return { code: RESPONSE_CODE.SUCCESS, data: marketState, message: null }
-        }
         const res = await baseApi.getMarketState()
         if (res && res.code === RESPONSE_CODE.SUCCESS) {
           const _data = res.data || {}
@@ -243,10 +269,7 @@ export const useBaseStore = create<BaseStore>()(
         }
 
         await Promise.all([
-          get().getChains(),
-          get().getTokens(chainId),
-          get().getBaseRwas(chainId),
-          get().getStocks(),
+          get().getAllTokens(chainId),
           get().getMarket(),
         ])
         set(() => ({
@@ -255,10 +278,8 @@ export const useBaseStore = create<BaseStore>()(
         }))
       },
       refreshByLanguage: async () => {
-        const chainId = get().lastChainId
-        if (chainId) {
-          await get().getBaseRwas(chainId)
-        }
+        await get().getBaseRwas()
+        await get().getStocks()
       },
       updateRwasPrice: (priceList: IRwaPrice[]) => {
         const rwaList = get().rwaList.map(rwa => {
@@ -293,7 +314,7 @@ export const useBaseStore = create<BaseStore>()(
       partialize: state => ({
         tokenList: state.tokenList,
         rwaList: state.rwaList,
-        chainList: state.chainList,
+        // chainList: state.chainList,
         stocksList: state.stocksList,
         marketInfo: state.marketInfo,
         lastInitTime: state.lastInitTime,

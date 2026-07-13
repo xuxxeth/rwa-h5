@@ -28,7 +28,7 @@ const Updater = memo(
     const router = useRouter()
     const { toastSuccess, toastError } = useToast()
     const { t } = useTranslation()
-    const { account } = useActiveWeb3()
+    const { account, chainId } = useActiveWeb3()
     const { dismissTxToast } = useTxToast()
     const newOrder = useWssStore(state => state.newOrder)
     const setTxSuccess = useTradeStore(state => state.setTxSuccess)
@@ -47,14 +47,14 @@ const Updater = memo(
       tokenBalanceRetryRunIdRef.current += 1
     }, [])
 
-    const refreshTokenBalanceByStockIdWithRetry = useCallback((stockId?: number) => {
+    const refreshTokenBalanceByStockIdWithRetry = useCallback((stockId?: number, chainId?: number) => {
       if (!stockId) return
       clearTokenBalanceRetryTimers()
       const runId = tokenBalanceRetryRunIdRef.current
       const runSerial = async () => {
         for (let i = 0; i < 3; i += 1) {
           if (tokenBalanceRetryRunIdRef.current !== runId) return
-          await getTokensDataByStockId([stockId])
+          await getTokensDataByStockId([stockId], chainId)
           if (i < 2) {
             await new Promise<void>((resolve) => {
               tokenBalanceRetryTimeoutRef.current = window.setTimeout(() => {
@@ -143,7 +143,7 @@ const Updater = memo(
         }
         
       }
-      refreshTokenBalanceByStockIdWithRetry(newOrder.si)
+      refreshTokenBalanceByStockIdWithRetry(newOrder.si, Number(newOrder.chi))
     }, [newOrder, refreshTokenBalanceByStockIdWithRetry, t, router.location.pathname, setTxSuccess, toastSuccess])
 
     useEffect(() => {

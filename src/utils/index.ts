@@ -5,6 +5,12 @@ export * from './sort'
 export * from './format'
 export * from './regex'
 
+const SYMBOL_SUFFIX = import.meta.env.VITE_SYMBOL_SUFFIX ?? 't'
+
+export function getSymbol(stockCode: string) {
+  return `${stockCode}${SYMBOL_SUFFIX}`
+}
+
 export function shortenAddress(address: string, startLength = 4, endLength = 4): string {
   if (!address) return ''
   if (address.length <= startLength + endLength) return address // 地址太短直接返回

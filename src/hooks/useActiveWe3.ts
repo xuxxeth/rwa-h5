@@ -6,6 +6,7 @@ import {
   useWallets,
   useInitialized,
   useSwitchChain,
+  useChainIdAndIsSupported,
 } from '@/hooks/useCaCommon'
 
 import { useCallback, useMemo } from 'react'
@@ -20,14 +21,14 @@ export function useActiveWeb3() {
   const connect = useConnect()
   const disConnect = useDisconnect()
   const account = useAccount() as unknown as string | undefined
-  const chainId = useChainId()
+  const { chainId, isChainSupported } = useChainIdAndIsSupported()
   const initialized = useInitialized()
   const switchChain = useSwitchChain()
 
   const handleConnect = useCallback(
-    async (connectorType: ConnectorType, wallet: WalletConfig) => {
+    async (connectorType: ConnectorType, chainId: number, wallet: WalletConfig) => {
       try {
-        await connect(connectorType, wallet)
+        await connect(connectorType, chainId, wallet)
         // 这里应该是连接成功之后，才存储状态
         storage.setItem(CONNECTOR_TYPE, connectorType)
         storage.setItem(WALLET_UUID, wallet.info.name)
@@ -71,6 +72,7 @@ export function useActiveWeb3() {
     wallets,
     account,
     chainId,
+    isChainSupported,
     handleConnect,
     handleDisConnect,
     handleSwitchChain,

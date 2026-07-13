@@ -155,7 +155,7 @@ export const OrderConfirmDrawer = memo(
             />
             <Row
               label={t('Network Fee')}
-              value={`${networkFeeInNative} BNB`}
+              value={`${networkFeeInNative}`}
             />
 
             {/* Estimated fee with expand */}

@@ -43,7 +43,7 @@ function Root() {
     <WalletProvider
       config={{
         chains: chains,
-        defaultChainId: chains[0] ? chains[0].id : defaultChains[0].id,
+        defaultChainId: undefined,
       }}
     >
       <QueryClientProvider client={queryClient}>

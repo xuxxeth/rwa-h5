@@ -5,8 +5,7 @@ import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import { useToast } from '@/hooks/useToast'
 import { useRouter } from '@/hooks/useRouter'
 import { useKycStatus } from '@/hooks/useKycStatus'
-import { useSignatureValidStatus } from '@/hooks/useSignature'
-import { useVerifyTip } from '@/components/market-trading/VerifyIdentity'
+
 import { usePendingStep } from '@/hooks/usePendingStep'
 import { KYC_OVERALL_STATUS } from '@/service/kyc/types'
 import {
@@ -18,6 +17,10 @@ import {
 } from '@/components/icons'
 import { IdentityExceptionDrawer } from '@/components/drawer/IdentityExceptionDrawer'
 import { Address } from '@/components/Address.tsx'
+import { useAppStore } from '@/stores/appStore'
+import { useBaseStore } from '@/stores/baseStore'
+import { LazyImage } from '../image/LazyImage'
+import { ChainListDrawer } from './ChainListDrawer'
 
 interface WalletDrawerProps {
   open: boolean
@@ -31,8 +34,6 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
   const { account, handleDisConnect } = useActiveWeb3()
 
   const { kycStatus } = useKycStatus()
-  const [isSignatureValid] = useSignatureValidStatus()
-  const { verifyTip } = useVerifyTip()
   const pendingStep = usePendingStep()
 
   const [exceptionDrawerOpen, setExceptionDrawerOpen] = useState(false)
@@ -88,6 +89,15 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
     return true
   }, [kycStatus, pendingStep.step])
 
+  const currentChainId = useAppStore(state => state.currentChainId)
+  const chains = useBaseStore(state => state.chainList)
+  const currentChain = useMemo(() => {
+    return chains.find(chain => chain.id === currentChainId)
+  }, [chains, currentChainId])
+
+  const [switchSheetOpen, setSwitchSheetOpen] = useState(false)
+
+
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange} title={t('Wallet')}>
@@ -104,6 +114,25 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
               </button>
             </div>*/}
             <Address className='text-[16px] font-medium text-white' address={account || ''} />
+          </div>
+          {/* 切换链 */}
+          <div className='flex items-center justify-between px-5 py-5'
+            onClick={e => {
+              e.stopPropagation()
+              onOpenChange && onOpenChange(false)
+              setSwitchSheetOpen(true)
+            }}
+          >
+            <span className='text-[16px] font-medium text-white'>{t('multiChain.t1')}</span>
+            
+            <div className=' text-white font-normal text-[14px] flex items-center gap-x-[4px]'>
+              <div className='w-[22px] h-[22px]'>
+                {currentChain?.icon && <LazyImage src={currentChain?.icon} className='w-full h-full' />}
+              </div>
+              
+              {currentChain?.displayName ?? '--'}
+              <LazyImage src='/images/h5/arrow-down.svg' />
+            </div>
           </div>
 
           {/* Verification Status Row */}
@@ -131,8 +160,9 @@ export const WalletDrawer = memo(({ open, onOpenChange }: WalletDrawerProps) => 
           </div>
         </div>
       </Drawer>
-
+          
       <IdentityExceptionDrawer open={exceptionDrawerOpen} onOpenChange={setExceptionDrawerOpen} />
+      <ChainListDrawer open={switchSheetOpen} onOpenChange={open => setSwitchSheetOpen(open)} />
     </>
   )
 })

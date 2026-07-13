@@ -17,7 +17,7 @@ import { useRouter } from '@/hooks/useRouter'
 import { MARKET_STATUS } from '@/config/constants'
 import { ConnectButtonText } from '@/components/button/ConnectButtonText'
 import SignButton from '@/components/button/SignButton'
-import { TradeType } from '@/hooks/useCaCommon'
+import { TradeType, useChainId } from '@/hooks/useCaCommon'
 import { parseAmount, truncateUP, formatTokenAmountWithCommas, INTEGER_REGEX, symbolToLower } from '@/utils'
 import { useTokenBalance } from '@/hooks/useTokenBalances'
 import { useTrading } from '@/hooks/useTrading'
@@ -44,11 +44,13 @@ import { cn } from '@/utils'
 import { RateDisplay } from './components/RateDisplay.tsx'
 import { MarketStatus } from '@/components/markets/MarketStatus.tsx'
 import { RwaSessionStatus } from '@/components/markets/RwaSessionStatus.tsx'
+import { useCurrentChain } from '@/hooks/useChain.ts'
 
 
 export const TradePage = () => {
   const { t, i18n } = useTranslation()
   const router = useRouter()
+  const chainId = useChainId()
   const { toastError } = useToast()
   const { account, isSameChain } = useActiveWeb3()
   const orderDialog = useShowDialog()
@@ -76,6 +78,7 @@ export const TradePage = () => {
     action,
     realtimeData,
     slippage,
+    currentChainId,
   } = useTradeStoreBindings()
 
   const updateInputToken = useTradeStore(state => state.updateInputToken)
@@ -108,19 +111,26 @@ export const TradePage = () => {
 
   // ── Token initialization from route param (same logic as CurrencyInputPanel) ──
   useEffect(() => {
+    const _rwa0 = rwaList[0]
     if (!router.params.symbol) {
-      rwaList[0] && updateInputToken(rwaList[0])
+      if (_rwa0 && _rwa0.chainId === currentChainId) {
+        updateInputToken(_rwa0)
+      }
     } else {
       const _rwa = rwaList.find(rwa => rwa.symbol.toLowerCase() === router.params.symbol?.toLowerCase())
-      _rwa && updateInputToken(_rwa)
+      if (_rwa && _rwa.chainId === currentChainId) {
+        updateInputToken(_rwa)
+      } else {
+        (_rwa0 && _rwa0.chainId === currentChainId) && router.push('/trade/' + _rwa0.symbol)
+      }
     }
-  }, [rwaList.length, inputToken, router.params])
+  }, [rwaList.length, router.params, currentChainId])
 
   useEffect(() => {
     if (tokenList[0]) {
       updateOutputToken(tokenList[0])
     }
-  }, [tokenList.length])
+  }, [tokenList.length, currentChainId])
 
   const marketTradeState = useBaseStore(state => state.marketTradeState)
   const tradeType = useTradeStore(state => state.tradeType)
@@ -293,7 +303,7 @@ export const TradePage = () => {
   const outputBalanceDisplay = account
     ? `${formatTokenAmountWithCommas(outputTokenBalance?.balance || '0')} ${outputToken?.symbol || ''}`
     : undefined
-
+  const currentChain = useCurrentChain()
   return (
     <div className='flex min-h-screen flex-col bg-gray-950 font-normal'>
       <div className='flex flex-col gap-3 px-5 py-[10px]'>
@@ -408,7 +418,7 @@ export const TradePage = () => {
             feeRate={inputToken?.feeRate ?? ''}
             platformFee={platformFee}
             brokerageFee={brokerageFee}
-            networkFeeInNative={marketInfo.networkFeeInNative}
+            networkFeeInNative={marketInfo.networkFeeInNative + ' ' + (currentChain?.nativeToken || '')}
             isBuy={action === 'buy'}
             decimals={inputToken?.decimals ?? 6}
           />}
@@ -451,7 +461,7 @@ export const TradePage = () => {
         brokerageFee={brokerageFee}
         estimatedFee={estimatedFee}
         feeRate={inputToken?.feeRate ?? ''}
-        networkFeeInNative={marketInfo.networkFeeInNative}
+        networkFeeInNative={marketInfo.networkFeeInNative + ' ' + (currentChain?.nativeToken || '')}
         onClick={() => {
           orderDialog.hide()
           order.submit()

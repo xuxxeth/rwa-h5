@@ -1,3 +1,4 @@
+import { useAppStore } from "@/stores/appStore"
 import { useBaseStore } from "@/stores/baseStore"
 import { useKycStore } from "@/stores/kycStore"
 import { useSettingStore } from "@/stores/settingStore"
@@ -26,6 +27,8 @@ export function useTradeStoreBindings() {
   const realtimeData = useTradeStore(state => state.realtimeRwaData)
   const slippage = useTradeStore(state => state.slippage)
 
+  const currentChainId = useAppStore(state => state.currentChainId)
+
   return {
     marketInfo,
     freshTokenBalances,
@@ -46,5 +49,6 @@ export function useTradeStoreBindings() {
     action,
     realtimeData,
     slippage,
+    currentChainId,
   }
 }

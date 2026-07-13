@@ -7,10 +7,12 @@ import type { IInviteCodeInfo } from '@/service/referral/types'
 import { useRequest } from '@/hooks/useRequest'
 import { useAccount } from '@/hooks/useCaCommon'
 import { useSignatureValidStatus } from '@/hooks/useSignature'
+import { useAppStore } from '@/stores/appStore'
 
 export const AccountPage = () => {
   const [isSignatureValid, _, validSignature] = useSignatureValidStatus()
   const account = useAccount()
+  const chainId = useAppStore(state => state.currentChainId)
 
   const {
     data: inviteCodeInfo,
@@ -19,7 +21,7 @@ export const AccountPage = () => {
     run: refreshCodeInfo,
   } = useRequest<IInviteCodeInfo>(
     async () => {
-      if (!account || !validSignature()) {
+      if (!account || !validSignature() || !chainId) {
         return null
       }
 
@@ -29,8 +31,8 @@ export const AccountPage = () => {
       }
       return null
     },
-    [account, isSignatureValid],
-    { immediate: Boolean(account) && isSignatureValid, initialData: null }
+    [account, isSignatureValid, chainId],
+    { immediate: Boolean(account) && isSignatureValid && !!chainId, initialData: null }
   )
 
   return (

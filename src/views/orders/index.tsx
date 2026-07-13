@@ -14,6 +14,7 @@ import SignatureVerify from '@/components/signature-verify'
 import { useAppStore } from '@/stores/appStore'
 import { cn } from '@/utils'
 import { useRouter } from '@/hooks/useRouter'
+import storage from '@/utils/storage'
 
 const TIKO_ORDER_URL = 'https://www.tiko.cc/order'
 
@@ -75,7 +76,10 @@ function OrdersWrapper(props: { children: React.ReactNode }) {
     <div className='flex min-h-main flex-col bg-gray-950'>
       {/* TittleBar */}
       <TittleBar
-        onBack={() => router.push('/trade')}
+        onBack={() => {
+          storage.setItem('fromPage', 'orders')
+          router.back()
+        }}
         className='sticky top-navbar z-[5]'
         title={t('assets.order.openOrders')}
       />
