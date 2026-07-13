@@ -56,6 +56,8 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
 
   const [walletSheetOpen, setWalletSheetOpen] = useState(false)
   const [switchSheetOpen, setSwitchSheetOpen] = useState(false)
+  const agreementsAccepted = useAppStore(state => state.agreementsAccepted)
+
 
   const currentChain = useMemo(() => {
     return chains.find(chain => chain.id === currentChainId)
@@ -127,7 +129,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         break
 
       case WalletStatus.WRONG_NETWORK:
-        setSwitchSheetOpen(true)
+        agreementsAccepted && setSwitchSheetOpen(true)
         break
 
       // case WalletStatus.IDLE:
@@ -140,7 +142,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     }
 
     prevStatusRef.current = status
-  }, [status])
+  }, [status, agreementsAccepted])
 
   useEffect(() => {
     if (!wallets.length || account || !initialized || !currentChainId) return
