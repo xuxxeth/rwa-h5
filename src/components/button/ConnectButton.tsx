@@ -58,7 +58,6 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
 
   const [walletSheetOpen, setWalletSheetOpen] = useState(false)
   const [switchSheetOpen, setSwitchSheetOpen] = useState(false)
-  const agreementsAccepted = useAppStore(state => state.agreementsAccepted)
   const { switchToChain } = useSwitchChainAction()
 
 
