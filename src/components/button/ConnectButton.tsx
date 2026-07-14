@@ -72,27 +72,28 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         await rwaHandleConnect(connectorType, chainId, wallet)
       } catch (error) {
         let connected = false
-        if (retry) {
-          for (const chain of chains) {
-            // 跳过第一次已经尝试过的 chain（可选）
-            if (chain.id === chainId) continue
+        // if (retry) {
+        //   for (const chain of chains) {
+        //     // 跳过第一次已经尝试过的 chain（可选）
+        //     if (chain.id === chainId) continue
 
-            try {
-              await switchToChain(chain.id)
-              await rwaHandleConnect(connectorType, chain.id, wallet)
-              connected = true
-              break
-            } catch {
-              // 继续尝试下一条链
-            }
-          }
-        }
+        //     try {
+        //       await switchToChain(chain.id)
+        //       await rwaHandleConnect(connectorType, chain.id, wallet)
+        //       connected = true
+        //       break
+        //     } catch {
+        //       // 继续尝试下一条链
+        //     }
+        //   }
+        // }
         
 
         if (!connected) {
           toastError({
             title: t('switchNetwork', { network: networkText }),
           })
+          setSwitchSheetOpen(true)
         }
       } finally {
         setIsWalletConnecting(false)
@@ -148,30 +149,30 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     prevStatusRef.current = status
   }, [status, agreementsAccepted])
 
-  useEffect(() => {
-    if (!wallets.length || account || !initialized || !currentChainId) return
+  // useEffect(() => {
+  //   if (!wallets.length || account || !initialized || !currentChainId) return
 
-    const walletUUID = storage.getItem(WALLET_UUID)
-    const connector = storage.getItem(CONNECTOR_TYPE) as ConnectorType | null
+  //   const walletUUID = storage.getItem(WALLET_UUID)
+  //   const connector = storage.getItem(CONNECTOR_TYPE) as ConnectorType | null
 
-    // 默认 isWalletConnecting 为 true, 如果发现不需要重连，把 isWalletConnecting 设为 false
-    if (!walletUUID || !connector) {
-      setIsWalletConnecting(false)
-      return
-    }
+  //   // 默认 isWalletConnecting 为 true, 如果发现不需要重连，把 isWalletConnecting 设为 false
+  //   if (!walletUUID || !connector) {
+  //     setIsWalletConnecting(false)
+  //     return
+  //   }
 
-    const wallet = wallets.find(w => w.info.name === walletUUID)
-    if (!wallet) return
+  //   const wallet = wallets.find(w => w.info.name === walletUUID)
+  //   if (!wallet) return
 
-    if (connector === ConnectorType.Injected && !wallet.detected) {
-      return
-    }
-    setCurrentWallet(wallet)
-    setStatus(WalletStatus.CONNECTING)
-    setIsWalletConnecting(true)
+  //   if (connector === ConnectorType.Injected && !wallet.detected) {
+  //     return
+  //   }
+  //   setCurrentWallet(wallet)
+  //   setStatus(WalletStatus.CONNECTING)
+  //   setIsWalletConnecting(true)
 
-    handleConnect(connector, currentChainId, wallet)
-  }, [wallets, initialized, currentChainId])
+  //   handleConnect(connector, currentChainId, wallet)
+  // }, [wallets, initialized, currentChainId])
 
   const connectWallet = async (wallet: WalletConfig, chainId: number | null) => {
     
@@ -217,7 +218,8 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
               toastError({ title: t('noInjectedWallet') })
               return
             }
-            connectWallet(injectedWallet, chains[0]?.id)
+            console.log(currentChainId)
+            connectWallet(injectedWallet, currentChainId)
           }}
         >
           {t('Connect Wallet')}
