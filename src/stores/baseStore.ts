@@ -313,7 +313,7 @@ export const useBaseStore = create<BaseStore>()(
       storage: createJSONStorage(() => localStorage),
       partialize: state => ({
         tokenList: state.tokenList,
-        rwaList: state.rwaList,
+        // rwaList: state.rwaList,
         // chainList: state.chainList,
         stocksList: state.stocksList,
         marketInfo: state.marketInfo,

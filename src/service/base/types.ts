@@ -10,6 +10,7 @@ export interface IChain {
   "nativeToken": string,
   "rpc": string,
   "scan": string
+  "rpcUrls": string[]
 }
 
 export interface ITokenWithBalance {
