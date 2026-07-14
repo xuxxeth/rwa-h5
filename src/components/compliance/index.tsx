@@ -15,6 +15,7 @@ import { Drawer } from '@/components/drawer'
 import { H5PdfLink } from '@/components/H5PdfLink'
 import { validateInviteCode } from '@/utils'
 import { useRouter } from '@/hooks/useRouter'
+import { useAppStore } from '@/stores/appStore'
 
 function getReferralCode(path: string) {
   const match = path.match(/^\/referral\/([^/]+)$/)
@@ -83,6 +84,8 @@ const Compliance = () => {
   const [aggree, setAggreee] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const setAgreementsAccepted = useAppStore(state => state.setAgreementsAccepted)
+
   const getAgreementsAccepted = async () => {
     // setLoading(true)
     const res = await kycApi.getAgreementsAccepted()
@@ -90,9 +93,12 @@ const Compliance = () => {
     if (res && res.data && !res.data.privacy) {
       setShow(true)
       lock()
+      setAgreementsAccepted(false)
     } else {
       setShow(false)
       unlock()
+      setAgreementsAccepted(true)
+
     }
     return res
   }
@@ -110,6 +116,7 @@ const Compliance = () => {
       if (resGet?.data?.privacy) {
         setShow(false)
         unlock()
+        setAgreementsAccepted(true)
       }
     } else {
       toastError({ title: res?.message || '' })

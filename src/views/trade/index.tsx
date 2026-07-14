@@ -127,7 +127,8 @@ export const TradePage = () => {
   }, [rwaList.length, router.params, currentChainId])
 
   useEffect(() => {
-    if (tokenList[0]) {
+    
+    if (tokenList[0] && tokenList[0].chainId === currentChainId) {
       updateOutputToken(tokenList[0])
     }
   }, [tokenList.length, currentChainId])
