@@ -72,28 +72,27 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
         await rwaHandleConnect(connectorType, chainId, wallet)
       } catch (error) {
         let connected = false
-        // if (retry) {
-        //   for (const chain of chains) {
-        //     // 跳过第一次已经尝试过的 chain（可选）
-        //     if (chain.id === chainId) continue
+        if (retry) {
+          for (const chain of chains) {
+            // 跳过第一次已经尝试过的 chain（可选）
+            if (chain.id === chainId) continue
 
-        //     try {
-        //       await switchToChain(chain.id)
-        //       await rwaHandleConnect(connectorType, chain.id, wallet)
-        //       connected = true
-        //       break
-        //     } catch {
-        //       // 继续尝试下一条链
-        //     }
-        //   }
-        // }
-        
+            try {
+              await switchToChain(chain.id)
+              await rwaHandleConnect(connectorType, chain.id, wallet)
+              connected = true
+              break
+            } catch {
+              // 继续尝试下一条链
+            }
+          }
+        }
 
         if (!connected) {
           toastError({
             title: t('switchNetwork', { network: networkText }),
           })
-          setSwitchSheetOpen(true)
+          // setSwitchSheetOpen(true)
         }
       } finally {
         setIsWalletConnecting(false)

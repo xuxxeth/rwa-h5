@@ -1,13 +1,11 @@
 import { memo, useCallback, useMemo, useState } from 'react'
 import { Drawer } from '@/components/drawer'
 import { useTranslation } from '@/hooks/useTranslation'
-import { useActiveWeb3 } from '@/hooks/useActiveWe3'
 import { useToast } from '@/hooks/useToast'
 import { useAppStore } from '@/stores/appStore'
 import { useBaseStore } from '@/stores/baseStore'
 import { LazyImage } from '../image/LazyImage'
-import storage from '@/utils/storage'
-import { LAST_CONNECTED_CHAIN_ID } from '@/config/storage'
+import { useSwitchChainAction } from '@/hooks/useSwitchChainAction'
 
 interface SwitchChainDrawerProps {
   open: boolean
@@ -17,11 +15,8 @@ interface SwitchChainDrawerProps {
 export const ChainListDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerProps) => {
   const { t } = useTranslation()
   const { toastError } = useToast()
-  const setCurrentChain = useBaseStore(state => state.setCurrentChain)
-  const setCurrentChainId = useAppStore(state => state.setCurrentChainId)
   const currentChainId = useAppStore(state => state.currentChainId)
   const chainList = useBaseStore(state => state.chainList)
-  const { handleSwitchChain } = useActiveWeb3()
 
   const supportedChains = useMemo(
     () => chainList.filter(chain => chain.state === 1),
@@ -34,29 +29,45 @@ export const ChainListDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerPr
 
   const networkText = useMemo(() => chains.filter(c => c.state === 1).map(chain => chain.displayName).join(' / '), [chains])
 
-  const handleSwitch = useCallback(
-    async (targetChainId: number) => {
+  const {
+    switchToChain
+  } = useSwitchChainAction();
 
-      try {
-        const ok = await handleSwitchChain(targetChainId)
-        if (ok) {
-          onOpenChange(false)
-        } else {
-          const chain = chains.find(chain => chain.id === targetChainId)
-          if (chain) {
-            storage.setItem(LAST_CONNECTED_CHAIN_ID, String(chain.id))
-            setCurrentChain(chain)
-            setCurrentChainId(chain.id)
-          }
-          toastError({ title: t('switchNetwork', { network: networkText }) })
-        }
-      } catch (error) {
+  const handleSelectChain = async(
+    chainId:number
+  )=>{
 
-        toastError({ title: t('switchNetwork', { network: networkText }) })
-      } finally {
+    try {
+
+      const ok =
+        await switchToChain(
+          chainId
+        );
+
+
+      if(!ok){
+
+        toastError({
+          title:t("switchNetwork")
+        });
+
       }
-    }, [chains]
-  ) 
+
+
+    } catch(error){
+
+      console.error(
+        "switch chain error:",
+        error
+      );
+
+      toastError({
+        title:t("switchNetwork")
+      });
+
+    }
+
+  };
 
   return (
     <>
@@ -67,7 +78,7 @@ export const ChainListDrawer = memo(({ open, onOpenChange }: SwitchChainDrawerPr
               <div key={chain.id} className='flex items-center justify-between px-4 py-4'
                 onClick={e => {
                   e.stopPropagation()
-                  handleSwitch(chain.id)
+                  handleSelectChain(chain.id)
                     
                 }}
               >
