@@ -162,7 +162,13 @@ export const SymbolSelectDrawer = memo(
         }
         newRwa.balanceValue = multiply(newRwa?.balance ?? '0', tokenWithPrice[symbolToLower(rwa.symbol)]?.price ?? '0')
         return newRwa
-      }).sort((a, b) => Number(b.balanceValue) - Number(a.balanceValue))
+      }).sort((a, b) => {
+          const nameA = a.symbol?.toLowerCase() || ''
+          const nameB = b.symbol?.toLowerCase() || ''
+          return nameA.localeCompare(nameB) 
+        })
+        .sort((a, b) => Number(b.weight) - Number(a.weight))
+        .sort((a, b) => Number(b.balanceValue) - Number(a.balanceValue))
     }, [rwaList, tokenWithBalance, tokenWithPrice])
 
     /* ── search ── */
