@@ -125,3 +125,12 @@ export default tseslint.config([
   },
 ])
 ```
+
+curl https://xlayertestrpc.okx.com/terigon \
+-H "content-type: application/json" \
+--data '{
+ "jsonrpc":"2.0",
+ "method":"eth_chainId",
+ "params":[],
+ "id":1
+}'

@@ -73,10 +73,13 @@ export function useTokenBalances() {
   const refreshTokenBalances = useCallback(() => {
     const filteredTokenList = tokenList.filter(token => token.chainId === currentChainId)
     const filteredRwaList = rwaList.filter(rwa => rwa.chainId === currentChainId)
+      .filter(rwa => rwa.address !== '0x0000000000000000000000000000000000000000')
     const tokensToFetch = [...filteredTokenList, ...filteredRwaList]
-    if (currentChainId && tokensToFetch.length > 0 && account) {
+    if (currentChainId && filteredRwaList.length > 0 && tokensToFetch.length > 0 && account) {
       const chain = chainList.find(item => item.id === currentChainId)
-      const diamondAddr = chain?.contract ?? null
+      const diamondAddr = chain?.contract ?? null;
+
+      console.log(diamondAddr, currentChainId, 'currentChainId')
       if (!diamondAddr) return
       // @ts-ignore
       getTokensData(
