@@ -14,7 +14,7 @@ const BOTTOM_MENUS_PATH = ['/kline', '/trade', '/assets']
 export function BottomMenus() {
   const { t } = useTranslation()
   const router = useRouter()
-  const [active, setActive] = useState("trade")
+  const [active, setActive] = useState("index")
   // http://localhost:8001/referral/3MNVNRPBY6
   // 这样的地址就识别错误了，怎么解
   const isBottomMenus = useMemo(

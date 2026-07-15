@@ -233,12 +233,12 @@ const KycState = () => {
               <LazyImage src="/images/h5/icons/id.png" className="w-[18px] h-[16px]" />
               <div className=" text-white text-[14px] font-medium">{content.title}</div>
             </div>
-            <button
+            {/* <button
               onClick={close}
               className="absolute top-4 right-4 rounded hover:bg-[#1e1e1e] transition"
             >
               <img src="/images/v2/icons/close_light.png" className="w-3 h-3" />
-            </button>
+            </button> */}
           </div>
           <div className=" flex items-center justify-center h-[42px] text-[#9CFF3A] text-[14px] font-medium">
             {content.btnText}

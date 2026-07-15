@@ -90,8 +90,8 @@ function Reward() {
 export function ReferraGroupReward() {
   return (
     <div className="relative shrink-0 w-full">
-      <div className="content-stretch flex flex-col gap-[24px] items-start px-[16px] relative size-full">
-        <div className={"content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full"}>
+      <div className="content-stretch w-full flex flex-col gap-[24px] items-start px-[16px] relative size-full">
+        <div className={"content-stretch  flex flex-col gap-[10px] items-start relative shrink-0 w-full"}>
           <ReferralGroup />
           <Reward />
         </div>

@@ -63,8 +63,6 @@ export function BottomTabBar({
     return null
   }
 
-  const hasCenterButton = Boolean(centerButton)
-
   return (
     <>
       <nav
