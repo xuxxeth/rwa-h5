@@ -40,7 +40,6 @@ function IndexPage() {
   const isWalletConnecting = useAppStore(state => state.isWalletConnecting)
   const [isSignatureValid] = useSignatureValidStatus()
   const { account } = useActiveWeb3()
-  console.log(account, isWalletConnecting, isSignatureValid,)
 
   if (isWalletConnecting) return null
 

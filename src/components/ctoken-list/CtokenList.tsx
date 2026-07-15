@@ -67,8 +67,8 @@ export const CTokenBalance = memo(({ symbol, pricePrecision }: { symbol: string;
   const total = multiply(tokenBalance, tokenPrice);
 
   return (
-    <div className="text-right text-[12px]">
-      <div className=" font-medium leading-[24px]">
+    <div className="text-right text-[12px] pr-1">
+      <div className=" font-medium leading-[24px] text-white">
         {formatTokenAmountWithCommas(tokenBalance)}
       </div>
       <div className=" font-normal text-[#9DA3AF]">
@@ -80,37 +80,7 @@ export const CTokenBalance = memo(({ symbol, pricePrecision }: { symbol: string;
 
 const CTokenItem = memo(
 
-  ({ token, onClick, toggleEnable, toggleFavorite, isFavorite, account }: {token: IRwa, toggleEnable: boolean, toggleFavorite: (stockId: number) => void, isFavorite: boolean, onClick?: (token: IRwa) => void, account?: string}) => {  
-    const { t } = useTranslation()
-    const marketInfo = useMemo(() => {
-      const state = token.state
-      let _icon = ''
-      let _info = ''
-      if (state === 0) {
-        _icon = '/images/icons/market/market_open.png'
-        _info = t("Open")
-      }
-      // if (state === 1) {
-      //   _icon = '/images/icons/market/market_pre.png'
-      //   _info = t("Pre-Market")
-      // }
-      // if (state === 2) {
-      //   _icon = '/images/icons/market/market_after.png'
-      //   _info = t("After Hours")
-      // }
-      // if (state === 3) {
-      //   _icon = '/images/icons/market/market_close.png'
-      //   _info = t("Market Closed")
-      // }
-      if (state === 1) {
-        _icon = '/images/icons/market/market_lock.png'
-        _info = t("Trading Halt")
-      }
-      return {
-        icon: _icon,
-        info: _info
-      }
-    }, [token])
+  ({ token, onClick, account }: {token: IRwa, onClick?: (token: IRwa) => void, account?: string}) => {  
     
     return (
       <div className="h-[48px] flex items-center justify-between mt-2 cursor-pointer hover:bg-[#232427] px-4 pr-2 relative group"
@@ -122,19 +92,12 @@ const CTokenItem = memo(
           "flex items-center gap-x-2 w-5/8 shrink-0",
           account ? "w-4/8" : ""
         )}>
-          <div>
-            <LazyImage onClick={(ev) => {
-              ev.stopPropagation()
-              if(!toggleEnable) return
-              toggleFavorite(token.stockId)
-            }} src={isFavorite ? "/images/v2/icons/collected.png" : "/images/v2/icons/collect.png"} className={cn("w-4 h-4 rounded-full", !toggleEnable ? 'cursor-not-allowed' : 'cursor-pointer')} />
-          </div>
-          <div className="w-8 h-8 shrink-0">
-            <LazyImage src={token.icon} className="w-8 h-8 rounded-full" />
+          <div className="w-[28px] h-[28px] shrink-0">
+            <LazyImage src={token.icon} className="w-[28px] h-[28px] rounded-full" />
           </div>
           <div>
-            <div className=" text-[12px] font-medium ">{token.symbol}</div>
-            <div className=" text-[12px] font-normal text-[#9DA3AF]">{token.name}</div>
+            <div className=" text-[14px] font-medium ">{token.symbol}</div>
+            <div className=" text-[12px] font-normal text-[#9DA3AF] max-w-[80px] truncate">{token.name}</div>
           </div>
           {
             token.state === 1 && 
@@ -214,8 +177,8 @@ const FilterTabs = memo(({ onTabChange }: { onTabChange?: (tab: TabItemProps) =>
   )
 })
 
-const CTokenList = memo(
-  ({ from, onClick }: { from?: string, onClick?: (token: IRwa) => void}) => {
+const CTokenListV2 = memo(
+  ({ from, tokenList, onClick }: { from?: string, tokenList?: IRwa[], onClick?: (token: IRwa) => void}) => {
     const { t } = useTranslation()
     const { account } = useActiveWeb3()
     const { sort, onSortChange } = useTableSort<SortableField>()
@@ -235,13 +198,14 @@ const CTokenList = memo(
     }, [rwaList])
 
     const newRwaList = useMemo(() => {
+      if (from === 'custom' && tokenList) return tokenList;
       if(selectTab === 'all') return rwaList
 
       return [...favorites].reverse().map(favorite => rwaMap.get(favorite)).filter(rwa => rwa !== undefined)
-    }, [rwaList, favorites, selectTab])
+    }, [rwaList, favorites, selectTab, from, tokenList])
 
     const rwaListWithBalance = useMemo(() => {
-      return newRwaList.filter(rwa => rwa.state !== 2).map(rwa => {
+      let _newRwaList = newRwaList.filter(rwa => rwa.state !== 2).map(rwa => {
         const newRwa = {
           ...rwa,
           ...tokenWithBalance[symbolToLower(rwa.symbol)],
@@ -256,11 +220,14 @@ const CTokenList = memo(
         })
         .sort((a, b) => Number(b.weight) - Number(a.weight))
         .sort((a, b) => Number(b.balanceValue) - Number(a.balanceValue))
-    }, [newRwaList, tokenWithBalance, tokenWithPrice])
+      // 如果是持有的，则通过balanceValue过滤
+      if (from === 'holdings') {
+        _newRwaList = _newRwaList.filter(rwa => Number(rwa.balanceValue) > 0)
+      }
+      return _newRwaList
+    }, [newRwaList, tokenWithBalance, tokenWithPrice, from])
 
     const [searchTerm, setSearchTerm] = useState("")
-    
-    const [filterHolding, setFilterHolding] = useState(false)
     
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value
@@ -269,11 +236,6 @@ const CTokenList = memo(
 
     const filterTokens = useMemo(() => {
       let tokens = rwaListWithBalance
-      // let tokens = selectTab === 'stared' 
-      //   ? rwaListWithBalance.filter(token => isFavorite(token.stockId))
-      //   : rwaListWithBalance
-
-      // if (selectTab === 'stared' && !account) return []
       // 添加搜索过滤
       if (searchTerm.trim()) {
         const term = searchTerm.toLowerCase().trim()
@@ -354,18 +316,22 @@ const CTokenList = memo(
     })
 
     return (
-      <div className="min-w-[443px] border-t border-[#232427] relative">
+      <div className="border-t border-[#232427] relative text-white">
         <div className=" absolute w-2 top-0 -right-1 h-[1px] bg-[#232427]"></div>
+        {
+          from === 'trade' && (
+            <div className=" px-4 mt-4">
+              <div className="bg-[#1A1B1E] rounded-[4px] overflow-hidden flex items-center px-2 h-[31px]">
+                <LazyImage src="/images/v2/icons/search.png" className="w-[12px] h-[12px]" />
+                <Input className="pl-1 h-[18px] placeholder:text-[#737A87] text-[12px] font-normal " placeholder={t('v2.tx.t36')}
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+              </div>
+            </div>
+          )
+        }
         
-        <div className=" px-4 mt-4">
-          <div className="bg-[#1A1B1E] rounded-[4px] overflow-hidden flex items-center px-2 h-[31px]">
-            <LazyImage src="/images/v2/icons/search.png" className="w-[12px] h-[12px]" />
-            <Input className="pl-1 h-[18px] placeholder:text-[#737A87] text-[12px] font-normal " placeholder={t('v2.tx.t36')}
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
-        </div>
         <div className="mt-2">
           <div className=" flex items-center justify-between text-[12px] font-normal px-4">
             <div className={cn(
@@ -408,17 +374,22 @@ const CTokenList = memo(
             }
             
           </div>
-          <FilterTabs 
-            onTabChange={tab => {
-              setSelectTab(tab.key)
-            }}
-          />
+          {
+            from === 'trade' && (
+              <FilterTabs 
+                onTabChange={tab => {
+                  setSelectTab(tab.key)
+                }}
+              />
+            )
+          }
+          
           <div className={cn(
-            "scroll-box h-[65vh] overflow-y-auto mt-2 pr-0",
+            "scroll-box h-[65vh] overflow-y-auto mt-2 pr-0 text-white",
             from === "StockSelect" ? "h-[50vh]" : ""
           )}>
             {
-              sortTokens.map((token, index) => <CTokenItem toggleEnable={toggleEnable} toggleFavorite={toggleFavorite} isFavorite={isFavorite(token.stockId)} account={account} key={`${_id}-${index}`} token={token} onClick={onClick} />)
+              sortTokens.map((token, index) => <CTokenItem  account={account} key={`${_id}-${index}`} token={token} onClick={onClick} />)
             }
            
             {sortTokens.length <= 0 && <NoDataReason
@@ -459,4 +430,4 @@ function NoDataReason(props: {
   return <NoData />
 }
 
-export { CTokenList }
+export { CTokenListV2 }

@@ -1,36 +1,12 @@
-import { useState } from "react";
-
-interface StockHolding {
-  id: string;
-  ticker: string;
-  name: string;
-  price: string;
-  change: string;
-  holdings: string;
-  holdingsUsd: string;
-  isDown: boolean;
-}
-
-interface WatchlistItem {
-  id: string;
-  ticker: string;
-  name: string;
-}
-
-const holdingsData: StockHolding[] = [
-  { id: "1", ticker: "APPLc", name: "Apple", price: "100.03", change: "-2.98%", holdings: "100.03", holdingsUsd: "≈ $100.03", isDown: true },
-  { id: "2", ticker: "APPLc", name: "Apple", price: "100.03", change: "-2.98%", holdings: "100.03", holdingsUsd: "≈ $100.03", isDown: true },
-  { id: "3", ticker: "APPLc", name: "Apple", price: "100.03", change: "-2.98%", holdings: "100.03", holdingsUsd: "≈ $100.03", isDown: true },
-  { id: "4", ticker: "APPLc", name: "Apple", price: "100.03", change: "-2.98%", holdings: "100.03", holdingsUsd: "≈ $100.03", isDown: true },
-  { id: "5", ticker: "APPLc", name: "Apple", price: "100.03", change: "-2.98%", holdings: "100.03", holdingsUsd: "≈ $100.03", isDown: true },
-];
-
-const watchlistData: WatchlistItem[] = [
-  { id: "1", ticker: "NVDAt", name: "英偉達" },
-  { id: "2", ticker: "NVDAt", name: "英偉達" },
-  { id: "3", ticker: "NVDAt", name: "英偉達" },
-  { id: "4", ticker: "NVDAt", name: "英偉達" },
-];
+import { CheckBoxBySVG } from "@/components/check-box";
+import { CTokenList } from "@/components/ctoken-list";
+import { CTokenListV2 } from "@/components/ctoken-list/CtokenList";
+import { Button } from "@/components/ui/button";
+import { useActiveWeb3 } from "@/hooks/useActiveWe3";
+import { useRwaRecommendList, useWatchList } from "@/hooks/useWatchList";
+import type { IRwa } from "@/service/base/types";
+import storage from "@/utils/storage";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type TabType = "watchlist" | "holdings";
 interface MarketTabsProps {
@@ -76,16 +52,19 @@ function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) {
     </div>
   );
 }
-function WatchlistCard({ item }: { item: WatchlistItem }) {
+function WatchlistCard({ item, onChecked }: { item: IRwa, onChecked: (rwa: IRwa ,checked: boolean) => void }) {
+
+  const [selected, setSelected] = useState(true)
+
   return (
     <div className="bg-[#1A1B1E] flex-1 min-w-0 rounded-[8px]">
       <div className="flex items-center justify-between p-[16px]">
         <div className="flex flex-1 gap-[8px] items-center min-w-0">
           <div className="shrink-0 size-[28px] relative">
             <img
-              alt={item.ticker}
+              alt={item.symbol}
               className="absolute inset-0 max-w-none object-cover size-full"
-              src={''}
+              src={item.icon}
             />
           </div>
           <div className="flex flex-col gap-[2px] min-w-0">
@@ -93,58 +72,94 @@ function WatchlistCard({ item }: { item: WatchlistItem }) {
               className="text-white text-[14px] font-medium leading-normal whitespace-nowrap"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
-              {item.ticker}
+              {item.symbol}
             </span>
             <span
-              className="text-[#737a87] text-[12px] leading-normal whitespace-nowrap"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              className="text-[#737a87] text-[12px] leading-normal whitespace-nowrap max-w-[80%] truncate"
             >
               {item.name}
             </span>
           </div>
         </div>
-        {/* <CheckboxIcon /> */}
+        <CheckBoxBySVG checked={selected} onChange={(checked) => {
+          setSelected(checked)
+          onChecked(item, checked)
+        }} />
       </div>
     </div>
   );
 }
 
 function WatchlistTab() {
+  const { account, chainId } = useActiveWeb3()
+  const { recommendList, customOptions, handleRefresh } = useWatchList()
+  const [hasChecked, setHasChecked] = useState(true)
+  const checkedList = useRef<IRwa[]>([])
+
+  useEffect(() => {
+    checkedList.current = [...recommendList]
+  }, [recommendList])
+
+  const handleCheck = useCallback(async (rwa: IRwa, checked: boolean) => {
+    if (checked) {
+      checkedList.current.push(rwa)
+    } else {
+      const _index = checkedList.current.findIndex(rwa => rwa.stockId === rwa.stockId)
+      checkedList.current.splice(_index, 1)
+    }
+    if (checkedList.current.length <= 0) {
+      setHasChecked(false)
+    }
+  }, [])
+
+  const handleAddCustom = useCallback(async () => {
+    if (account && chainId) {
+      const storageKey = account + chainId
+      storage.setItem(storageKey, checkedList.current)
+      handleRefresh()
+    }
+    
+  }, [account, chainId, handleRefresh])
+
+  if (!customOptions) return null
+
   return (
-    <div className="px-[16px] flex flex-col gap-[16px] items-center w-full">
-      <div className="flex flex-col gap-[10px] w-full">
-        {/* 2x2 grid */}
-        <div className="flex gap-[10px] items-start w-full">
-          {watchlistData.slice(0, 2).map((item) => (
-            <WatchlistCard key={item.id + "-top"} item={item} />
-          ))}
-        </div>
-        <div className="flex gap-[10px] items-start w-full">
-          {watchlistData.slice(2, 4).map((item) => (
-            <WatchlistCard key={item.id + "-bot"} item={item} />
-          ))}
-        </div>
-      </div>
-      {/* Add watchlist button */}
-      <div className="bg-white rounded-[8px] h-[44px] w-full">
-        <button className="flex items-center justify-center size-full px-[24px] py-[8px]">
-          <span
-            className="text-black text-[14px] font-medium leading-normal whitespace-nowrap"
-            style={{ fontFamily: "'DM Sans', 'Noto Sans SC', sans-serif" }}
-          >
-            添加自选
-          </span>
-        </button>
-      </div>
-    </div>
+    <>
+      {
+        customOptions.length <= 0 ? (
+          <div className="px-[16px] flex flex-col gap-[16px] items-center w-full">
+            <div className=" grid grid-cols-2 gap-[10px] w-full min-h-[156px]">
+              {recommendList.map((item) => (
+                <WatchlistCard key={item.id + "-top"} item={item} onChecked={handleCheck} />
+              ))}
+              
+            </div>
+            {
+              recommendList.length > 0 && (
+                <Button
+                  className="w-full h-[44px]"
+                  disabled={!hasChecked}
+                  onClick={handleAddCustom}
+                >
+                  添加自选
+                </Button>
+              )
+            }
+            
+            
+          </div>
+        ) : (
+          <CTokenListV2 from="custom" tokenList={customOptions} />
+        )
+      }
+    </>
+    
   );
 }
 
 function HoldingsTab() {
   return (
-    <div className="flex flex-col w-full">
-      
-    </div>
+    <CTokenListV2 from="holdings" />
   );
 }
 

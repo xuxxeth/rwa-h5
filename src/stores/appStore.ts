@@ -9,6 +9,8 @@ export interface AppStore {
   setCurrentChainId: (chainId: number | null) => void
   isSwitchingChain: boolean
   setIsSwitchingChain: (isSwitching: boolean) => void
+  agreementsAccepted: boolean
+  setAgreementsAccepted: (accept: boolean) => void
 }
 
 export const useAppStore = create<AppStore>()((set, get) => ({
@@ -28,4 +30,8 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   setIsSwitchingChain: (isSwitching: boolean) => {
     set({ isSwitchingChain: isSwitching })
   },
+  agreementsAccepted: false,
+  setAgreementsAccepted: (accept: boolean) => {
+    set({agreementsAccepted: accept})
+  }
 }))
