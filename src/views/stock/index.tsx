@@ -13,6 +13,8 @@ import { StockInfo } from './components/StockInfo'
 import { useRealtimeRwa } from '@/hooks/useRealtimeRwa'
 import TVChartContainer from '@/components/TVChart/TVChartContainer'
 import { TradingChart } from '@/components/TVChart/TradingChart'
+import { SwitchButton } from '@/components/button/SwitchChainButton'
+import { RwaItemPrice } from './components/RwaItemPrice'
 
 
 function StockChartPage() {
@@ -43,44 +45,12 @@ function StockChartPage() {
 
   return (
     <div className='h-screen flex flex-col justify-between bg-[#0E0F12] text-white'>
+      <SwitchButton />
       <div className='mx-auto flex h-[100%] max-w-[430px] flex-col w-full'>
         <div className='pt-4'>
           <StockInfo inputToken={inputToken} />
           <StockTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
-          <div className='mt-5 flex gap-2 justify-between px-4 '>
-            <div className=''>
-              <div className='text-[28px] font-semibold leading-none text-[#32E0A0]'>${234.98}</div>
-              <div className='mt-[6px] text-[12px] font-medium text-[#32E0A0]'>
-                {23} (0.45%)
-              </div>
-              <div className='mt-3 flex flex-wrap items-center gap-2 text-[12px]'>
-                <span className='rounded-full bg-purple-500/20 px-2.5 py-1 text-purple-300'>盘中时段</span>
-              </div>
-            </div>
-
-            <div className='w-[60%] space-y-2 pt-2 text-[10px] text-[#9DA3AF] flex justify-end'>
-              <div className=' grid grid-cols-2'>
-                {[
-                  ['市值', '$31.4B'],
-                  ['24h最高', '$31.4B'],
-                  ['24h最低', '$31.4B'],
-                  ['合约地址', '0x334e...Re34'],
-                ].map(([label, value]) => (
-                  <>
-                    <span>{label}</span>
-                    <span className='flex items-center gap-1 text-[#CED1D9] justify-end'>
-                      {value}
-                      {label === '合约地址' ? <CopyButtonV2 svgClassName='text-[#9DA3AF] w-3 h-3' copyText='1111' /> : null}
-                    </span>
-                  </>
-                    
-                ))}
-              </div>
-              
-            </div>
-          </div>
-
+          <RwaItemPrice />
           
         </div>
 

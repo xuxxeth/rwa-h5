@@ -162,7 +162,9 @@ export const TVChartContainer = memo(
               "timeScale.rightOffset": 0,
               "timeScale.fixLeftEdge": true,
               "timeScale.fixRightEdge": true,
+              'scalesProperties.fontSize': 12,
             });
+
             const chart = tvWidgetRef.current?.activeChart();
             if (chart) {
               // chart.onDataLoaded().subscribe(null, () => {

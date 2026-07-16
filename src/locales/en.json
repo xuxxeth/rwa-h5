@@ -895,5 +895,10 @@
     "t1": "Switch Network",
     "t2": "This app doesn’t support your current network. Switch to an available option to continue.",
     "t3": "or"
+  },
+  "v4": {
+    "t1": "Contract Address",
+    "t2": "24h High",
+    "t3": "24h Low"
   }
 }
