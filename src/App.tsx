@@ -32,24 +32,18 @@ export function RoutesWrapper() {
   return useRoutes(routes)
 }
 
-const HOME_MENUS_PATH = ['/home']
+const HOME_MENUS_PATH = ['/home', '/stock']
 const NO_MENUS_PATH = ['/kyc/liveness-complete']
 
 function App() {
   const { t, i18n } = useTranslation()
   const router = useRouter()
-  const { account, chainId } = useActiveWeb3()
   const initBaseStore = useBaseStore(state => state.init)
   const refreshByLanguage = useBaseStore(state => state.refreshByLanguage)
   const isHomeMenus = useMemo(
-    () => HOME_MENUS_PATH.includes(router.location.pathname),
+    () => HOME_MENUS_PATH.some(path => router.location.pathname?.startsWith(path)),
     [router.location.pathname]
   )
-  // const isNoMenus = useMemo(
-  //   () => NO_MENUS_PATH.includes(router.location.pathname),
-  //   [router.location.pathname]
-  // )
-
   const currentChainId = useAppStore(state => state.currentChainId)
   const setIsSwitchingChain = useAppStore(state => state.setIsSwitchingChain)
 
