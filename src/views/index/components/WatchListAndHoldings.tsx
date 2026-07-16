@@ -8,15 +8,16 @@ import type { IRwa } from "@/service/base/types";
 import storage from "@/utils/storage";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type TabType = "watchlist" | "holdings";
-interface MarketTabsProps {
+export type TabType = "watchlist" | "holdings" | "all";
+export interface MarketTabsProps {
   activeTab: TabType;
+  type?: string;
   onTabChange: (tab: TabType) => void;
 }
 
-function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) {
+export function MarketTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
   return (
-    <div className="flex gap-[8px] items-center px-[16px] shrink-0 w-full">
+    <div className="flex gap-[8px] items-center px-[16px]">
       <button
         onClick={() => onTabChange("watchlist")}
         className="flex h-[28px] items-center justify-center px-[8px] rounded-[6px] transition-colors"
@@ -46,7 +47,7 @@ function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) {
             fontWeight: activeTab === "holdings" ? 500 : 400,
           }}
         >
-          持有
+          {type === 'all' ? '全部' : '持有'}
         </span>
       </button>
     </div>
@@ -90,7 +91,7 @@ function WatchlistCard({ item, onChecked }: { item: IRwa, onChecked: (rwa: IRwa 
   );
 }
 
-function WatchlistTab() {
+export function WatchlistTab() {
   const { account, chainId } = useActiveWeb3()
   const { recommendList, customOptions, handleRefresh } = useWatchList()
   const [hasChecked, setHasChecked] = useState(true)

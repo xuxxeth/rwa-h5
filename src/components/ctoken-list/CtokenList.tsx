@@ -1,4 +1,4 @@
-import { memo, useId, useMemo, useState } from "react"
+import { memo, forwardRef, useId, useImperativeHandle, useMemo, useState } from "react"
 import { useTranslation } from "@/hooks/useTranslation";
 import { LazyImage } from "../image/LazyImage"
 import { useRwas } from "@/hooks/useRwaBalances";
@@ -29,6 +29,11 @@ export type CTokenProps = {
   up: string,
   lock?: number
   state?: string
+}
+
+export type CTokenListRef = {
+  handleSearchChange: (value: string) => void
+  resetSearch: () => void
 }
 
 export const CTokenPrice = memo(({ symbol }: { symbol: string;}) => {
@@ -178,7 +183,7 @@ const FilterTabs = memo(({ onTabChange }: { onTabChange?: (tab: TabItemProps) =>
 })
 
 const CTokenListV2 = memo(
-  ({ from, tokenList, onClick }: { from?: string, tokenList?: IRwa[], onClick?: (token: IRwa) => void}) => {
+  forwardRef<CTokenListRef, { from?: string, tokenList?: IRwa[], onClick?: (token: IRwa) => void}>(({ from, tokenList, onClick }, ref) => {
     const { t } = useTranslation()
     const { account } = useActiveWeb3()
     const { sort, onSortChange } = useTableSort<SortableField>()
@@ -229,10 +234,18 @@ const CTokenListV2 = memo(
 
     const [searchTerm, setSearchTerm] = useState("")
     
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value
+    const handleSearchChange = (value: string) => {
       setSearchTerm(value)
     }
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        handleSearchChange,
+        resetSearch: () => setSearchTerm(''),
+      }),
+      []
+    )
 
     const filterTokens = useMemo(() => {
       let tokens = rwaListWithBalance
@@ -325,7 +338,7 @@ const CTokenListV2 = memo(
                 <LazyImage src="/images/v2/icons/search.png" className="w-[12px] h-[12px]" />
                 <Input className="pl-1 h-[18px] placeholder:text-[#737A87] text-[12px] font-normal " placeholder={t('v2.tx.t36')}
                   value={searchTerm}
-                  onChange={handleSearchChange}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                 />
               </div>
             </div>
@@ -402,8 +415,7 @@ const CTokenListV2 = memo(
 
       </div>
     )
-  }
-)
+  }))
 
 function NoDataReason(props: {
   isFavorites: boolean
