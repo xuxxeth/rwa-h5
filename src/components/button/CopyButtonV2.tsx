@@ -4,6 +4,7 @@ import { cloneElement, isValidElement, useRef, useState } from 'react'
 import type { ReactElement } from 'react'
 
 type CopyButtonProps = {
+  svgClassName?: string
   className?: string
   copyText: string
   children?: ReactElement<{ onClick?: (event: React.MouseEvent<HTMLElement>) => void }>
@@ -44,7 +45,7 @@ async function doCopy(text: string) {
   }
 }
 
-function CopyButtonV2({ className, copyText, children }: CopyButtonProps) {
+function CopyButtonV2({svgClassName, className, copyText, children }: CopyButtonProps) {
   const [copied, setCopied] = useState(false)
   const timeoutRef = useRef<number | null>(null)
 
@@ -85,7 +86,7 @@ function CopyButtonV2({ className, copyText, children }: CopyButtonProps) {
         onClick={handleCopy}
         className={className || 'text-gray-400 hover:text-white'}
       >
-        <CopySVG className='w-4 h-4' />
+        <CopySVG className={svgClassName || 'w-4 h-4'} />
       </button>
     )
   }

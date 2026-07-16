@@ -12,6 +12,7 @@ const Home = lazy(() => import('../views/home'));
 const Referral = lazy(() => import('../views/referral'))
 const Kline = lazy(() => import('../views/kline'))
 const Assets = lazy(() => import('../views/assets'))
+const Stock = lazy(() => import('../views/stock'))
 
 // 路由表
 const routes: RouteObject[] = [
@@ -34,6 +35,10 @@ const routes: RouteObject[] = [
   {
     path: '/trade/:symbol?',
     element: <MarketTrading />,
+  },
+  {
+    path: '/stock/:symbol?',
+    element: <Stock />,
   },
   {
     path: '/orders',
