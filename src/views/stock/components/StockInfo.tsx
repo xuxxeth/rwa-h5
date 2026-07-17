@@ -5,9 +5,13 @@ import type { IRwa } from "@/service/base/types"
 import { memo } from "react"
 import type { TabType } from "./StockTabs"
 import { ItemPrice } from "./RwaItemPrice"
+import useFavorites from "@/hooks/useFavorites"
+import { cn } from "@/utils/tw"
 
 export const StockInfo = memo(
   ({inputToken, activeTab}: {inputToken?: IRwa | null, activeTab?: TabType}) => {
+    const { isFavorite, toggleFavorite, toggleEnable } = useFavorites()
+    
     return (
       <div className='flex items-center gap-2 px-4 '>
         <BackButton />
@@ -25,8 +29,10 @@ export const StockInfo = memo(
           }
         </div>
 
-        <button className=''>
-          <LazyImage src='/images/v2/icons/collect.png' className='w-4 h-4' />
+        <button className={cn("",  !toggleEnable ? "cursor-not-allowed": '')}
+          onClick={() => {if(inputToken && toggleEnable) { toggleFavorite(inputToken.stockId) }}}
+        >
+          <LazyImage src={inputToken && isFavorite(inputToken.stockId) ? "/images/v2/icons/collected.png" : "/images/v2/icons/collect.png"} className='w-4 h-4' />
         </button>
       </div>
 
