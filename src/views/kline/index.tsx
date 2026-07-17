@@ -5,8 +5,10 @@ import { LazyImage } from "@/components/image/LazyImage";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MarketStatus } from "@/components/markets/MarketStatus";
+import { useRouter } from "@/hooks/useRouter";
 
 function KLine() {
+  const router = useRouter()
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<TabType>("watchlist");
 
@@ -31,7 +33,13 @@ function KLine() {
         <MarketTabs type="all" activeTab={activeTab} onTabChange={setActiveTab} />
         <MarketStatus from="trade" />
       </div>
-      {activeTab === "watchlist" ? <WatchlistTab /> : <CTokenListV2 from="kline" ref={listRef} />}
+      {
+        activeTab === "watchlist" ? <WatchlistTab /> : 
+        <CTokenListV2 from="kline" ref={listRef} onClick={(token) => {
+          
+          router.push('/stock/' + token.symbol)
+        }}  />
+      }
     </div>
   )
 }

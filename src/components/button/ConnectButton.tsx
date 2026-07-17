@@ -40,6 +40,7 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
   const setCurrentWallet = useBaseStore(s => s.setCurrentWallet)
   const currentChainId = useAppStore(s => s.currentChainId)
   const setIsWalletConnecting = useAppStore(s => s.setIsWalletConnecting)
+  const isWalletConnecting = useAppStore(s => s.isWalletConnecting)
 
   const [status, setStatus] = useState<WalletStatus>(WalletStatus.IDLE)
   const prevStatusRef = useRef<WalletStatus>(WalletStatus.IDLE)
@@ -152,6 +153,8 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     await handleConnect(ConnectorType.WalletConnect, chainId, wallet, true)
   }
 
+  if (isWalletConnecting) return null
+
   return (
     <>
       {!account ? (
@@ -182,7 +185,10 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
           </div>
           
           <span>{shortenAddress(account)}</span>
-          <LazyImage src='/images/h5/arrow-down.svg' />
+          <div className='w-[10px]'>
+            <LazyImage src='/images/h5/arrow-down.svg' />
+          </div>
+          
         </button>
       )}
       <WalletDrawer open={walletSheetOpen} onOpenChange={open => setWalletSheetOpen(open)} />

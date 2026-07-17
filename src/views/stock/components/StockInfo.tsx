@@ -7,18 +7,28 @@ import type { TabType } from "./StockTabs"
 import { ItemPrice } from "./RwaItemPrice"
 import useFavorites from "@/hooks/useFavorites"
 import { cn } from "@/utils/tw"
+import { SymbolSelectDrawer } from "@/components/drawer/SymbolSelectDrawer"
+import { useShowDialog } from "@/components/dialog/DialogController"
+import { useRouter } from "@/hooks/useRouter"
 
 export const StockInfo = memo(
   ({inputToken, activeTab}: {inputToken?: IRwa | null, activeTab?: TabType}) => {
     const { isFavorite, toggleFavorite, toggleEnable } = useFavorites()
-    
+    const tokenDialog = useShowDialog()
+    const router = useRouter()
+
     return (
       <div className='flex items-center gap-2 px-4 '>
         <BackButton />
         <div className='w-6 h-6'>
           {inputToken?.icon && <LazyImage src={inputToken?.icon} className="w-6 h-6 rounded-full" />}
         </div>
-        <div className='min-w-0 flex-1'>
+        <div className='min-w-0 flex-1'
+          onClick={e => {
+            e.stopPropagation()
+            tokenDialog.setOpen(true)
+          }}
+        >
           <div className='flex items-center gap-1 text-[18px] font-bold leading-none'>
             <span>{inputToken?.symbol || '--'}</span>
             <LazyImage src='/images/v0.4/arrow-down.png' className='w-[9px]' />
@@ -34,6 +44,15 @@ export const StockInfo = memo(
         >
           <LazyImage src={inputToken && isFavorite(inputToken.stockId) ? "/images/v2/icons/collected.png" : "/images/v2/icons/collect.png"} className='w-4 h-4' />
         </button>
+
+        <SymbolSelectDrawer
+          open={tokenDialog.open}
+          onOpenChange={tokenDialog.setOpen}
+          onClick={(token) => {
+            tokenDialog.setOpen(false)
+            router.push('/stock/' + token.symbol)
+          }}
+        />
       </div>
 
     )

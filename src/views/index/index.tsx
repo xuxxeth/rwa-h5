@@ -46,7 +46,7 @@ function IndexPage() {
   return (
     <div className="bg-[#131416] relative size-full flex justify-center pb-[100px]" >
       {
-        !account || !isSignatureValid && <NoAccountOrSign />
+        (!account || !isSignatureValid) && <NoAccountOrSign />
       }
       {
         isSignatureValid && <AccountAndSign />

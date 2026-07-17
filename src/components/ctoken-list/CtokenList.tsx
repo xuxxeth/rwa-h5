@@ -19,6 +19,7 @@ import SignatureVerify from '@/components/signature-verify'
 import IconWithTooltip from "../icon-tooltip";
 import { useWssStore } from "@/stores/wssStore";
 import { useWssOn } from "@/hooks/useWssOn";
+import { SessionType, TradeState } from "@/views/markets/MarketQuotes";
 
 export type CTokenProps = {
   stock: string,
@@ -104,15 +105,19 @@ const CTokenItem = memo(
             <div className=" text-[14px] font-medium ">{token.symbol}</div>
             <div className=" text-[12px] font-normal text-[#9DA3AF] max-w-[80px] truncate">{token.name}</div>
           </div>
-          {
-            token.state === 1 && 
-              // <LazyImage src="/images/v2/icons/trade_halt.svg" className="w-[24px]" />
-              <IconWithTooltip
-                triggerClassName=''
-                icon='/images/v2/icons/trade_halt.svg'
-                tooltip='portfolio.tH'
-              />
-          }
+          <div className="flex items-center"
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+            }}
+            onTouchEnd={e => {
+              e.stopPropagation()
+              e.preventDefault()
+            }}
+          >
+            <TradeState state={token.state} />
+            <SessionType sessionMask={token.sessionMask} />
+          </div>
         </div>
         <div className={cn(
           "w-3/8 flex items-center ",
@@ -333,10 +338,10 @@ const CTokenListV2 = memo(
         <div className=" absolute w-2 top-0 -right-1 h-[1px] bg-[#232427]"></div>
         {
           from === 'trade' && (
-            <div className=" px-4 mt-4">
-              <div className="bg-[#1A1B1E] rounded-[4px] overflow-hidden flex items-center px-2 h-[31px]">
+            <div className=" px-4 mt-4 mb-3">
+              <div className="bg-[#232427] rounded-[4px] overflow-hidden flex items-center px-2 h-[42px]">
                 <LazyImage src="/images/v2/icons/search.png" className="w-[12px] h-[12px]" />
-                <Input className="pl-1 h-[18px] placeholder:text-[#737A87] text-[12px] font-normal " placeholder={t('v2.tx.t36')}
+                <Input className="pl-1 h-[40px] placeholder:text-[#737A87] text-[12px] font-normal " placeholder={t('v2.tx.t36')}
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
                 />
@@ -387,7 +392,7 @@ const CTokenListV2 = memo(
             }
             
           </div>
-          {
+          {/* {
             from === 'trade' && (
               <FilterTabs 
                 onTabChange={tab => {
@@ -395,7 +400,7 @@ const CTokenListV2 = memo(
                 }}
               />
             )
-          }
+          } */}
           
           <div className={cn(
             "scroll-box h-[65vh] overflow-y-auto mt-2 pr-0 text-white",

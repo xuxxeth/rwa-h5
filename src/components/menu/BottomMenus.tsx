@@ -28,8 +28,10 @@ export function BottomMenus() {
     const pathname = router.location.pathname
     if (pathname.startsWith('/trade')) {
       setActive('trade')
-    } else if (pathname.startsWith('/referral')) {
-      setActive('ref')
+    } else if (pathname.startsWith('/kline')) {
+      setActive('kline')
+    } else if (pathname.startsWith('/assets')) {
+      setActive('assets')
     }
   }, [router.location.pathname])
 

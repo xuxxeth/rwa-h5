@@ -2,7 +2,9 @@ import { CheckBoxBySVG } from "@/components/check-box";
 import { CTokenList } from "@/components/ctoken-list";
 import { CTokenListV2 } from "@/components/ctoken-list/CtokenList";
 import { Button } from "@/components/ui/button";
+import { PAGE_FROM } from "@/config/constants";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
+import { useRouter } from "@/hooks/useRouter";
 import { useRwaRecommendList, useWatchList } from "@/hooks/useWatchList";
 import type { IRwa } from "@/service/base/types";
 import storage from "@/utils/storage";
@@ -92,10 +94,12 @@ function WatchlistCard({ item, onChecked }: { item: IRwa, onChecked: (rwa: IRwa 
 }
 
 export function WatchlistTab() {
+  const router = useRouter()
   const { account, chainId } = useActiveWeb3()
   const { recommendList, customOptions, handleRefresh } = useWatchList()
   const [hasChecked, setHasChecked] = useState(true)
   const checkedList = useRef<IRwa[]>([])
+
 
   useEffect(() => {
     checkedList.current = [...recommendList]
@@ -150,7 +154,12 @@ export function WatchlistTab() {
             
           </div>
         ) : (
-          <CTokenListV2 from="custom" tokenList={customOptions} />
+          <CTokenListV2 from="custom" tokenList={customOptions} 
+            onClick={(token) => {
+              storage.setItem(PAGE_FROM, router.location.pathname)
+              router.push('/stock/' + token.symbol)
+            }} 
+          />
         )
       }
     </>
@@ -159,8 +168,14 @@ export function WatchlistTab() {
 }
 
 function HoldingsTab() {
+  const router = useRouter()
   return (
-    <CTokenListV2 from="holdings" />
+    <CTokenListV2 from="holdings" 
+      onClick={(token) => {
+        storage.setItem(PAGE_FROM, '/')
+        router.push('/stock/' + token.symbol)
+      }} 
+    />
   );
 }
 
