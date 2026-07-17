@@ -40,6 +40,7 @@ export const TVChartContainer = memo(
     const dataFeedRef = useRef<IExtaIBasicDataFeed | null>(null)
     const [tvWidgetShow, setTvWidgetShow] = useState(false)
     const tvWidgetReady = useRef(false)
+    const widgetInitRetryRef = useRef<number | null>(null)
     const skipIntervalChangeRef = useRef(false)
     const wasAreaModeRef = useRef(false)
     const tokenSymbolRef = useRef(token.symbol)
@@ -51,6 +52,7 @@ export const TVChartContainer = memo(
     const tradingTime = useTradingStartTime()
     const { notSupportBeforeOrAfter, notSupportOvernight } = useNotSupportSession(marketTradeState, token)
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    const isTelegramWebView = /Telegram/i.test(navigator.userAgent) || Boolean((window as Window & { Telegram?: { WebApp?: unknown } }).Telegram?.WebApp)
     const priceAxisFontSize = isMobile ? 8 : 12
 
     const syncAreaModeClass = useCallback((enabled: boolean) => {
@@ -100,6 +102,12 @@ export const TVChartContainer = memo(
     useEffect(() => {
       let mounted = true;
       let initTimer: number | undefined;
+      const clearInitRetry = () => {
+        if (widgetInitRetryRef.current) {
+          clearTimeout(widgetInitRetryRef.current)
+          widgetInitRetryRef.current = null
+        }
+      }
       if (tvWidgetRef.current) {
           // tvWidgetRef.current.remove();
         return
@@ -108,7 +116,9 @@ export const TVChartContainer = memo(
       initChart = (rwa?: IRwa) => {
         const elem = chartContainerRef.current;
         const language = storage.getItem(CA_LANGUAGE) || 'en'
-        if (!mounted || !elem) {
+        const rect = elem?.getBoundingClientRect()
+        const hasValidSize = !!elem && !!rect && rect.width > 0 && rect.height > 0
+        if (!mounted || !hasValidSize) {
           initTimer = window.setTimeout(initChart, 100);
           return;
         }
@@ -116,6 +126,8 @@ export const TVChartContainer = memo(
           dataFeedRef.current = getDataFeed({ name: rwa?.symbol || token.symbol, token: rwa || token })
         }
         const systemTimezone = (Intl.DateTimeFormat().resolvedOptions().timeZone || "exchange") as Timezone
+        const containerWidth = Math.max(elem.clientWidth || 0, elem.getBoundingClientRect().width || 0)
+        const containerHeight = Math.max(elem.clientHeight || 0, elem.getBoundingClientRect().height || 0)
         const widgetOptions: ChartingLibraryWidgetOptions = {
           symbol: rwa?.symbol || token.symbol,
           debug: false,
@@ -133,7 +145,9 @@ export const TVChartContainer = memo(
           client_id: "tradingview.com",
           user_id: "public_user_id",
           fullscreen: false,
-          autosize: true,
+          autosize: !isTelegramWebView,
+          width: isTelegramWebView ? containerWidth : undefined,
+          height: isTelegramWebView ? containerHeight : undefined,
           custom_css_url: "/libraries/charting_library/tradingview-chart.css?_t=0.1.8",
           timezone: "exchange",
           overrides: chartOverrides,
@@ -271,6 +285,10 @@ export const TVChartContainer = memo(
                 // }
 
               }, 300)
+              clearInitRetry()
+              widgetInitRetryRef.current = window.setTimeout(() => {
+                tvWidgetRef.current?.activeChart?.()?.resetData?.()
+              }, 200)
               // 隐藏图例（防止出现 "MA5 close" 等）
               // const panes = chart.getPanes?.();
               // if (panes?.length) {
@@ -288,6 +306,7 @@ export const TVChartContainer = memo(
       return () => {
         mounted = false;
         if (initTimer) clearTimeout(initTimer);
+        clearInitRetry()
         if (tvWidgetRef.current) {
           tvWidgetRef.current.remove();
           tvWidgetRef.current = null
@@ -363,6 +382,25 @@ export const TVChartContainer = memo(
       if (!tvWidgetReady.current) return
       syncAreaModeClass(chartType)
     }, [chartType, syncAreaModeClass])
+
+    useEffect(() => {
+      const handleResize = () => {
+        const container = chartContainerRef.current
+        if (!container || !tvWidgetRef.current) return
+        const width = container.clientWidth || container.getBoundingClientRect().width || 0
+        const height = container.clientHeight || container.getBoundingClientRect().height || 0
+        if (width > 0 && height > 0) {
+          tvWidgetRef.current.applyOverrides({})
+        }
+      }
+
+      window.addEventListener('resize', handleResize)
+      window.addEventListener('orientationchange', handleResize)
+      return () => {
+        window.removeEventListener('resize', handleResize)
+        window.removeEventListener('orientationchange', handleResize)
+      }
+    }, [])
 
     // 监听市场状态变化，更新dataFeed的市场状态
     useEffect(() => {

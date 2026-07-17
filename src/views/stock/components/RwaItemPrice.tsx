@@ -20,12 +20,6 @@ const RwaItemPrice = memo(
     const upValue = useMemo(() => realtimeData ? Number(truncate(subtract(realtimeData.p ?? '0', (realtimeData.o ?? '0')), 2)) : 0, [realtimeData?.o, realtimeData?.p])
     const openUp = useMemo(() => realtimeData ? Number(calculateUp(realtimeData.p, realtimeData.o)) : 0, [realtimeData?.o, realtimeData?.p])
 
-    const priceWidth = useMemo(() => {
-      if (!realtimeData?.p) return 70
-      const length = String(realtimeData.p).length + 1
-      return Math.max(70, length * 10 + 6)
-    }, [realtimeData?.p])
-
     const upWidth = useMemo(() => {
       if (!realtimeData?.p || !realtimeData?.o) return 70
       const upStr = `${Math.abs(upValue).toFixed(2)}${Math.abs(openUp).toFixed(2)}`
@@ -99,17 +93,9 @@ const RwaItemPrice = memo(
       }
     }, [inputToken?.stockId])
 
-    const marketCapWidth = useMemo(() => {
-      if (!stockData?.marketCap) return 30
-      const marketCap = stockData.marketCap
-      const length = String(marketCap).length - 1
-      return Math.max(30, length * 10 - 6)
-    }, [stockData?.marketCap, rwaPrice?.p])
-
-
     return (
       <>
-        <div className='mt-5 flex gap-2 justify-between px-4 '>
+        <div className='mt-4 flex gap-2 justify-between px-4 '>
             <div className=''>
               <div className={cn(
                 'text-[28px] font-semibold leading-none text-[#32E0A0]',

@@ -1,8 +1,4 @@
-import { Suspense, useEffect, useState } from 'react'
-
-import { BackButton } from '@/components/menu/BackButton'
-import { LazyImage } from '@/components/image/LazyImage'
-import CopyButtonV2 from '@/components/button/CopyButtonV2'
+import {  lazy, useEffect, useState } from 'react'
 import { KlineCharts } from './components/KlineCharts'
 import { StockTabs, type TabType } from './components/StockTabs'
 import { useRouter } from '@/hooks/useRouter'
@@ -16,6 +12,8 @@ import { TradingChart } from '@/components/TVChart/TradingChart'
 import { SwitchButton } from '@/components/button/SwitchChainButton'
 import { RwaItemPrice } from './components/RwaItemPrice'
 
+const StockCompany = lazy(() => import("./components/StockCompany").then(m => ({ default: m.StockCompany })))
+const Financials = lazy(() => import("./components/FiInfo").then(m => ({ default: m.Financials })))
 
 function StockChartPage() {
   const [activeTab, setActiveTab] = useState<TabType>("chart");
@@ -44,20 +42,31 @@ function StockChartPage() {
 
 
   return (
-    <div className='h-screen flex flex-col justify-between bg-[#0E0F12] text-white'>
+    <div className='flex flex-col justify-between bg-[#0E0F12] text-white pt-[102px]'
+    >
       <SwitchButton />
+      <div className='pt-4 fixed left-0 right-0 top-0 bg-[#0E0F12] z-50'>
+        <StockInfo inputToken={inputToken} />
+        <StockTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
       <div className='mx-auto flex h-[100%] max-w-[430px] flex-col w-full'>
-        <div className='pt-4'>
-          <StockInfo inputToken={inputToken} />
-          <StockTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        
+        <div hidden={activeTab === 'info' || activeTab === 'fi'}>
           <RwaItemPrice />
-          
+          <div className='mt-3'>
+            <KlineCharts />
+            {/* <TradingChart from={'market'} mode="tv" /> */}
+          </div>
         </div>
-
-        <div className='mt-3'>
-          <KlineCharts />
-          {/* <TradingChart from={'market'} mode="tv" /> */}
+        <div hidden={activeTab === 'chart' || activeTab === 'fi'}
+        >
+          <StockCompany />
         </div>
+        <div hidden={activeTab === 'chart' || activeTab === 'info'}
+        >
+          <Financials />
+        </div>
+        
 
       </div>
       <div className='mt-auto grid grid-cols-2 gap-3 border-t border-[#1A1B1E] p-4 fixed left-0 right-0 bottom-0'>
