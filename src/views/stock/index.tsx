@@ -55,8 +55,8 @@ function StockChartPage() {
         </div>
 
         <div className='mt-3'>
-          {/* <KlineCharts /> */}
-          <TradingChart from={'market'} mode="tv" />
+          <KlineCharts />
+          {/* <TradingChart from={'market'} mode="tv" /> */}
         </div>
 
       </div>
