@@ -21,6 +21,7 @@ import { Header } from '@/components/Header.tsx'
 import { Settings } from '@/components/Settings.tsx'
 import { BottomMenus } from './components/menu/BottomMenus'
 import { useAppStore } from './stores/appStore'
+import { useReconnectWallet } from './hooks/useReconnectWallet'
 
 BigNumber.config({
   DECIMAL_PLACES: 80, // 足够精度，避免 DeFi 里丢失小数
@@ -45,10 +46,13 @@ function App() {
     [router.location.pathname]
   )
   const currentChainId = useAppStore(state => state.currentChainId)
+  const setIsWalletConnecting = useAppStore(state => state.setIsWalletConnecting)
   const setIsSwitchingChain = useAppStore(state => state.setIsSwitchingChain)
 
   const getChains = useBaseStore(state => state.getChains)
   const getStocks = useBaseStore(state => state.getStocks)
+  const setCurrentWallet = useBaseStore(state => state.setCurrentWallet)
+  const { wallets, account, initialized, handleConnect } = useActiveWeb3()
 
   useEffect(() => {
     const lng = storage.getItem('CA_LANGUAGE') || 'en'
@@ -67,6 +71,16 @@ function App() {
   useRiskUserConfig()
 
   useWssAuth()
+
+  useReconnectWallet({
+    wallets,
+    account,
+    initialized,
+    currentChainId,
+    setCurrentWallet,
+    setIsWalletConnecting,
+    connect: handleConnect,
+  })
 
   useEffect(() => {
     getChains()
