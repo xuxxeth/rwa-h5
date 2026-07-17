@@ -40,13 +40,12 @@ function StockChartPage() {
 
   useRealtimeRwa(inputToken ?? null)
 
-
   return (
     <div className='flex flex-col justify-between bg-[#0E0F12] text-white pt-[102px]'
     >
       <SwitchButton />
       <div className='pt-4 fixed left-0 right-0 top-0 bg-[#0E0F12] z-50'>
-        <StockInfo inputToken={inputToken} />
+        <StockInfo inputToken={inputToken} activeTab={activeTab} />
         <StockTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
       <div className='mx-auto flex h-[100%] max-w-[430px] flex-col w-full'>
@@ -54,8 +53,8 @@ function StockChartPage() {
         <div hidden={activeTab === 'info' || activeTab === 'fi'}>
           <RwaItemPrice />
           <div className='mt-3'>
-            <KlineCharts />
-            {/* <TradingChart from={'market'} mode="tv" /> */}
+            {/* <KlineCharts /> */}
+            <TradingChart from={'market'} mode="tv" />
           </div>
         </div>
         <div hidden={activeTab === 'chart' || activeTab === 'fi'}

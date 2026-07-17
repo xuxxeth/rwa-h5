@@ -3,9 +3,11 @@ import { LazyImage } from "@/components/image/LazyImage"
 import { BackButton } from "@/components/menu/BackButton"
 import type { IRwa } from "@/service/base/types"
 import { memo } from "react"
+import type { TabType } from "./StockTabs"
+import { ItemPrice } from "./RwaItemPrice"
 
 export const StockInfo = memo(
-  ({inputToken}: {inputToken?: IRwa | null}) => {
+  ({inputToken, activeTab}: {inputToken?: IRwa | null, activeTab?: TabType}) => {
     return (
       <div className='flex items-center gap-2 px-4 '>
         <BackButton />
@@ -17,28 +19,17 @@ export const StockInfo = memo(
             <span>{inputToken?.symbol || '--'}</span>
             <LazyImage src='/images/v0.4/arrow-down.png' className='w-[9px]' />
           </div>
-          <div className='mt-1 text-[12px] text-[#9DA3AF] max-w-[60px] truncate'>{inputToken?.name || '--'}</div>
+          {
+            activeTab === 'chart' ? <div className='mt-1 text-[12px] text-[#9DA3AF] max-w-[60px] truncate'>{inputToken?.name || '--'}</div>
+                                  : <ItemPrice from="info" />
+          }
         </div>
 
         <button className=''>
           <LazyImage src='/images/v2/icons/collect.png' className='w-4 h-4' />
         </button>
       </div>
-      // <div className="flex items-center">
-      //   <div className="w-[40px] h-[40px]">
-      //     {
-      //       inputToken?.icon && <LazyImage src={inputToken?.icon} className="w-[40px] h-[40px] rounded-full" />
-      //     }
-      //   </div>
-      //   <div className="ml-2 mr-1 ">
-      //     <div className="flex items-baseline gap-x-1">
-      //       <div className="text-[18px] font-medium text-white">{inputToken?.symbol || '--'}</div>
-      //     </div>
-      //     <IconWithTooltip triggerClassName=" justify-start" tooltip={inputToken?.name ?? ' '}>
-      //       <div className=" text-[12px] font-normal text-[#9DA3AF] max-w-[60px] truncate">{inputToken?.name || '--'}</div>
-      //     </IconWithTooltip>
-      //   </div>
-      // </div>
+
     )
   }
 )
