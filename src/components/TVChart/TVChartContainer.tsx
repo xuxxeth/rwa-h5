@@ -50,6 +50,8 @@ export const TVChartContainer = memo(
     const marketTradeState = useBaseStore(state => state.marketTradeState)
     const tradingTime = useTradingStartTime()
     const { notSupportBeforeOrAfter, notSupportOvernight } = useNotSupportSession(marketTradeState, token)
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    const priceAxisFontSize = isMobile ? 8 : 12
 
     const syncAreaModeClass = useCallback((enabled: boolean) => {
       console.log('syncAreaModeClass', enabled)
@@ -162,7 +164,7 @@ export const TVChartContainer = memo(
               "timeScale.rightOffset": 0,
               "timeScale.fixLeftEdge": true,
               "timeScale.fixRightEdge": true,
-              'scalesProperties.fontSize': 12,
+              'scalesProperties.fontSize': priceAxisFontSize,
             });
 
             const chart = tvWidgetRef.current?.activeChart();

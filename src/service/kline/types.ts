@@ -26,3 +26,10 @@ export interface IMinuteItem {
   stockId: number,
   items: {close: number, startTime: number}[]
 }
+
+export interface ISession {
+  stockId: number,            // 股票编号
+  sessionType: number,        // 时段类别
+  beginTime: number,  //开始时间
+  endTime: number    //结束时间
+}

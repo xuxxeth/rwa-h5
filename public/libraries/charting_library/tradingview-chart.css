@@ -39,6 +39,24 @@
     --ui-lib-checkbox-color-accent: #2a2e39;
     
 }
+
+html,
+body,
+.chart-widget,
+.chart-gui-wrapper,
+.price-axis,
+.time-axis,
+.pane,
+.chart-markup-table {
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+.price-axis,
+.price-axis * {
+  font-size: 12px !important;
+}
+
 html.theme-dark .wrapper-GZajBGIm .box-GZajBGIm:before {
   border-color: #2a2e39;
 }
@@ -213,4 +231,9 @@ html.theme-dark .tv-area-mode .button-GwQQdU8S.isInteractive-GwQQdU8S.isActive-G
 }
 .common-tooltip__hotkey-text-EJBD96zX {
   padding-right: 6px !important;
+}
+
+.noWrap-l31H9iuA .series-l31H9iuA .valuesAdditionalWrapper-l31H9iuA {
+  display: flex !important;
+  flex-wrap: wrap !important;
 }
