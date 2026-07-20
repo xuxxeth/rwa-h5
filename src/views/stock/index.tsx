@@ -1,4 +1,4 @@
-import {  lazy, useEffect, useState } from 'react'
+import {  lazy, useCallback, useEffect, useState } from 'react'
 import { KlineCharts } from './components/KlineCharts'
 import { StockTabs, type TabType } from './components/StockTabs'
 import { useRouter } from '@/hooks/useRouter'
@@ -22,6 +22,7 @@ function StockChartPage() {
   const inputToken = useTradeStore(state => state.inputToken)
   const updateInputToken = useTradeStore(state => state.updateInputToken)
   const rwaList = useRwas()
+  const updateActiveConvertTab = useTradeStore(state => state.updateActiveConvertTab)
 
   useEffect(() => {
     // 当前链和rwaList里的数据chainId一致，才进行更新操作
@@ -39,6 +40,11 @@ function StockChartPage() {
 
 
   useRealtimeRwa(inputToken ?? null)
+
+  const handeAction = useCallback((action: 'buy' | 'sell') => {
+    updateActiveConvertTab(action)
+    router.push('/trade/' + inputToken?.symbol)
+  }, [inputToken])
 
   return (
     <div className='flex flex-col justify-between bg-[#0E0F12] text-white pt-[102px]'
@@ -69,8 +75,18 @@ function StockChartPage() {
 
       </div>
       <div className='mt-auto grid grid-cols-2 gap-3 border-t border-[#1A1B1E] p-4 fixed left-0 right-0 bottom-0'>
-        <button className='h-11 rounded-full bg-[#2BAE58] text-[14px] font-semibold text-white active:scale-95'>买入</button>
-        <button className='h-11 rounded-full bg-[#D24C73] text-[14px] font-semibold text-white active:scale-95'>卖出</button>
+        <button className='h-11 rounded-full bg-[#2BAE58] text-[14px] font-semibold text-white active:scale-95'
+          onClick={e => {
+            e.stopPropagation()
+            handeAction('buy')
+          }}
+        >买入</button>
+        <button className='h-11 rounded-full bg-[#D24C73] text-[14px] font-semibold text-white active:scale-95'
+          onClick={e => {
+            e.stopPropagation()
+            handeAction('sell')
+          }}
+        >卖出</button>
       </div>
     </div>
   )
