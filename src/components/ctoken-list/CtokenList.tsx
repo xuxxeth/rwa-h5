@@ -86,7 +86,7 @@ export const CTokenBalance = memo(({ symbol, pricePrecision }: { symbol: string;
 
 const CTokenItem = memo(
 
-  ({ token, onClick, account }: {token: IRwa, onClick?: (token: IRwa) => void, account?: string}) => {  
+  ({ token, onClick, account, from }: {token: IRwa, onClick?: (token: IRwa) => void, account?: string, from?: string}) => {  
     
     return (
       <div className="h-[48px] flex items-center justify-between mt-2 cursor-pointer hover:bg-[#232427] px-4 pr-2 relative group"
@@ -119,12 +119,17 @@ const CTokenItem = memo(
             <SessionType sessionMask={token.sessionMask} />
           </div>
         </div>
-        <div className={cn(
-          "w-3/8 flex items-center ",
-          account ? "w-2/8 justify-start" : ""
-        )}>
-          <CTokenPrice symbol={token.symbol} />
-        </div>
+        {
+          from !== 'assets' && (
+            <div className={cn(
+              "w-3/8 flex items-center ",
+              account ? "w-2/8 justify-start" : ""
+            )}>
+              <CTokenPrice symbol={token.symbol} />
+            </div>
+          )
+        }
+        
         {
           account && <div className="w-2/8 text-right">
             <CTokenBalance symbol={token.symbol} pricePrecision={token.precision} />
@@ -231,7 +236,7 @@ const CTokenListV2 = memo(
         .sort((a, b) => Number(b.weight) - Number(a.weight))
         .sort((a, b) => Number(b.balanceValue) - Number(a.balanceValue))
       // 如果是持有的，则通过balanceValue过滤
-      if (from === 'holdings') {
+      if (from === 'holdings' || from === 'assets') {
         _newRwaList = _newRwaList.filter(rwa => Number(rwa.balanceValue) > 0)
       }
       return _newRwaList
@@ -365,18 +370,23 @@ const CTokenListV2 = memo(
                 <SortButton order={sort?.field === 'name' ? sort?.order : undefined} />
               </div>
             </div>
-            <div className={cn(
-              "flex items-center w-3/8 cursor-pointer",
-              account ? "w-2/8 justify-start" : ""
-            )}
-              onClick={() => {
-                onSortChange('change')
-              }}
-              >{t("Change")}
-              <div className="text-[rgba(255,255,255,0.6)]">
-                <SortButton order={sort?.field === 'change' ? sort?.order : undefined} />
-              </div>
-            </div>
+            {
+              from !== 'assets' && (
+                <div className={cn(
+                  "flex items-center w-3/8 cursor-pointer",
+                  account ? "w-2/8 justify-start" : ""
+                )}
+                  onClick={() => {
+                    onSortChange('change')
+                  }}
+                  >{t("Change")}
+                  <div className="text-[rgba(255,255,255,0.6)]">
+                    <SortButton order={sort?.field === 'change' ? sort?.order : undefined} />
+                  </div>
+                </div>
+              )
+            }
+            
             {
               account && 
                 <div className="w-2/8 text-right flex items-center justify-end cursor-pointer"
@@ -407,7 +417,7 @@ const CTokenListV2 = memo(
             from === "StockSelect" ? "h-[50vh]" : ""
           )}>
             {
-              sortTokens.map((token, index) => <CTokenItem  account={account} key={`${_id}-${index}`} token={token} onClick={onClick} />)
+              sortTokens.map((token, index) => <CTokenItem from={from}  account={account} key={`${_id}-${index}`} token={token} onClick={onClick} />)
             }
            
             {sortTokens.length <= 0 && <NoDataReason

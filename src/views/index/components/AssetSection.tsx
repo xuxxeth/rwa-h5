@@ -1,7 +1,9 @@
+import { LazyImage } from "@/components/image/LazyImage";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatWithCommas, truncate } from "@/utils";
 import { useAssetsList } from "@/views/assets/assetsList";
+import { useState } from "react";
 
 interface AssetSectionProps {
   isHidden: boolean;
@@ -28,6 +30,8 @@ function EyeShowIcon() {
 }
 
 export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
+  const [showChart, setShowChart] = useState(false)
+
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3()
   const { assetsList, estimatedBalance, estimatedRwaTotalValue, estimatedStableTokenTotalValue } =
@@ -36,17 +40,33 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
   return (
     <div className="px-[16px] flex flex-col gap-[4px] items-start w-full shrink-0 mt-2">
       {/* Label row */}
-      <button
-        onClick={onToggleHidden}
-        className="flex gap-[8px] items-center"
-      >
-        <span
-          className="text-[#737a87] text-[14px] leading-normal whitespace-nowrap"
+      <div className=" flex items-center justify-between w-full">
+        <button
+          onClick={onToggleHidden}
+          className="flex gap-[8px] items-center"
         >
-          {t('portfolio.total')}
-        </span>
-        {isHidden ? <EyeHideIcon /> : <EyeShowIcon />}
-      </button>
+          <span
+            className="text-[#737a87] text-[14px] leading-normal whitespace-nowrap"
+          >
+            {t('portfolio.total')}
+          </span>
+          {isHidden ? <EyeHideIcon /> : <EyeShowIcon />}
+        </button>
+        <div className="flex items-center gap-x-[10px]">
+          <button className="w-[18px] h-[18px]">
+            <LazyImage src="/images/v0.4/risk.png" className="w-[18px] h-[18px]" />
+          </button>
+          <button className="w-[18px] h-[18px]"
+            onClick={e => {
+              setShowChart(!showChart)
+            }}
+          >
+            <LazyImage src={showChart ? "/images/v0.4/chart_show.png" : "/images/v0.4/chart_hide.png"} className="w-[18px] h-[18px]" />
+          </button>
+        </div>
+      </div>
+      
+
 
       {/* Amount row */}
       <div className="flex gap-[4px] items-center w-full">

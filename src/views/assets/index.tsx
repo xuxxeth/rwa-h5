@@ -5,6 +5,7 @@ import { Suspense, useState } from 'react';
 import { AssetsPageTop } from '../index/components/PageTop';
 import { SecurityWrap } from '../index/components/SecurityWrap';
 import KycState from '@/components/kyc-state';
+import { CTokenListV2 } from '@/components/ctoken-list/CtokenList';
 
 
 function NoAccountOrSign({ from }: {from?: string}) {
@@ -27,6 +28,10 @@ function AccountAndSign() {
         <Suspense fallback={null} >
           <KycState />
         </Suspense>
+      </div>
+      <div className='text-[18px] font-bold text-white px-4 mt-2'>持有资产</div>
+      <div className=' w-full'>
+        <CTokenListV2 from='assets' />
       </div>
     </div>
   )
