@@ -17,6 +17,25 @@ function Banner() {
   );
 }
 
+function AssetsBanner() {
+  return (
+    <div className="content-stretch flex flex-col gap-[10px] items-center overflow-clip relative shrink-0 w-full pt-2">
+      <div className="h-[187px] mix-blend-lighten relative shrink-0 w-[375px]" data-name="image 139">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <LazyImage alt="" className="absolute h-[100%] left-0 max-w-none top-[0] w-full" src="/images/v0.4/assets_banner.png" />
+        </div>
+      </div>
+      <div className="flex items-center gap-2 text-white font-bold text-[20px]">
+        <span>全球股票资产</span>
+        <span>链上交易平台</span>
+      </div>
+      <div className=" text-center font-normal text-[12px] text-[#848E9C] px-4 mb-4">
+        支持热门美股 RWA 资产交易，用户可通过自托管钱包与 USDT 参与全球股票市场。
+      </div>
+    </div>
+  );
+}
+
 function ConnectSign() {
   const { account } = useActiveWeb3()
   const [isSignatureValid, refreshIsSignatureValid] = useSignatureValidStatus()
@@ -45,6 +64,15 @@ export function PageTop() {
   return (
     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
       <Banner />
+      <ConnectSign />
+    </div>
+  );
+}
+
+export function AssetsPageTop() {
+  return (
+    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full mb-6">
+      <AssetsBanner />
       <ConnectSign />
     </div>
   );

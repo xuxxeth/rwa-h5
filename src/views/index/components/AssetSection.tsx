@@ -1,3 +1,7 @@
+import { useActiveWeb3 } from "@/hooks/useActiveWe3";
+import { useTranslation } from "@/hooks/useTranslation";
+import { formatWithCommas, truncate } from "@/utils";
+import { useAssetsList } from "@/views/assets/assetsList";
 
 interface AssetSectionProps {
   isHidden: boolean;
@@ -24,6 +28,11 @@ function EyeShowIcon() {
 }
 
 export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
+  const { t } = useTranslation()
+  const { chainId } = useActiveWeb3()
+  const { assetsList, estimatedBalance, estimatedRwaTotalValue, estimatedStableTokenTotalValue } =
+    useAssetsList(chainId ?? 97)
+
   return (
     <div className="px-[16px] flex flex-col gap-[4px] items-start w-full shrink-0 mt-2">
       {/* Label row */}
@@ -34,7 +43,7 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
         <span
           className="text-[#737a87] text-[14px] leading-normal whitespace-nowrap"
         >
-          总资产估值
+          {t('portfolio.total')}
         </span>
         {isHidden ? <EyeHideIcon /> : <EyeShowIcon />}
       </button>
@@ -44,7 +53,9 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
         <span
           className="text-white text-[28px] font-semibold leading-normal"
         >
-          {isHidden ? "****" : "10,000.00"}
+          {isHidden ? "****" : estimatedBalance !== undefined
+                  ? formatWithCommas(truncate(estimatedBalance, 2), 2)
+                  : '--'}
         </span>
         <span
           className="text-white text-[14px] font-medium leading-none"

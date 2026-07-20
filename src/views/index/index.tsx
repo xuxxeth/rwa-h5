@@ -1,5 +1,5 @@
 import { useAppStore } from "@/stores/appStore";
-import { PageTop } from "./components/PageTop";
+import { AssetsPageTop, PageTop } from "./components/PageTop";
 import { ReferraGroupReward } from "./components/ReferraGroupReward";
 import { SecurityWrap } from "./components/SecurityWrap";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
@@ -9,18 +9,22 @@ import { AssetSection } from "./components/AssetSection";
 import { WatchListAndHolsings } from "./components/WatchListAndHoldings";
 const KycState = lazy(() => import("@/components/kyc-state"));
 
-function NoAccountOrSign() {
+export function NoAccountOrSign({ from }: {from?: string}) {
   return (
     <div className="content-stretch flex flex-col gap-[24px] items-start justify-center relative rounded-bl-[8px] rounded-br-[8px] max-w-[680px]">
-      <PageTop />
-      <ReferraGroupReward />
+      {
+        from === 'assets' ? <AssetsPageTop /> : <PageTop />
+      }
+      {
+        from !== 'assets' && <ReferraGroupReward />
+      }
       <SecurityWrap />
     </div>
   )
 }
 
 
-function AccountAndSign() {
+export function AccountAndSign() {
   const [isHidden, setIsHidden] = useState(true);
   
   return (
