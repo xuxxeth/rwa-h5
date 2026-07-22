@@ -25,11 +25,10 @@ export function NoAccountOrSign({ from }: {from?: string}) {
 
 
 export function AccountAndSign() {
-  const [isHidden, setIsHidden] = useState(true);
   
   return (
     <div className="content-stretch flex flex-col gap-[16px] items-start justify-center relative rounded-bl-[8px] rounded-br-[8px] max-w-[680px] w-full">
-      <AssetSection isHidden={isHidden} onToggleHidden={() => setIsHidden((h) => !h)} />
+      <AssetSection />
       <div className=" w-full px-4">
         <Suspense fallback={null} >
           <KycState />

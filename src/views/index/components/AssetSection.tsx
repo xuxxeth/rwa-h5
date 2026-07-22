@@ -5,6 +5,7 @@ import { formatWithCommas, truncate } from "@/utils";
 import { useAssetsList, useRiskControlAssets } from "@/views/assets/assetsList";
 import { useState } from "react";
 import { RiskControlAssets } from "./RiskControlAssets";
+import { AssetsRatio } from "./AssetsRatio";
 
 interface AssetSectionProps {
   isHidden: boolean;
@@ -30,7 +31,12 @@ function EyeShowIcon() {
   );
 }
 
-export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
+export function AssetSection({
+  from
+}: {  
+  from?: string
+}) {
+  const [isHidden, setIsHidden] = useState(true);
   const [showChart, setShowChart] = useState(false)
 
   const { t } = useTranslation()
@@ -46,7 +52,9 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
       {/* Label row */}
       <div className=" flex items-center justify-between w-full">
         <button
-          onClick={onToggleHidden}
+          onClick={e => {
+            setIsHidden(!isHidden)
+          }}
           className="flex gap-[8px] items-center"
         >
           <span
@@ -56,19 +64,24 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
           </span>
           {isHidden ? <EyeHideIcon /> : <EyeShowIcon />}
         </button>
-        <div className="flex items-center gap-x-[10px]">
-          {
-            isRiskControlled && <RiskControlAssets riskControlledAssets={riskControlledAssets} />
-          }
-          
-          <button className="w-[18px] h-[18px]"
-            onClick={e => {
-              setShowChart(!showChart)
-            }}
-          >
-            <LazyImage src={showChart ? "/images/v0.4/chart_show.png" : "/images/v0.4/chart_hide.png"} className="w-[18px] h-[18px]" />
-          </button>
-        </div>
+        {
+          from === 'assets' && (
+            <div className="flex items-center gap-x-[10px]">
+              {
+                isRiskControlled && <RiskControlAssets riskControlledAssets={riskControlledAssets} />
+              }
+              
+              <button className="w-[18px] h-[18px]"
+                onClick={e => {
+                  setShowChart(!showChart)
+                }}
+              >
+                <LazyImage src={showChart ? "/images/v0.4/chart_show.png" : "/images/v0.4/chart_hide.png"} className="w-[18px] h-[18px]" />
+              </button>
+            </div>
+          )
+        }
+        
       </div>
       
 
@@ -88,6 +101,15 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
           USD
         </span>
       </div>
+      {
+        from === 'assets' && (
+          <div className="w-full">
+            {estimatedBalance !== undefined && showChart && (
+              <AssetsRatio assetsList={assetsList} estimatedBalance={estimatedBalance} />
+            )}
+          </div>
+        )
+      }
     </div>
   );
 }

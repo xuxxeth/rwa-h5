@@ -6,6 +6,7 @@ import { AssetsPageTop } from '../index/components/PageTop';
 import { SecurityWrap } from '../index/components/SecurityWrap';
 import KycState from '@/components/kyc-state';
 import { CTokenListV2 } from '@/components/ctoken-list/CtokenList';
+import { AssetsRatio } from '../index/components/AssetsRatio';
 
 
 function NoAccountOrSign({ from }: {from?: string}) {
@@ -19,11 +20,10 @@ function NoAccountOrSign({ from }: {from?: string}) {
 
 
 function AccountAndSign() {
-  const [isHidden, setIsHidden] = useState(true);
   
   return (
     <div className="content-stretch flex flex-col gap-[16px] items-start relative rounded-bl-[8px] rounded-br-[8px] max-w-[680px] w-full">
-      <AssetSection isHidden={isHidden} onToggleHidden={() => setIsHidden((h) => !h)} />
+      <AssetSection from='assets' />
       <div className=" w-full px-4">
         <Suspense fallback={null} >
           <KycState />
