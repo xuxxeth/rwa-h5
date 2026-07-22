@@ -2,8 +2,9 @@ import { LazyImage } from "@/components/image/LazyImage";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatWithCommas, truncate } from "@/utils";
-import { useAssetsList } from "@/views/assets/assetsList";
+import { useAssetsList, useRiskControlAssets } from "@/views/assets/assetsList";
 import { useState } from "react";
+import { RiskControlAssets } from "./RiskControlAssets";
 
 interface AssetSectionProps {
   isHidden: boolean;
@@ -33,9 +34,12 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
   const [showChart, setShowChart] = useState(false)
 
   const { t } = useTranslation()
-  const { chainId } = useActiveWeb3()
+  const { chainId, account } = useActiveWeb3()
   const { assetsList, estimatedBalance, estimatedRwaTotalValue, estimatedStableTokenTotalValue } =
     useAssetsList(chainId ?? 97)
+  const riskControlledAssets = useRiskControlAssets(chainId ?? 97, account)
+
+  const isRiskControlled = riskControlledAssets.length > 0
 
   return (
     <div className="px-[16px] flex flex-col gap-[4px] items-start w-full shrink-0 mt-2">
@@ -53,9 +57,10 @@ export function AssetSection({ isHidden, onToggleHidden }: AssetSectionProps) {
           {isHidden ? <EyeHideIcon /> : <EyeShowIcon />}
         </button>
         <div className="flex items-center gap-x-[10px]">
-          <button className="w-[18px] h-[18px]">
-            <LazyImage src="/images/v0.4/risk.png" className="w-[18px] h-[18px]" />
-          </button>
+          {
+            isRiskControlled && <RiskControlAssets riskControlledAssets={riskControlledAssets} />
+          }
+          
           <button className="w-[18px] h-[18px]"
             onClick={e => {
               setShowChart(!showChart)

@@ -1,25 +1,12 @@
-import { memo, useEffect, useId, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { Drawer } from '@/components/drawer'
 import { useTranslation } from '@/hooks/useTranslation'
-import { useRwas } from '@/hooks/useRwaBalances'
 import { useRwaPrice, useTokenBalance } from '@/hooks/useTokenBalances'
-import { useBaseStore } from '@/stores/baseStore'
-import { useActiveWeb3 } from '@/hooks/useActiveWe3'
-import { useTableSort } from '@/hooks/useTableHelper'
-import { useWssStore } from '@/stores/wssStore'
-import { useWssOn } from '@/hooks/useWssOn'
 import { LazyImage } from '@/components/image/LazyImage'
-import { Search } from '@/components/icons'
-import { SortButton } from '@/components/sort-button-svg'
-import { NoData } from '@/components/markets/NoData'
-import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { formatTokenAmountWithCommas } from '@/utils/format'
-import { multiply, symbolToLower } from '@/utils'
+import { multiply } from '@/utils'
 import type { IRwa } from '@/service/base/types'
-import IconWithTooltip from '@/components/icon-tooltip'
-import { MARKET_STATUS } from '@/config/constants'
-import { MarketStatus } from '../markets/MarketStatus'
 import { SessionType, TradeState } from '@/views/markets/MarketQuotes'
 import { CTokenListV2 } from '../ctoken-list/CtokenList'
 
@@ -30,8 +17,6 @@ interface SymbolSelectDrawerProps {
   onOpenChange: (open: boolean) => void
   onClick?: (token: IRwa) => void
 }
-
-type SortableField = 'name' | 'change' | 'marketCap'
 
 /* ────────────────────────── sub-components ───────────────── */
 
@@ -146,7 +131,6 @@ export const SymbolSelectDrawer = memo(
     const { t } = useTranslation()
     return (
       <Drawer open={open} onOpenChange={(open) => {
-        
         onOpenChange(open)
         setTimeout(() => {
           if (!open) {
