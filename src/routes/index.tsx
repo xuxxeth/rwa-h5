@@ -13,6 +13,7 @@ const Referral = lazy(() => import('../views/referral'))
 const Kline = lazy(() => import('../views/kline'))
 const Assets = lazy(() => import('../views/assets'))
 const Stock = lazy(() => import('../views/stock'))
+const SearchPage = lazy(() => import('../views/search'))
 
 // 路由表
 const routes: RouteObject[] = [
@@ -55,6 +56,10 @@ const routes: RouteObject[] = [
   {
     path: '/referral/:inviteCode?',
     element: <Referral />,
+  },
+  {
+    path: '/search',
+    element: <SearchPage />,
   },
   {
     path: '/com',

@@ -131,7 +131,7 @@ const CTokenItem = memo(
         }
         
         {
-          account && <div className="w-2/8 text-right">
+          account && from !== 'search' && <div className="w-2/8 text-right">
             <CTokenBalance symbol={token.symbol} pricePrecision={token.precision} />
           </div>
         }
@@ -388,7 +388,7 @@ const CTokenListV2 = memo(
             }
             
             {
-              account && 
+              account && from !== 'search' && 
                 <div className="w-2/8 text-right flex items-center justify-end cursor-pointer"
                   onClick={() => {
                     onSortChange('marketCap')

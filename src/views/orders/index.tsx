@@ -15,6 +15,7 @@ import { useAppStore } from '@/stores/appStore'
 import { cn } from '@/utils'
 import { useRouter } from '@/hooks/useRouter'
 import storage from '@/utils/storage'
+import OrderTabs from './components/OrderTabs'
 
 const TIKO_ORDER_URL = 'https://www.tiko.cc/order'
 
@@ -63,6 +64,7 @@ const OedersPageEntry = () => {
 
   return (
     <OrdersWrapper>
+      <OrderTabs />
       <OrdersPage account={account} chainId={chainId} />
     </OrdersWrapper>
   )
@@ -81,7 +83,7 @@ function OrdersWrapper(props: { children: React.ReactNode }) {
           router.back()
         }}
         className='sticky top-navbar z-[5]'
-        title={t('assets.order.openOrders')}
+        title={'交易记录'}
       />
       {props.children}
     </div>
