@@ -84,7 +84,7 @@ export const CTokenBalance = memo(({ symbol, pricePrecision }: { symbol: string;
   );
 });
 
-const CTokenItem = memo(
+export const CTokenItem = memo(
 
   ({ token, onClick, account, from }: {token: IRwa, onClick?: (token: IRwa) => void, account?: string, from?: string}) => {  
     
@@ -141,9 +141,9 @@ const CTokenItem = memo(
   }
 )
 
-type SortableField = 'name' | 'token' | 'price' | 'change' | 'marketCap' | 'dailyHigh'
+export type SortableField = 'name' | 'token' | 'price' | 'change' | 'marketCap' | 'dailyHigh'
 
-type TabItemProps = {
+export type TabItemProps = {
   id: string;
   label: string;
   key: string;
@@ -432,7 +432,7 @@ const CTokenListV2 = memo(
     )
   }))
 
-function NoDataReason(props: {
+export function NoDataReason(props: {
   isFavorites: boolean
   account?: string
   chainId: number | null
