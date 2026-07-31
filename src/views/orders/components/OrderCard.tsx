@@ -11,6 +11,7 @@ import { Address } from '@/components/Address.tsx'
 import { textPrefix, truncate, isGreater, divide } from '@/utils'
 
 import { CancelOrderButton } from '@/views/assets/v2/OpenOrder'
+import { OrderStatusCell, TradingFees } from '@/views/assets/Shared'
 
 /* ── 状态映射 ── */
 const STATUS_CONFIG: Record<number, { textKey: string; className: string }> = {
@@ -96,9 +97,11 @@ interface OrderCardProps {
   order: IOpenOrder
   onCancel?: (orderId: string) => void
   canceling?: boolean
+  history?: string
+  from?: string
 }
 
-export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) => {
+export const OrderCard = memo(({ order, from, onCancel, canceling }: OrderCardProps) => {
   const { t, i18n } = useTranslation()
   const rwa = useRwaByStockId(order.stockId)
   const statusConfig = STATUS_CONFIG[order.state] ?? STATUS_CONFIG[0]
@@ -132,13 +135,24 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
         <div className='flex flex-col items-end justify-center gap-1'>
           {order.orderType == 1 ? (
             <div className='text-gray-400'>--</div>
-          ) : (
-            <CancelOrderButton
-              className='text-[14px] font-medium leading-[1.25em] text-brand'
-              orderId={order.orderId}
-              disabled={order.state === 8}
-            />
-          )}
+          ) : (<>
+            {
+              from === 'open' &&
+                <CancelOrderButton
+                  className='text-[14px] font-medium leading-[1.25em] text-brand'
+                  orderId={order.orderId}
+                  disabled={order.state === 8}
+                />
+            }
+            {
+              from === 'history' && (
+                <OrderStatusCell state={order.state} />
+              )
+                
+            }
+          </>)
+            
+          }
           <span className='text-[12px] font-normal leading-[1.25em] text-gray-400'>
             {formatTimestamp(order.txTime)}
           </span>
@@ -147,61 +161,105 @@ export const OrderCard = memo(({ order, onCancel, canceling }: OrderCardProps) =
 
       {/* Row 2: 委托价格 / 成交数量 / 成交均价 */}
       <div className='flex flex-row items-center'>
-        <DataCell
-          className='flex-[1.5]'
-          label={`${t('portfolio.orderTable.orderPrice')}`}
-          value={
-            order.orderType === 1
-              ? '--'
-              : textPrefix(truncate(order.price, isGreater(order.price, 1) ? 2 : 4), '$')
-          }
-        />
+        {
+          (from === 'open' || from === 'history') && (
+            <DataCell
+              className='flex-[1.5]'
+              label={`${t('portfolio.orderTable.orderPrice')}`}
+              value={
+                order.orderType === 1
+                  ? '--'
+                  : textPrefix(truncate(order.price, isGreater(order.price, 1) ? 2 : 4), '$')
+              }
+            />
+          )
+        }
+        
         <DataCell
           label={t('portfolio.orderTable.filledAmount')}
           value={`${order.settledSize ?? '--'}/${order.size ?? '--'}`}
+          className={from === 'trade' ? 'flex-[1.5]' : 'flex-1'}
         />
+        {
+          from === 'trade' && (
+            <DataCell
+              className='flex-[1]'
+              label={`${t('portfolio.orderTable.filledValue')}${currencyUnit}`}
+              value={toFixed(order.settledAmount)}
+            />
+          )
+        }
         <DataCell
           label={t('portfolio.orderTable.avgPrice')}
           value={textPrefix(toFixed(divide(order.settledAmount, order.settledSize)), '$')}
           align='right'
         />
+        
       </div>
 
       {/* Row 3: 成交金额 / 状态 / 交易时段 */}
-      <div className='flex flex-row items-center'>
-        <DataCell
-          className='flex-[1.5]'
-          label={`${t('portfolio.orderTable.filledValue')}${currencyUnit}`}
-          value={toFixed(order.settledAmount)}
-        />
-        <DataCell
-          label={t('portfolio.orderTable.status')}
-          value={t(statusConfig.textKey)}
-          valueClassName={statusConfig.className}
-        />
-        <DataCell
-          label={t('portfolio.orderTable.session')}
-          value={order.sessionType === 3 ? t('portfolio.overnight') : order.sessionType === 0 ? t('portfolio.rthOnly') : t('portfolio.preAfter')}
-          align='right'
-        />
-      </div>
+      {
+        (from === 'open' || from === 'history') && (
+          <div className='flex flex-row items-center'>
+            <DataCell
+              className='flex-[1.5]'
+              label={`${t('portfolio.orderTable.filledValue')}${currencyUnit}`}
+              value={toFixed(order.settledAmount)}
+            />
+            {
+              from === 'open' && (
+                <DataCell
+                  label={t('portfolio.orderTable.status')}
+                  value={t(statusConfig.textKey)}
+                  valueClassName={statusConfig.className}
+                />
+              )
+            }
+            
+            <DataCell
+              label={t('portfolio.orderTable.session')}
+              value={order.sessionType === 3 ? t('portfolio.overnight') : order.sessionType === 0 ? t('portfolio.rthOnly') : t('portfolio.preAfter')}
+              align={from === 'open' ? 'right' : 'left'}
+            />
+            {
+              from === 'history' && (
+                <div className=' flex flex-col flex-1'>
+                  <DataCell
+                    label={t('portfolio.orderTable.tf')}
+                    value={''}
+                    align='right'
+                  />
+                  <TradingFees
+                    currency={order.currency}
+                    commissionItems={order.commissionItems}
+                    commission={order.commission}
+                    fee={order.fee}
+                  />
+                </div>
+
+              )
+            }
+            
+          </div>
+        )
+      }
+      
 
       {/* Row 4: 哈希 */}
-      <div className='flex items-center justify-between'>
-        <span className='text-[12px] font-normal leading-[1em] text-gray-450'>
-          {t('portfolio.orderTable.txHash')}
-        </span>
-        {/* <div className='flex items-center gap-1.5'>
-          <span className='text-[12px] leading-[1.25em] text-blue-50'>
-            {shortenAddress(order.txHash ?? '', 4, 4)}
-          </span>
-          <CopyButton copyText={order.txHash ?? ''} />
-        </div>*/}
-        <Address
-          className='text-[12px] font-mono leading-[1.25em] text-blue-50'
-          address={order.txHash ?? ''}
-        />
-      </div>
+      {
+        (from === 'open' || from === 'trade') && (
+          <div className='flex items-center justify-between'>
+            <span className='text-[12px] font-normal leading-[1em] text-gray-450'>
+              {t('portfolio.orderTable.txHash')}
+            </span>
+            <Address
+              className='text-[12px] font-mono leading-[1.25em] text-blue-50'
+              address={order.txHash ?? ''}
+            />
+          </div>
+        )
+      }
+      
     </div>
   )
 })

@@ -122,6 +122,7 @@ export function infiniteOpenOrderOptions(
         },
         errorHandlers
       )
+
       const orders = data?.data ?? []
       const limit = filters?.limit ?? DEFAULT_PAGE_LIMIT
       const hasNextPage = orders.length >= limit

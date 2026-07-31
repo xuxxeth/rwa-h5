@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const tabs = [
   {
-    label: "当前委托(0)",
+    label: "当前委托",
     value: "current",
   },
   {
@@ -16,7 +16,7 @@ const tabs = [
   },
 ];
 
-export default function OrderTabs() {
+export default function OrderTabs({ onChange }: { onChange?: (tab: string) => void }) {
   const [active, setActive] = useState("current");
 
   const activeIndex = tabs.findIndex((item) => item.value === active);
@@ -27,7 +27,10 @@ export default function OrderTabs() {
         {tabs.map((tab) => (
           <button
             key={tab.value}
-            onClick={() => setActive(tab.value)}
+            onClick={() => {
+              setActive(tab.value)
+              onChange?.(tab.value)
+            }}
             className={cn(
               "relative flex-1 h-[46px] text-[14px] font-medium transition-colors",
               active === tab.value

@@ -49,37 +49,20 @@ export function TradingFees(props: {
   commission: string
   fee: string
 }) {
-  const { data: feeRulesI18n } = useFeeRulesI18n()
   let { currency, commissionItems, commission, fee } = props
 
   commission = toFixed(commission)
   fee = toFixed(fee)
   const sumFees = sum(commission, fee)
 
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
-  function getRuleTitle(ruleId: number) {
-    const titleFromApi = feeRulesI18n?.[ruleId]
-    if (titleFromApi) return titleFromApi
-
-    const key = `portfolio.orderTable.ruleId.${ruleId}`
-    if (!i18n.exists(key)) return `ruleId${ruleId}`
-    return t(key)
-  }
-
-  const commissions = Array.isArray(commissionItems)
-    ? [...commissionItems]
-        .sort((a, b) => a.ruleId - b.ruleId)
-        .map(item => ({
-          title: getRuleTitle(item.ruleId)!,
-          value: item.amount,
-        }))
-    : [
-        {
-          title: t('portfolio.orderTable.bf'),
-          value: commission,
-        },
-      ]
+  const commissions = [
+    {
+      title: t('portfolio.orderTable.bf'),
+      value: commission,
+    },
+  ]
 
   const tooltip = (
     <div className='flex flex-col gap-1'>
@@ -90,7 +73,7 @@ export function TradingFees(props: {
           value: fee,
         },
       ].map(({ value, title }) => (
-        <div className='text-xs/[15px] text-gray-300 flex flex-row justify-between'>
+        <div className='text-xs/[15px] text-gray-300 flex flex-row justify-between '>
           {title}
           <span className='ml-9'>
             {value} {currency}
@@ -100,15 +83,16 @@ export function TradingFees(props: {
     </div>
   )
   return (
-    <div>
+    <div className=' text-right'>
       {isGreater(sumFees, 0) ? (
         <IconWithTooltip
           iconOrTextClassName='text-xs/[15px] font-normal border-b border-dashed'
           text={`${sumFees} ${currency}`}
           tooltip={tooltip}
+          triggerClassName='justify-end'
         />
       ) : (
-        <span className='font-normal'>
+        <span className='font-normal text-white text-[12px] text-right'>
           {sumFees} {currency}
         </span>
       )}

@@ -42,25 +42,37 @@ export type OrderReason = (typeof OrderReason)[keyof typeof OrderReason]
 // 0 仅盘中 4 盘前+盘后
 export type SessionType = 0 | 4 | 3
 
-export interface IOpenOrder {
+export type Reason = 0 | 1 | 2 | 3
+
+export interface IOrder {
   id: string
-  chainId: number
   orderId: string
+  chainId: number
   stockId: number
   orderType: OrderType
-  tif: Tif
   side: OrderSide
+  tif: Tif
   validDate: number
+  // 委托金额
   amount: string
+  // 委托数量
   size: string
+  // 委托价格
   price: string
+  // 订单状态
   state: OrderState
+  // 成交金额
   settledAmount: string
+  // 成交数量
   settledSize: string
+  reason: Reason
   txTime: number
+  tradeTime: number
   txHash: string
-  reason: OrderReason
   currency: string
+  commission: string
+  commissionItems: ICommissionItem[]
+  fee: string
   sessionType: SessionType
 }
 
@@ -90,7 +102,7 @@ export interface IOrder {
   settledAmount: string
   // 成交数量
   settledSize: string
-  reason: OrderReason
+  reason: Reason
   txTime: number
   tradeTime: number
   txHash: string
@@ -99,6 +111,31 @@ export interface IOrder {
   commissionItems: ICommissionItem[]
   fee: string
   sessionType: SessionType
+}
+
+export interface IOpenOrder {
+  id: string
+  chainId: number
+  orderId: string
+  stockId: number
+  orderType: OrderType
+  tif: Tif
+  side: OrderSide
+  validDate: number
+  amount: string
+  size: string
+  price: string
+  state: OrderState
+  settledAmount: string
+  settledSize: string
+  txTime: number
+  txHash: string
+  reason: Reason
+  currency: string
+  sessionType: SessionType
+  commission: string
+  commissionItems: ICommissionItem[]
+  fee: string
 }
 
 export interface ITrade {

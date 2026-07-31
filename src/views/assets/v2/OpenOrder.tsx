@@ -282,7 +282,6 @@ export function CancelOrderButton(props: {
   const { t } = useTranslation()
   const { orderId } = props
   const { cancelOrder, txStep } = useTradeUtils()
-  const { toastSuccess, toastError } = useToast()
   const setTxError = useTradeStore(state => state.setTxError)
   const setTxSuccess = useTradeStore(state => state.setTxSuccess)
   const [isCanceling, setIsCanceling] = useState(false)
