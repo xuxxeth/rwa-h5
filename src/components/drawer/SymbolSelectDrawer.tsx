@@ -132,14 +132,12 @@ export const SymbolSelectDrawer = memo(
     return (
       <Drawer open={open} onOpenChange={(open) => {
         onOpenChange(open)
-        setTimeout(() => {
-          if (!open) {
-            // @ts-ignore
-            onSortChange(null)
-          }
-        }, 800)
+       
       }} title={t('Select a token')}>
-        <CTokenListV2 from='trade' onClick={onClick} />
+        <CTokenListV2 from='trade' onClick={token => {
+          onClick?.(token)
+          onOpenChange(false)
+        }} />
       </Drawer>
     )
   },
