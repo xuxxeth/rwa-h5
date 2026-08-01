@@ -18,7 +18,7 @@ export interface IRiskControlAsset {
 export function useRiskControlAssets(chainId: number, account: string): IRiskControlAsset[] {
   const currentChainId = useAppStore(state => state.currentChainId)
   const chainList = useBaseStore(state => state.chainList)
-  const rwaList = useRwaTokens(false)
+  const rwaList = useRwaTokens(false).filter(rwa => rwa.showState)
   const tokenList = useTokens()
   const allTokens = [...tokenList, ...rwaList]
 
@@ -55,7 +55,7 @@ export function useRiskControlAssets(chainId: number, account: string): IRiskCon
 
 export function useAssetsList(chainId: number, account: string) {
   const tokenList = useTokens()
-  const rwaList = useRwaTokens(false)
+  const rwaList = useRwaTokens(false).filter(rwa => rwa.showState)
 
   const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
   const [tokenWithPrice, setTokenWithPrice] = useState<Record<string, { price: number }>>({})
@@ -65,7 +65,8 @@ export function useAssetsList(chainId: number, account: string) {
     ...rwaList.map(getAssetItemFromRwa),
   ].map(token => {
     const symbolLowdered = symbolToLower(token.symbol)
-    const balanceFromStore = tokenWithBalance[symbolLowdered]
+    const addressLowdered = symbolToLower(token.address)
+    const balanceFromStore = tokenWithBalance[addressLowdered]
     token.rwaPrice = tokenWithPrice[symbolLowdered]?.price
 
     token.holdings =

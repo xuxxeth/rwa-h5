@@ -20,8 +20,8 @@ interface USDSelectDrawerProps {
 /* ────────────────────────── sub-components ───────────────── */
 
 /** Holdings column (balance + USD equivalent) */
-const TokenHoldings = memo(({ symbol }: { symbol: string }) => {
-  const tokenBalance = useTokenBalance(symbol)?.balance ?? '0'
+const TokenHoldings = memo(({ address }: { address: string }) => {
+  const tokenBalance = useTokenBalance(address)?.balance ?? '0'
   // For stablecoins the price ≈ 1, display balance as USD equivalent
   const usdValue = tokenBalance
 
@@ -56,7 +56,7 @@ const TokenRow = memo(
 
       {/* Holdings – fill */}
       <div className="flex-1">
-        <TokenHoldings symbol={token.symbol} />
+        <TokenHoldings address={token.address} />
       </div>
     </div>
   ),
@@ -77,7 +77,7 @@ export const USDSelectDrawer = memo(
       () =>
         tokenList.map((token) => ({
           ...token,
-          ...tokenWithBalance[symbolToLower(token.symbol)],
+          ...tokenWithBalance[symbolToLower(token.address)],
         })),
       [tokenList, tokenWithBalance],
     )
