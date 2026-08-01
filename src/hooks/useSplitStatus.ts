@@ -3,10 +3,11 @@ import { useRwas } from "./useRwaBalances";
 import { useMemo } from "react";
 import { useBaseStore } from "@/stores/baseStore";
 import { symbolToLower } from "@/utils";
+import { useRwaTokens } from "./useTokens";
 
 
 export function useSplitStatus(token?: IRwa | null) {
-  const rwaList = useRwas()
+  const rwaList = useRwaTokens()
   const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
 
   // 查询所有相同symbol的rwa,
