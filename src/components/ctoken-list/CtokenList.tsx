@@ -66,8 +66,8 @@ export const CTokenPrice = memo(({ symbol }: { symbol: string;}) => {
     </div>
   );
 });
-export const CTokenBalance = memo(({ symbol, pricePrecision }: { symbol: string; pricePrecision: number }) => {
-  const tokenBalance = useTokenBalance(symbol)?.balance ?? "0";
+export const CTokenBalance = memo(({address, symbol, pricePrecision }: {address: string, symbol: string; pricePrecision: number }) => {
+  const tokenBalance = useTokenBalance(symbolToLower(address))?.balance ?? "0";
   const tokenPrice = useRwaPrice(symbol)?.price ?? "0";
 
   const total = multiply(tokenBalance, tokenPrice);
@@ -132,7 +132,7 @@ export const CTokenItem = memo(
         
         {
           account && from !== 'search' && <div className="w-2/8 text-right">
-            <CTokenBalance symbol={token.symbol} pricePrecision={token.precision} />
+            <CTokenBalance address={token.address} symbol={token.symbol} pricePrecision={token.precision} />
           </div>
         }
         
@@ -223,7 +223,7 @@ const CTokenListV2 = memo(
       let _newRwaList = newRwaList.filter(rwa => rwa.state !== 2).map(rwa => {
         const newRwa = {
           ...rwa,
-          ...tokenWithBalance[symbolToLower(rwa.symbol)],
+          ...tokenWithBalance[symbolToLower(rwa.address)],
           ...tokenWithPrice[symbolToLower(rwa.symbol)],
         }
         newRwa.balanceValue = multiply(newRwa?.balance ?? '0', tokenWithPrice[symbolToLower(rwa.symbol)]?.price ?? '0')
