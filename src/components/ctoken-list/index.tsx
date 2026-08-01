@@ -245,7 +245,7 @@ const CTokenList = memo(
         const newRwa = {
           ...rwa,
           ...tokenWithBalance[symbolToLower(rwa.address)],
-          ...tokenWithPrice[symbolToLower(rwa.address)],
+          ...tokenWithPrice[symbolToLower(rwa.symbol)],
         }
         newRwa.balanceValue = multiply(newRwa?.balance ?? '0', tokenWithPrice[symbolToLower(rwa.symbol)]?.price ?? '0')
         return newRwa

@@ -9,7 +9,6 @@ export function useSplitStatus(token?: IRwa | null) {
   const rwaList = useRwas()
   const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
 
-  console.log(tokenWithBalance)
   // 查询所有相同symbol的rwa,
   const filterList = useMemo(() => {
     return rwaList.filter(rwa => rwa.symbol === token?.symbol && rwa.splitStatus === 1)
