@@ -10,7 +10,6 @@ import { textPrefix, toFixed, formatWithCommas } from '@/utils/format'
 import type { IRwa } from '@/service/base/types'
 import { useBaseStore } from '@/stores/baseStore'
 import type { ITableConfig } from '@/components/table-header'
-import { symbolToLower } from '@/utils'
 import { useRouter } from '@/hooks/useRouter'
 import { useCallback } from 'react'
 
@@ -22,7 +21,7 @@ function AssetsTable(props: { chainId: number; account: string; assetsList: IAss
   const { sort, onSortChange } = useTableSort<SortableField>()
   const router = useRouter()
 
-  const rwaList = useBaseStore(state => state.rwaList)
+  const rwaList = useBaseStore(state => state.rwaList).filter(rwa => rwa.showState)
 
   const defaultSort = useCallback((item1: IAssetItem, item2: IAssetItem) => {
     const isItem1Rwa = Boolean(item1.rwaId)

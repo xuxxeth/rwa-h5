@@ -45,6 +45,7 @@ import { RateDisplay } from './components/RateDisplay.tsx'
 import { MarketStatus } from '@/components/markets/MarketStatus.tsx'
 import { RwaSessionStatus } from '@/components/markets/RwaSessionStatus.tsx'
 import { useCurrentChain } from '@/hooks/useChain.ts'
+import { SplitTip } from './components/SplitTip.tsx'
 
 
 export const TradePage = () => {
@@ -84,14 +85,14 @@ export const TradePage = () => {
   const updateInputToken = useTradeStore(state => state.updateInputToken)
   const updateOutputToken = useTradeStore(state => state.updateOutputToken)
   const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
-  const rwaList = useRwas()
+  const rwaList = useRwas().filter(rwa => rwa.showState)
   const tokenList = useTokens()
 
   // ── Output token list with balance (same logic as USDTSelect) ──
   const tokenListWithBalance = useMemo(() => {
     return tokenList.map(token => ({
       ...token,
-      ...tokenWithBalance[symbolToLower(token.symbol)]
+      ...tokenWithBalance[symbolToLower(token.address)]
     }))
   }, [tokenList, tokenWithBalance])
 
@@ -151,8 +152,8 @@ export const TradePage = () => {
   )
 
   // ── Token balances ──
-  const inputTokenBalance = useTokenBalance(inputToken?.symbol || '')
-  const outputTokenBalance = useTokenBalance(outputToken?.symbol || '')
+  const inputTokenBalance = useTokenBalance(inputToken?.address || '')
+  const outputTokenBalance = useTokenBalance(outputToken?.address || '')
 
   // ── Realtime price sync ──
   const { inputTokenPrice, handlePriceInput, handleChangePrice } = useRealtimePriceSync({
@@ -363,7 +364,7 @@ export const TradePage = () => {
             isInsufficient={uiState.isBuyInsufficient}
           />
         </div>
-
+        <SplitTip />
         {/* 操作按钮 + 摘要 */}
         <div className='flex flex-col gap-3'>
           {(!account || !isSameChain) ? (

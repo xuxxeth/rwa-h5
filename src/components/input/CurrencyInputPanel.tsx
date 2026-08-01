@@ -39,7 +39,7 @@ const CurrencyInputPanel = memo(
     const tokenDialog = useShowDialog()
     const cTokenDialog = useShowDialog()
     const tokenList = useTokens()
-    const rwaList = useRwas()
+    const rwaList = useRwas().filter(rwa => rwa.showState)
 
     const { t } = useTranslation()
     const [inputFocus, setInputFocus] = useState(false)

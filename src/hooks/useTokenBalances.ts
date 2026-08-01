@@ -42,6 +42,8 @@ export function useTokenBalances() {
   ) => {
     if (!tokenList.length || tokenList[0].chainId !== chainId) return
 
+    console.log(tokenList, 111)
+
     const chunks = chunk(tokenList, CHUNK_SIZE)
 
     const tokenWithBalance: Record<string, ITokenWithBalance> = {}
@@ -56,7 +58,7 @@ export function useTokenBalances() {
       balancesRes.forEach((balance, index) => {
         const token = tokens[index]
 
-        tokenWithBalance[symbolToLower(token.symbol)] = {
+        tokenWithBalance[symbolToLower(token.address)] = {
           origin: String(balance.balance),
           balance: formatAmount(
             String(balance.balance),
@@ -74,6 +76,8 @@ export function useTokenBalances() {
     const filteredTokenList = tokenList.filter(token => token.chainId === currentChainId)
     const filteredRwaList = rwaList.filter(rwa => rwa.chainId === currentChainId)
       .filter(rwa => rwa.address !== '0x0000000000000000000000000000000000000000')
+
+    
     const tokensToFetch = [...filteredTokenList, ...filteredRwaList]
     if (currentChainId && filteredRwaList.length > 0 && tokensToFetch.length > 0 && account) {
       const chain = chainList.find(item => item.id === currentChainId)
@@ -179,8 +183,8 @@ export function useGetTokenBalances() {
   }
 }
 
-export const useTokenBalance = (symbol: string) =>
-  useBaseStore(state => state.tokenWithBalance[symbolToLower(symbol)])
+export const useTokenBalance = (address: string) =>
+  useBaseStore(state => state.tokenWithBalance[symbolToLower(address)])
 
 export const useRwaPrice = (symbol: string) =>
   useBaseStore(state => state.tokenWithPrice[symbolToLower(symbol)])

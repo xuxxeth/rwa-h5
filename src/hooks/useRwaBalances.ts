@@ -47,7 +47,7 @@ export function useRwas() {
 }
 
 export function useRwaByStockId(stockId?: number) {
-  const rwaList = useBaseStore(state => state.rwaList)
+  const rwaList = useBaseStore(state => state.rwaList).filter(rwa => rwa.showState)
   return useMemo(() => {
     return rwaList.find(token => token.stockId === stockId)
   }, [rwaList])

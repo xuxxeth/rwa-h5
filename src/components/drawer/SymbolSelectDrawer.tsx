@@ -52,8 +52,8 @@ TokenPrice.displayName = 'TokenPrice'
 
 /** Holdings column */
 const TokenHoldings = memo(
-  ({ symbol, pricePrecision }: { symbol: string; pricePrecision: number }) => {
-    const tokenBalance = useTokenBalance(symbol)?.balance ?? '0'
+  ({ address, symbol, pricePrecision }: { address: string, symbol: string; pricePrecision: number }) => {
+    const tokenBalance = useTokenBalance(address)?.balance ?? '0'
     const tokenPrice = useRwaPrice(symbol)?.price ?? '0'
     const total = multiply(tokenBalance, tokenPrice)
 
@@ -116,7 +116,7 @@ const TokenRow = memo(
       {/* Holdings – fill */}
       {account && (
         <div className="flex-1">
-          <TokenHoldings symbol={token.symbol} pricePrecision={token.precision} />
+          <TokenHoldings address={token.address} symbol={token.symbol} pricePrecision={token.precision} />
         </div>
       )}
     </div>

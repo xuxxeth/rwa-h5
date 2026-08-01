@@ -900,5 +900,9 @@
     "t1": "Contract Address",
     "t2": "24h High",
     "t3": "24h Low"
+  },
+  "events": {
+    "t38": "Convert Now",
+    "t42": "This token has an unprocessed stock split. Go to [Stock Split] to convert."
   }
 }
