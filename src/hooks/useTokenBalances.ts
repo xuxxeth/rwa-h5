@@ -93,8 +93,8 @@ export function useTokenBalances() {
   }, [currentChainId, account, rwaList, tokenList])
 
   useEffect(() => {
-    // refreshTokenBalances()
-  }, [freshTokenBalancesCount])
+    refreshTokenBalances()
+  }, [refreshTokenBalances, freshTokenBalancesCount])
 
   return {
     refreshTokenBalances: refreshTokenBalances,

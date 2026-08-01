@@ -23,15 +23,15 @@ export function useStockMap(includeDelisted: boolean = false) {
 }
 
 // 获取原生的 rwa 列表
-export function useRwaTokens(includeDelisted: boolean = true) {
+export function useRwaTokens(includeDelisted: boolean = false) {
   const rwaList = useBaseStore(state => state.rwaList)
   const currentChainId = useAppStore(state => state.currentChainId)
 
   return useMemo(() => {
     if (includeDelisted) {
-      return rwaList
+      return rwaList.filter(rwa => rwa.showState).filter(rwa => rwa.chainId === currentChainId)
     }
-    return rwaList.filter(rwa => rwa.state !== 2 && rwa.chainId === currentChainId)
+    return rwaList.filter(rwa => rwa.showState).filter(rwa => rwa.state !== 2 && rwa.chainId === currentChainId)
   }, [rwaList, includeDelisted, currentChainId])
 }
 

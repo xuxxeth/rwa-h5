@@ -21,7 +21,7 @@ export const useWssStore = create<WssStore>()(
         const { priceInitialized } = get();
         if (priceInitialized) return; // 
 
-        const rwaList = useBaseStore.getState().rwaList.filter(rwa => rwa.showState);
+        const rwaList = useBaseStore.getState().rwaList;
         if (rwaList.length === 0) return;
         const tokenWithPrices: Record<string, ITokenWithPrice> = data.reduce(
           (acc, cur) => {

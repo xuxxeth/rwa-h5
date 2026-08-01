@@ -21,7 +21,7 @@ function AssetsTable(props: { chainId: number; account: string; assetsList: IAss
   const { sort, onSortChange } = useTableSort<SortableField>()
   const router = useRouter()
 
-  const rwaList = useBaseStore(state => state.rwaList).filter(rwa => rwa.showState)
+  const rwaList = useBaseStore(state => state.rwaList)
 
   const defaultSort = useCallback((item1: IAssetItem, item2: IAssetItem) => {
     const isItem1Rwa = Boolean(item1.rwaId)
