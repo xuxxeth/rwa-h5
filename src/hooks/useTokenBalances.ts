@@ -28,7 +28,7 @@ export function useTokenBalances() {
   const currentChainId = useAppStore(state => state.currentChainId)
 
   const { account } = useActiveWeb3()
-  const rwaList = useRwaTokens()
+  const rwaList = useRwaTokens(true)
   const tokenList = useTokens()
 
   const setTokenWithBalance = useBaseStore(state => state.setTokenWithBalance)
@@ -93,8 +93,8 @@ export function useTokenBalances() {
   }, [currentChainId, account, rwaList, tokenList])
 
   useEffect(() => {
-    // refreshTokenBalances()
-  }, [freshTokenBalancesCount])
+    refreshTokenBalances()
+  }, [refreshTokenBalances, freshTokenBalancesCount])
 
   return {
     refreshTokenBalances: refreshTokenBalances,
@@ -106,7 +106,7 @@ export function useGetTokenBalances() {
   const { account } = useActiveWeb3()
   const contractAddr = useContractAddr() as `0x${string}` | null
   const tokenList = useTokens()
-  const rwaRwaList = useRwaTokens()
+  const rwaRwaList = useRwaTokens(true)
   const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
   const setTokenWithBalance = useBaseStore(state => state.setTokenWithBalance)
 
