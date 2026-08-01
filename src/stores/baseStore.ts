@@ -23,6 +23,7 @@ const CACHE_TIME = 1000 * 60 * 60 * 2
 export const useBaseStore = create<BaseStore>()(
   persist(
     (set, get) => ({
+      allTokensLoading: true,
       connectInit: false,
       showConnect: false,
       currentWallet: null,
@@ -141,6 +142,7 @@ export const useBaseStore = create<BaseStore>()(
         return res
       },
       getAllTokens: async (chainId?: number) => {
+
         const stableTokenRes =  await baseApi.getTokens(chainId)
         const rwaTokenRes = await baseApi.getBaseRwas(chainId)
 
@@ -168,6 +170,11 @@ export const useBaseStore = create<BaseStore>()(
         set({
           tokenList: newStableTokenList,
         })
+
+        setTimeout(() => {
+          set({allTokensLoading: false})
+        }, 500)
+        
       },
       getStocks: async () => {
         const res = await baseApi.getStocks()

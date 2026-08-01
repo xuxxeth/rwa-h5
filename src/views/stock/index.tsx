@@ -21,7 +21,7 @@ function StockChartPage() {
   const currentChainId = useAppStore(state => state.currentChainId)
   const inputToken = useTradeStore(state => state.inputToken)
   const updateInputToken = useTradeStore(state => state.updateInputToken)
-  const rwaList = useRwas()
+  const rwaList = useRwas().filter(rwa => rwa.showState)
   const updateActiveConvertTab = useTradeStore(state => state.updateActiveConvertTab)
 
   useEffect(() => {

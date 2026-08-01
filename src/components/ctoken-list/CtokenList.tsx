@@ -20,6 +20,7 @@ import IconWithTooltip from "../icon-tooltip";
 import { useWssStore } from "@/stores/wssStore";
 import { useWssOn } from "@/hooks/useWssOn";
 import { SessionType, TradeState } from "@/views/markets/MarketQuotes";
+import { CircleLoading } from "../loading";
 
 export type CTokenProps = {
   stock: string,
@@ -197,7 +198,7 @@ const CTokenListV2 = memo(
     const { t } = useTranslation()
     const { account } = useActiveWeb3()
     const { sort, onSortChange } = useTableSort<SortableField>()
-    
+    const allTokensLoading = useBaseStore(state => state.allTokensLoading)
     const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
     const tokenWithPrice = useBaseStore(state => state.tokenWithPrice)
 
@@ -206,7 +207,7 @@ const CTokenListV2 = memo(
     const { isFavorite, favorites, toggleFavorite, toggleEnable, ...favoritesRest } = useFavorites()
 
     const _id = useId()
-    const rwaList = useRwas()
+    const rwaList = useRwas().filter(rwa => rwa.showState)
 
     const rwaMap = useMemo(() => {
       return new Map(rwaList.map(rwa => [rwa.stockId, rwa]))
@@ -402,15 +403,6 @@ const CTokenListV2 = memo(
             }
             
           </div>
-          {/* {
-            from === 'trade' && (
-              <FilterTabs 
-                onTabChange={tab => {
-                  setSelectTab(tab.key)
-                }}
-              />
-            )
-          } */}
           
           <div className={cn(
             "scroll-box h-[65vh] overflow-y-auto mt-2 pr-0 text-white",
@@ -420,10 +412,13 @@ const CTokenListV2 = memo(
               sortTokens.map((token, index) => <CTokenItem from={from}  account={account} key={`${_id}-${index}`} token={token} onClick={onClick} />)
             }
            
-            {sortTokens.length <= 0 && <NoDataReason
+            {!allTokensLoading && sortTokens.length <= 0 && <NoDataReason
               isFavorites={selectTab === 'stared'}
               {...favoritesRest}
             />}
+            {
+              allTokensLoading && <div className=" w-full min-h-[50vh] flex justify-center pt-10"><CircleLoading className='absolute top-[50px] left-1/2 -translate-x-1/2 -translate-y-1/2' /></div>
+            }
           </div>
           
         </div>

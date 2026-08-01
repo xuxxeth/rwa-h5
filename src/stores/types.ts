@@ -39,6 +39,7 @@ export type IFeeConfig = {
 }
 
 export interface BaseStore {
+  allTokensLoading: boolean,
   connectInit: boolean,
   showConnect: boolean,
   currentWallet: any,

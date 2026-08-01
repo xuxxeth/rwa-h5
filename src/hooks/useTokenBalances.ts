@@ -42,8 +42,6 @@ export function useTokenBalances() {
   ) => {
     if (!tokenList.length || tokenList[0].chainId !== chainId) return
 
-    console.log(tokenList, 111)
-
     const chunks = chunk(tokenList, CHUNK_SIZE)
 
     const tokenWithBalance: Record<string, ITokenWithBalance> = {}
@@ -83,7 +81,6 @@ export function useTokenBalances() {
       const chain = chainList.find(item => item.id === currentChainId)
       const diamondAddr = chain?.contract ?? null;
 
-      console.log(diamondAddr, currentChainId, 'currentChainId')
       if (!diamondAddr) return
       // @ts-ignore
       getTokensData(
@@ -96,8 +93,8 @@ export function useTokenBalances() {
   }, [currentChainId, account, rwaList, tokenList])
 
   useEffect(() => {
-    refreshTokenBalances()
-  }, [refreshTokenBalances, freshTokenBalancesCount])
+    // refreshTokenBalances()
+  }, [freshTokenBalancesCount])
 
   return {
     refreshTokenBalances: refreshTokenBalances,
