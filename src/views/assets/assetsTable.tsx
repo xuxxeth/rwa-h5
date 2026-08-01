@@ -97,6 +97,7 @@ const assetTableConfig: ITableConfig<IAssetItem, { rwaList: IRwa[] }> = [
     key: 'price',
     sortable: false,
     render: (item: IAssetItem) => {
+      // @ts-ignore
       const price = item.tokenPrice ?? item.rwaPrice
       return <TextCell text={price ? textPrefix(toFixed(price, item.precision), '$') : '--'} />
     },
