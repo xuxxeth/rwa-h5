@@ -85,7 +85,7 @@ export const TradePage = () => {
   const updateInputToken = useTradeStore(state => state.updateInputToken)
   const updateOutputToken = useTradeStore(state => state.updateOutputToken)
   const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
-  const rwaList = useRwas().filter(rwa => rwa.showState)
+  const rwaList = useRwas()
   const tokenList = useTokens()
 
   // ── Output token list with balance (same logic as USDTSelect) ──

@@ -12,6 +12,7 @@ import { useBaseStore } from '@/stores/baseStore'
 import type { ITableConfig } from '@/components/table-header'
 import { useRouter } from '@/hooks/useRouter'
 import { useCallback } from 'react'
+import { useRwas } from '@/hooks/useRwaBalances'
 
 type SortableField = 'value'
 
@@ -21,7 +22,7 @@ function AssetsTable(props: { chainId: number; account: string; assetsList: IAss
   const { sort, onSortChange } = useTableSort<SortableField>()
   const router = useRouter()
 
-  const rwaList = useBaseStore(state => state.rwaList).filter(rwa => rwa.showState)
+  const rwaList = useRwas()
 
   const defaultSort = useCallback((item1: IAssetItem, item2: IAssetItem) => {
     const isItem1Rwa = Boolean(item1.rwaId)

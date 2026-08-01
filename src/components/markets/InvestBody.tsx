@@ -9,7 +9,7 @@ export function InvestBody() {
   const router = useRouter()
   const { t } = useTranslation()
   const _id = useId()
-  const rwaList = useBaseStore(state => state.rwaList).filter(rwa => rwa.showState)
+  const rwaList = useBaseStore(state => state.rwaList)
   const filterRwaList = useMemo(() => rwaList.slice(0, 6), [rwaList])
   const updateInputToken = useTradeStore(state => state.updateInputToken)
 

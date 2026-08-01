@@ -230,7 +230,7 @@ const HotRwsSymbolSet = new Set(
 
 function HotRwas() {
   const { t } = useTranslation()
-  const rwaList = useRwaTokens()
+  const rwaList = useRwaTokens(false)
   const router = useRouter()
 
   const displayList = useMemo(() => {

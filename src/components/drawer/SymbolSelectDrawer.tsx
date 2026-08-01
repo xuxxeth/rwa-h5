@@ -150,7 +150,7 @@ export const SymbolSelectDrawer = memo(
     const tokenWithPrice = useBaseStore((s) => s.tokenWithPrice)
 
     const _id = useId()
-    const rwaList = useRwas().filter(rwa => rwa.showState)
+    const rwaList = useRwas()
 
     /* ── merge balance + price ── */
     const rwaListWithBalance = useMemo(() => {
