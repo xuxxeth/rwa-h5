@@ -19,7 +19,6 @@ const SplitTip = () => {
         
         <div>
           {t('events.t42')}
-          <span className="text-[#9CFF3A] cursor-pointer" onClick={e => router.push('/splits')}>{t('events.t38')} &gt;</span>
         </div>
         
       </div>
