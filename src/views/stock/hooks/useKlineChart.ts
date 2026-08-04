@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { dispose, init, type Chart } from 'klinecharts'
 import {
   getPeriod,
+  type ChartMode,
   type KLineData,
   type MainOverlay,
   type SubOverlay,
@@ -11,11 +12,12 @@ import {
 type UseKlineChartOptions = {
   candles: KLineData[]
   timeframe: Timeframe
+  chartMode: ChartMode
   mainOverlay: MainOverlay
   subOverlay: SubOverlay
 }
 
-export function useKlineChart({ candles, timeframe, mainOverlay, subOverlay }: UseKlineChartOptions) {
+export function useKlineChart({ candles, timeframe, chartMode, mainOverlay, subOverlay }: UseKlineChartOptions) {
   const chartElRef = useRef<HTMLDivElement | null>(null)
   const chartRef = useRef<Chart | null>(null)
 
@@ -52,6 +54,13 @@ export function useKlineChart({ candles, timeframe, mainOverlay, subOverlay }: U
           },
           high: { text: { color: '#FFFFFF', backgroundColor: 'rgba(255,255,255,0.14)' } },
           low: { text: { color: '#FFFFFF', backgroundColor: 'rgba(255,255,255,0.14)' } },
+        },
+      },
+      technicalIndicator: {
+        line: {
+          styles: {
+            color: '#9CFF3A',
+          },
         },
       },
       indicator: {
@@ -94,8 +103,44 @@ export function useKlineChart({ candles, timeframe, mainOverlay, subOverlay }: U
     })
     chart.setSymbol({ ticker: `NVDA-${timeframe}`, pricePrecision: 2, volumePrecision: 0 })
     chart.setPeriod(getPeriod(timeframe))
+    chart.setStyles({
+      candle: {
+        type: chartMode === 'line' ? 'area' : 'candle_solid',
+        bar: {
+          compareRule: 'current_open',
+          upColor: '#2BBE63',
+          downColor: '#D14C75',
+          noChangeColor: '#888888',
+          upBorderColor: '#2BBE63',
+          downBorderColor: '#D14C75',
+          noChangeBorderColor: '#888888',
+          upWickColor: '#2BBE63',
+          downWickColor: '#D14C75',
+          noChangeWickColor: '#888888',
+        },
+        area: {
+          lineSize: 2,
+          lineColor: '#9CFF3A',
+          value: 'close',
+          smooth: true,
+          backgroundColor: [
+            { offset: 0, color: 'rgba(156, 255, 58, 0.22)' },
+            { offset: 1, color: 'rgba(156, 255, 58, 0.02)' },
+          ],
+          point: {
+            show: false,
+            color: '#9CFF3A',
+            radius: 0,
+            rippleColor: '#9CFF3A',
+            rippleRadius: 0,
+            animation: false,
+            animationDuration: 0,
+          },
+        },
+      },
+    } as any)
     chart.resetData()
-  }, [candles, timeframe])
+  }, [candles, timeframe, chartMode])
 
   useEffect(() => {
     const chart = chartRef.current

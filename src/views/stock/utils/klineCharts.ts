@@ -1,4 +1,5 @@
-export type Timeframe = '15m' | '1h' | '4h' | '1d'
+export type Timeframe = '1m' | '15m' | '1h' | '4h' | '1d'
+export type ChartMode = 'line' | 'candle'
 export type MainOverlay = 'MA' | 'EMA' | 'BOLL' | 'SAR'
 export type SubOverlay = 'MACD' | 'KDJ' | 'SKDJ'
 
@@ -33,7 +34,11 @@ export type KLineSummary = {
   bollLower?: number
 }
 
-export const TIMEFRAMES: Timeframe[] = ['15m', '1h', '4h', '1d']
+export const TIMEFRAMES: Timeframe[] = ['1m', '15m', '1h', '4h', '1d']
+export const CHART_MODES: Array<{ code: ChartMode; label: string }> = [
+  { code: 'line', label: '分时线' },
+  { code: 'candle', label: 'K线' },
+]
 export const MAIN_OVERLAYS: MainOverlay[] = ['MA', 'EMA', 'BOLL', 'SAR']
 export const SUB_OVERLAYS: SubOverlay[] = ['MACD', 'KDJ', 'SKDJ']
 
@@ -49,6 +54,8 @@ function seededRandom(seed: number) {
 
 function getSeed(timeframe: Timeframe) {
   switch (timeframe) {
+    case '1m':
+      return 20260714
     case '15m':
       return 20260715
     case '1h':
@@ -62,6 +69,8 @@ function getSeed(timeframe: Timeframe) {
 
 function getStepMinutes(timeframe: Timeframe) {
   switch (timeframe) {
+    case '1m':
+      return 1
     case '15m':
       return 15
     case '1h':
@@ -75,6 +84,8 @@ function getStepMinutes(timeframe: Timeframe) {
 
 export function getPeriod(timeframe: Timeframe): KLinePeriod {
   switch (timeframe) {
+    case '1m':
+      return { span: 1, type: 'minute' }
     case '15m':
       return { span: 15, type: 'minute' }
     case '1h':
@@ -89,6 +100,7 @@ export function getPeriod(timeframe: Timeframe): KLinePeriod {
 export function generateMockData(timeframe: Timeframe) {
   const rand = seededRandom(getSeed(timeframe))
   const lengthMap: Record<Timeframe, number> = {
+    '1m': 180,
     '15m': 80,
     '1h': 72,
     '4h': 60,
@@ -126,6 +138,18 @@ export function generateMockData(timeframe: Timeframe) {
   }
 
   return candles
+}
+
+export function generateLineData(timeframe: Timeframe) {
+  const candles = generateMockData(timeframe)
+  const lineCandles = candles.map(item => ({
+    ...item,
+    open: item.close,
+    high: item.close,
+    low: item.close,
+  }))
+
+  return lineCandles
 }
 
 function sma(values: number[], period: number) {
