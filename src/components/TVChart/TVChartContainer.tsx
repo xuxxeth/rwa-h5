@@ -464,7 +464,12 @@ export const TVChartContainer = memo(
         {
           tvWidgetShow && (
             <div className=" absolute left-4 top-[0px] h-[38px] flex items-center w-[140px]">
-              <SessionLineSelectt onChange={handleSessionChange} selected={chartType} />
+              <SessionLineSelectt
+                onChange={handleSessionChange}
+                selected={chartType}
+                triggerText='盘中分时'
+                className='w-[120px]'
+              />
               {
                 chartType && (
                   <button

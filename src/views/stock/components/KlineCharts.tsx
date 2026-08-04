@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/tw'
@@ -13,6 +13,7 @@ import {
   type SubOverlay,
   type Timeframe,
 } from '../utils/klineCharts'
+import { SessionLineSelectt, type IItemCode } from '@/components/session-line-select'
 
 function KlineCharts() {
   const [timeframe, setTimeframe] = useState<Timeframe>('1h')
@@ -32,14 +33,24 @@ function KlineCharts() {
     mainOverlay,
     subOverlay,
   })
+  const [chartType, setChartType] = useState(true)
+  const handleSessionChange = useCallback((data: IItemCode) => {
+    
+  }, [])
 
   return (
     <div>
       <div className='mt-5 flex items-center justify-between pb-1 text-[12px]'>
         <div className='flex flex-wrap items-center gap-2 text-[#9DA3AF]'>
-          <button className='flex items-center gap-1 text-white'>
+          {/* <button className='flex items-center gap-1 text-white'>
             盘中分时 <ChevronDown className='h-4 w-4' />
-          </button>
+          </button> */}
+          <SessionLineSelectt
+            onChange={handleSessionChange}
+            selected={chartType}
+            triggerText='盘中分时'
+            className='w-[120px]'
+          />
           {TIMEFRAMES.slice(0, 3).map(item => (
             <button
               key={item}
