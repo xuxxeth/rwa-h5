@@ -87,17 +87,17 @@ function createCandleStyle(chartMode: 'line' | 'candle') {
     },
     area: {
       lineSize: 2,
-      lineColor: '#9CFF3A',
+      lineColor: '#25A750',
       value: 'close',
       smooth: true,
       backgroundColor: [
         {
           offset: 0,
-          color: 'rgba(156, 255, 58, 0)',
+          color: 'rgba(37, 167, 80, 0.42)',
         },
         {
           offset: 1,
-          color: 'rgba(156, 255, 58, 0)',
+          color: 'rgba(37, 167, 80, 0)',
         },
       ],
       point: {
