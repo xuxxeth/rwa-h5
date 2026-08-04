@@ -58,8 +58,8 @@ function StockChartPage() {
         <div hidden={activeTab === 'info' || activeTab === 'fi'}>
           <RwaItemPrice />
           <div className='mt-3'>
-            {/* <KlineCharts /> */}
-            <TradingChart from={'market'} mode="tv" />
+            <KlineCharts />
+            {/* <TradingChart from={'market'} mode="tv" /> */}
             <div className='h-[120px]'></div>
 
           </div>
@@ -75,7 +75,7 @@ function StockChartPage() {
         
 
       </div>
-      <div className='mt-auto grid grid-cols-2 gap-3 border-t border-[#1A1B1E] p-4 fixed left-0 right-0 bottom-0'>
+      <div className='mt-auto grid grid-cols-2 gap-3 border-t border-[#1A1B1E] p-4 fixed left-0 right-0 bottom-0 z-50'>
         <button className='h-11 rounded-full bg-[#2BAE58] text-[14px] font-semibold text-white active:scale-95'
           onClick={e => {
             e.stopPropagation()
