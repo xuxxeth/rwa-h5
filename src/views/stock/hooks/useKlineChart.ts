@@ -27,6 +27,92 @@ const INITIAL_BATCH_SIZE = 500
 const getFollowUpBatchSize = () => Math.floor(Math.random() * 101) + 300
 const REQUEST_CACHE_WINDOW = 1000
 
+function createCandleStyle(chartMode: 'line' | 'candle') {
+  return {
+    type: chartMode === 'line' ? 'area' : 'candle_solid',
+    bar: {
+      compareRule: 'current_open',
+      upColor: '#2BBE63',
+      downColor: '#D14C75',
+      noChangeColor: '#888888',
+      upBorderColor: '#2BBE63',
+      downBorderColor: '#D14C75',
+      noChangeBorderColor: '#888888',
+      upWickColor: '#2BBE63',
+      downWickColor: '#D14C75',
+      noChangeWickColor: '#888888',
+    },
+    priceMark: {
+      last: {
+        show: true,
+        compareRule: 'previous_close',
+        line: { show: true, color: 'rgba(255,255,255,0.45)' },
+        text: {
+          show: true,
+          color: '#111214',
+          backgroundColor: '#FFFFFF',
+          size: 12,
+          family: 'inherit',
+          weight: 'normal',
+          paddingLeft: 6,
+          paddingRight: 6,
+          paddingTop: 3,
+          paddingBottom: 3,
+          borderStyle: 'solid',
+          borderDashedValue: [],
+          borderSize: 0,
+          borderColor: 'transparent',
+          borderRadius: 4,
+        },
+        upColor: '#2BBE63',
+        downColor: '#D14C75',
+        noChangeColor: '#888888',
+      },
+      high: {
+        show: true,
+        color: '#FFFFFF',
+        textSize: 12,
+        textFamily: 'inherit',
+        textWeight: 'normal',
+        textMargin: 6,
+      },
+      low: {
+        show: true,
+        color: '#FFFFFF',
+        textSize: 12,
+        textFamily: 'inherit',
+        textWeight: 'normal',
+        textMargin: 6,
+      },
+    },
+    area: {
+      lineSize: 2,
+      lineColor: '#9CFF3A',
+      value: 'close',
+      smooth: true,
+      backgroundColor: [
+        {
+          offset: 0,
+          color: 'rgba(156, 255, 58, 0)',
+        },
+        {
+          offset: 1,
+          color: 'rgba(156, 255, 58, 0)',
+        },
+      ],
+      point: {
+        show: false,
+        color: '#9CFF3A',
+        radius: 0,
+        rippleColor: '#9CFF3A',
+        rippleRadius: 0,
+        animation: false,
+        animationDuration: 0,
+      },
+    },
+  }
+}
+
 type LoadResult = {
   bars: KLineData[]
   meta: { backward: boolean; forward: boolean }
@@ -90,88 +176,7 @@ export function useKlineChart({
         horizontal: { show: true, color: 'rgba(255,255,255,0.06)' },
         vertical: { show: true, color: 'rgba(255,255,255,0.06)' },
       },
-      candle: {
-        bar: {
-          compareRule: 'current_open',
-          upColor: '#2BBE63',
-          downColor: '#D14C75',
-          noChangeColor: '#888888',
-          upBorderColor: '#2BBE63',
-          downBorderColor: '#D14C75',
-          noChangeBorderColor: '#888888',
-          upWickColor: '#2BBE63',
-          downWickColor: '#D14C75',
-          noChangeWickColor: '#888888',
-        },
-        priceMark: {
-          last: {
-            show: true,
-            compareRule: 'previous_close',
-            line: { show: true, color: 'rgba(255,255,255,0.45)' },
-            text: {
-              show: true,
-              color: '#111214',
-              backgroundColor: '#FFFFFF',
-              size: 12,
-              family: 'inherit',
-              weight: 'normal',
-              paddingLeft: 6,
-              paddingRight: 6,
-              paddingTop: 3,
-              paddingBottom: 3,
-              borderStyle: 'solid',
-              borderDashedValue: [],
-              borderSize: 0,
-              borderColor: 'transparent',
-              borderRadius: 4,
-            },
-            upColor: '#2BBE63',
-            downColor: '#D14C75',
-            noChangeColor: '#888888',
-          },
-          high: {
-            show: true,
-            color: '#FFFFFF',
-            textSize: 12,
-            textFamily: 'inherit',
-            textWeight: 'normal',
-            textMargin: 6,
-          },
-          low: {
-            show: true,
-            color: '#FFFFFF',
-            textSize: 12,
-            textFamily: 'inherit',
-            textWeight: 'normal',
-            textMargin: 6,
-          },
-        },
-        area: {
-          lineSize: 2,
-          lineColor: '#9CFF3A',
-          value: 'close',
-          smooth: true,
-          backgroundColor: [
-            {
-              offset: 0,
-              color: 'rgba(156, 255, 58, 0)',
-            },
-            {
-              offset: 1,
-              color: 'rgba(156, 255, 58, 0)',
-            },
-          ],
-          point: {
-            show: false,
-            color: '#9CFF3A',
-            radius: 0,
-            rippleColor: '#9CFF3A',
-            rippleRadius: 0,
-            animation: false,
-            animationDuration: 0,
-          },
-        },
-      },
+      candle: createCandleStyle(chartMode),
       technicalIndicator: {
         line: {
           styles: {
@@ -385,6 +390,15 @@ export function useKlineChart({
       chartRef.current = null
     }
   }, [])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    if (!chart) return
+
+    chart.setStyles({
+      candle: createCandleStyle(chartMode),
+    } as any)
+  }, [chartMode])
 
   useEffect(() => {
     const chart = chartRef.current
