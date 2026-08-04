@@ -107,7 +107,7 @@ export const chartOverrides = {
   "mainSeriesProperties.areaStyle.color2": "rgba(37, 167, 80, 0)",   // 下
   "mainSeriesProperties.areaStyle.linecolor": "#25A750",             // 线
   priceScaleSelectionStrategyName: 'right',
-  // "paneProperties.rightMargin": 0,
+  "paneProperties.rightMargin": 0,
   ...chartStyleOverrides,
 }
 

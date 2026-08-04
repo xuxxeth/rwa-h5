@@ -50,6 +50,10 @@ body,
 .chart-markup-table {
   -webkit-text-size-adjust: 100% !important;
   text-size-adjust: 100% !important;
+  font-size: 12px !important;
+}
+.label-WJDah4zD {
+  font-size: 12px !important;
 }
 
 .price-axis,
@@ -215,7 +219,7 @@ html.theme-dark .nav-button-znwuaSC1 {
 }
 
 .layout__area--top .toolbar-qqNP9X6e {
-  padding-left: 160px !important;
+  padding-left: 150px !important;
   background-color: #131416;
 }
 .series-l31H9iuA .titlesWrapper-l31H9iuA {

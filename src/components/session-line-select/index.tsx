@@ -80,9 +80,8 @@ const SessionLineSelectt = memo(
         <SelectTrigger 
           open={open}
           className={cn(
-            "px-[10px] py-0 h-[23px] shadow-none flex items-center justify-between rounded-[4px] border border-solid ",
+            "px-[10px] py-0 h-[23px] shadow-none flex items-center justify-between rounded-[4px] border border-solid border-[#232427] ",
             className,
-            selected ? "text-[#ffffff] border-[#FFFFFF]" : "border-[#232427] "
           )}
         >
           <div className={cn(
