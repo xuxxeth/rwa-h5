@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/tw'
 import { useTradeStore } from '@/stores/tradeStore'
+import { CircleLoading } from '@/components/loading'
 import { useKlineChart } from '../hooks/useKlineChart'
 import {
   CHART_MODES,
@@ -119,7 +120,14 @@ function KlineCharts() {
       </div>
 
       <div className='rounded-[18px] border border-white/5 bg-[#111214] px-1 pb-2 pt-1 shadow-[0_24px_80px_rgba(0,0,0,0.35)]'>
-        <div ref={chartElRef} className='h-[430px] w-full overflow-hidden rounded-[14px] bg-[#111214]' />
+        <div className='relative h-[430px] w-full overflow-hidden rounded-[14px] bg-[#111214]'>
+          <div ref={chartElRef} className='h-full w-full' />
+          {loading ? (
+            <div className='absolute inset-0 z-10 flex items-center justify-center bg-black/30'>
+              <CircleLoading size={28} className='text-white' />
+            </div>
+          ) : null}
+        </div>
         <div className='mb-2 flex items-center justify-between px-2 text-[12px] font-medium text-white/70'>
           {chartMode === 'candle' ? (
             <>

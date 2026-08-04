@@ -437,6 +437,14 @@ export function useKlineChart({
     const chart = chartRef.current
     if (!chart) return
 
+    chart.setScrollEnabled(!loading)
+    chart.setZoomEnabled(!loading)
+  }, [loading])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    if (!chart) return
+
     const removeIndicators = () => {
       ;['MA', 'EMA', 'BOLL', 'SAR'].forEach(name => {
         chart.removeIndicator({ paneId: 'candle_pane', name })
