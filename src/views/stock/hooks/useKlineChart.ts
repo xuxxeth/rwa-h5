@@ -6,6 +6,7 @@ import type { MainOverlayValue, SubOverlayValue, Timeframe } from '../utils/klin
 import {
   getPeriod,
   mapCandlesToKLineData,
+  mapCandlesToLineKLineData,
   mapMinuteToKLineData,
   timeframeToResolution,
 } from '../utils/klineCharts'
@@ -153,11 +154,11 @@ export function useKlineChart({
           backgroundColor: [
             {
               offset: 0,
-              color: chartMode === 'line' ? 'rgba(156, 255, 58, 0)' : 'rgba(156, 255, 58, 0.22)',
+              color: 'rgba(156, 255, 58, 0)',
             },
             {
               offset: 1,
-              color: chartMode === 'line' ? 'rgba(156, 255, 58, 0)' : 'rgba(156, 255, 58, 0.02)',
+              color: 'rgba(156, 255, 58, 0)',
             },
           ],
           point: {
@@ -299,7 +300,7 @@ export function useKlineChart({
             }
 
             const rawData = res.data || []
-            const data = mapCandlesToKLineData(rawData).slice(-limit)
+            const data = mapCandlesToLineKLineData(rawData).slice(-limit)
             oldestTimestampRef.current = data[0]?.timestamp ?? oldestTimestampRef.current
             isFirstLoadRef.current = false
             const hasMoreBackward = type !== 'init' && type === 'backward' && rawData.length >= limit

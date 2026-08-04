@@ -79,7 +79,7 @@ function KlineCharts() {
             triggerText={CHART_MODES.find(item => item.code === chartMode)?.label}
             className='w-[120px] justify-between'
           />
-          {TIMEFRAMES.filter(item => item !== '1m').slice(0, 3).map(item => (
+          {TIMEFRAMES.slice(0, 4).map(item => (
             <button
               key={item}
               className={cn(

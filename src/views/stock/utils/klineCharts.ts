@@ -76,6 +76,23 @@ export function mapCandlesToKLineData(
     }))
 }
 
+export function mapCandlesToLineKLineData(
+  candles: Array<{ t: number; o: number; h: number; l: number; c: number }>
+): KLineData[] {
+  return candles
+    .slice()
+    .sort((left, right) => left.t - right.t)
+    .map(item => ({
+      timestamp: item.t * 1000,
+      open: Number(item.c.toFixed(2)),
+      high: Number(item.c.toFixed(2)),
+      low: Number(item.c.toFixed(2)),
+      close: Number(item.c.toFixed(2)),
+      volume: 0,
+      turnover: 0,
+    }))
+}
+
 export function mapMinuteToKLineData(
   items: Array<{ close: number; startTime: number }>
 ): KLineData[] {
