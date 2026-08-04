@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/tw'
+import { useTradeStore } from '@/stores/tradeStore'
 import { useKlineChart } from '../hooks/useKlineChart'
 import {
   CHART_MODES,
@@ -9,8 +10,6 @@ import {
   SUB_OVERLAYS,
   TIMEFRAMES,
   buildSummary,
-  generateLineData,
-  generateMockData,
   type ChartMode,
   type MainOverlay,
   type MainOverlayValue,
@@ -19,34 +18,39 @@ import {
   type Timeframe,
 } from '../utils/klineCharts'
 import { SessionLineSelectt, type IItemCode } from '@/components/session-line-select'
+import type { SessionType } from 'ca-common-web'
 
 function KlineCharts() {
+  const inputToken = useTradeStore(state => state.inputToken)
+  const sessionType = useTradeStore(state => state.sessionType)
+  const updateSessionType = useTradeStore(state => state.updateSessionType)
   const [timeframe, setTimeframe] = useState<Timeframe>('1m')
   const [chartMode, setChartMode] = useState<ChartMode>('line')
   const [mainOverlay, setMainOverlay] = useState<MainOverlayValue>(null)
   const [subOverlay, setSubOverlay] = useState<SubOverlayValue>('MACD')
 
-  const candles = useMemo(() => {
-    return chartMode === 'line' ? generateLineData(timeframe) : generateMockData(timeframe)
-  }, [chartMode, timeframe])
+  const { chartElRef, candles, loading } = useKlineChart({
+    stockId: inputToken?.stockId,
+    symbol: inputToken?.symbol || '',
+    pricePrecision: inputToken?.precision || 2,
+    timeframe,
+    chartMode,
+    sessionType,
+    mainOverlay,
+    subOverlay,
+  })
+
   const summary = useMemo(() => buildSummary(candles), [candles])
   const latestTimestampLabel = useMemo(
     () => format(new Date(summary.last.timestamp), timeframe === '1d' ? 'MM/dd' : 'MM/dd HH:mm'),
     [summary.last.timestamp, timeframe]
   )
 
-  const chartElRef = useKlineChart({
-    candles,
-    timeframe,
-    chartMode,
-    mainOverlay,
-    subOverlay,
-  })
-
   const handleSessionChange = useCallback((data: IItemCode) => {
+    updateSessionType(Number(data.code) as SessionType)
     setChartMode('line')
     setTimeframe('1m')
-  }, [])
+  }, [updateSessionType])
 
   const handleTimeframeChange = useCallback((item: Timeframe) => {
     setTimeframe(item)
@@ -143,7 +147,7 @@ function KlineCharts() {
               </div>
             </>
           ) : (
-            <div className='text-white/55'>分时模式</div>
+            <div className='text-white/55'>{loading ? '加载中...' : '分时模式'}</div>
           )}
         </div>
       </div>

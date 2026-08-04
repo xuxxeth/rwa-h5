@@ -319,7 +319,8 @@ export function getDataFeed({
           }
           
           const fetchPromise = (async () => {
-            const res = await klineApi.getMinute({ stock: currentToken.stockId, sessionType })
+            const limit = firstDataRequest ? 500 : (Math.floor(Math.random() * 101) + 300)
+            const res = await klineApi.getMinute({ stock: currentToken.stockId, sessionType, limit })
             const _data = res?.data?.items || []
             let bars = _data
               .sort((a, b) => a.startTime - b.startTime)

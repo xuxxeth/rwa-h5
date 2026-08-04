@@ -19,6 +19,7 @@ export interface ICandlesItem {
 export interface IMinuteParams {
   stock: number,
   sessionType: number,
+  limit?: number,
   day?: number
 }
 

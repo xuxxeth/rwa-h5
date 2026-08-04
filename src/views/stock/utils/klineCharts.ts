@@ -11,8 +11,8 @@ export type KLineData = {
   high: number
   low: number
   close: number
-  volume: number
-  turnover: number
+  volume?: number
+  turnover?: number
 }
 
 export type KLinePeriod = {
@@ -44,32 +44,7 @@ export const CHART_MODES: Array<{ code: ChartMode; label: string }> = [
 export const MAIN_OVERLAYS: MainOverlay[] = ['MA', 'EMA', 'BOLL', 'SAR']
 export const SUB_OVERLAYS: SubOverlay[] = ['MACD', 'KDJ', 'SKDJ']
 
-function seededRandom(seed: number) {
-  let value = seed % 2147483647
-  if (value <= 0) value += 2147483646
-
-  return () => {
-    value = (value * 16807) % 2147483647
-    return (value - 1) / 2147483646
-  }
-}
-
-function getSeed(timeframe: Timeframe) {
-  switch (timeframe) {
-    case '1m':
-      return 20260714
-    case '15m':
-      return 20260715
-    case '1h':
-      return 20260716
-    case '4h':
-      return 20260717
-    case '1d':
-      return 20260718
-  }
-}
-
-function getStepMinutes(timeframe: Timeframe) {
+export function timeframeToResolution(timeframe: Timeframe) {
   switch (timeframe) {
     case '1m':
       return 1
@@ -82,6 +57,39 @@ function getStepMinutes(timeframe: Timeframe) {
     case '1d':
       return 1440
   }
+}
+
+export function mapCandlesToKLineData(
+  candles: Array<{ t: number; o: number; h: number; l: number; c: number }>
+): KLineData[] {
+  return candles
+    .slice()
+    .sort((left, right) => left.t - right.t)
+    .map(item => ({
+      timestamp: item.t * 1000,
+      open: Number(item.o.toFixed(2)),
+      high: Number(item.h.toFixed(2)),
+      low: Number(item.l.toFixed(2)),
+      close: Number(item.c.toFixed(2)),
+      volume: 0,
+      turnover: 0,
+    }))
+}
+
+export function mapMinuteToKLineData(
+  items: Array<{ close: number; startTime: number }>
+): KLineData[] {
+  return items
+    .map(item => ({
+      timestamp: item.startTime * 1000,
+      open: Number(item.close.toFixed(2)),
+      high: Number(item.close.toFixed(2)),
+      low: Number(item.close.toFixed(2)),
+      close: Number(item.close.toFixed(2)),
+      volume: 0,
+      turnover: 0,
+    }))
+    .sort((left, right) => left.timestamp - right.timestamp)
 }
 
 export function getPeriod(timeframe: Timeframe): KLinePeriod {
@@ -97,61 +105,6 @@ export function getPeriod(timeframe: Timeframe): KLinePeriod {
     case '1d':
       return { span: 1, type: 'day' }
   }
-}
-
-export function generateMockData(timeframe: Timeframe) {
-  const rand = seededRandom(getSeed(timeframe))
-  const lengthMap: Record<Timeframe, number> = {
-    '1m': 180,
-    '15m': 80,
-    '1h': 72,
-    '4h': 60,
-    '1d': 48,
-  }
-  const length = lengthMap[timeframe]
-  const stepMinutes = getStepMinutes(timeframe)
-  const now = Date.now()
-  const start =
-    Math.floor(now / (stepMinutes * 60_000)) * stepMinutes * 60_000 -
-    length * stepMinutes * 60_000
-
-  const candles: KLineData[] = []
-  let close = 226.12
-
-  for (let index = 0; index < length; index += 1) {
-    const trend = Math.sin(index / 4) * 1.8 + Math.cos(index / 8) * 0.8
-    const noise = (rand() - 0.5) * 3.6
-    const open = close
-    close = Math.max(40, open + trend + noise)
-    const high = Math.max(open, close) + rand() * 2.8 + 0.4
-    const low = Math.min(open, close) - rand() * 2.8 - 0.4
-    const volume = Math.round(8_000 + Math.abs(close - open) * 4_500 + rand() * 3_500)
-    const turnover = ((open + high + low + close) / 4) * volume
-
-    candles.push({
-      timestamp: start + index * stepMinutes * 60_000,
-      open: Number(open.toFixed(2)),
-      high: Number(high.toFixed(2)),
-      low: Number(low.toFixed(2)),
-      close: Number(close.toFixed(2)),
-      volume,
-      turnover: Number(turnover.toFixed(2)),
-    })
-  }
-
-  return candles
-}
-
-export function generateLineData(timeframe: Timeframe) {
-  const candles = generateMockData(timeframe)
-  const lineCandles = candles.map(item => ({
-    ...item,
-    open: item.close,
-    high: item.close,
-    low: item.close,
-  }))
-
-  return lineCandles
 }
 
 function sma(values: number[], period: number) {
@@ -195,6 +148,25 @@ function stddev(values: number[], period: number) {
 }
 
 export function buildSummary(candles: KLineData[]): KLineSummary {
+  if (!candles.length) {
+    const emptyBar: KLineData = {
+      timestamp: 0,
+      open: 0,
+      high: 0,
+      low: 0,
+      close: 0,
+      volume: 0,
+      turnover: 0,
+    }
+
+    return {
+      last: emptyBar,
+      prev: emptyBar,
+      change: 0,
+      changePct: 0,
+    }
+  }
+
   const closes = candles.map(item => item.close)
   const ema5 = ema(closes, 5)
   const ema10 = ema(closes, 10)
