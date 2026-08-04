@@ -42,8 +42,6 @@ export function useTokenBalances() {
   ) => {
     if (!tokenList.length || tokenList[0].chainId !== chainId) return
 
-    console.log(tokenList, 111)
-
     const chunks = chunk(tokenList, CHUNK_SIZE)
 
     const tokenWithBalance: Record<string, ITokenWithBalance> = {}
