@@ -23,8 +23,8 @@ type UseKlineChartOptions = {
 }
 
 const RIGHT_OFFSET_DISTANCE = 4
-const INITIAL_BATCH_SIZE = 500
-const getFollowUpBatchSize = () => Math.floor(Math.random() * 101) + 300
+const INITIAL_BATCH_SIZE = 100
+const getFollowUpBatchSize = () => Math.floor(Math.random() * 51) + 50
 const REQUEST_CACHE_WINDOW = 1000
 
 function createCandleStyle(chartMode: 'line' | 'candle') {
@@ -139,6 +139,7 @@ export function useKlineChart({
   const requestSeqRef = useRef(0)
   const isFirstLoadRef = useRef(true)
   const oldestTimestampRef = useRef<number | null>(null)
+  const newestTimestampRef = useRef<number | null>(null)
   const pendingLoadRef = useRef<PendingLoad | null>(null)
   const recentLoadRef = useRef<{ key: string; result: LoadResult; ts: number } | null>(null)
   const optionsRef = useRef({
@@ -151,6 +152,13 @@ export function useKlineChart({
   })
   const [candles, setCandles] = useState<KLineData[]>([])
   const [loading, setLoading] = useState(false)
+
+  const mergeAndSortBars = (prevBars: KLineData[], nextBars: KLineData[]) => {
+    const barMap = new Map<number, KLineData>()
+    prevBars.forEach(bar => barMap.set(bar.timestamp, bar))
+    nextBars.forEach(bar => barMap.set(bar.timestamp, bar))
+    return Array.from(barMap.values()).sort((left, right) => left.timestamp - right.timestamp)
+  }
 
   useEffect(() => {
     optionsRef.current = {
@@ -226,6 +234,7 @@ export function useKlineChart({
           type,
           timestamp ?? '',
           oldestTimestampRef.current ?? '',
+          newestTimestampRef.current ?? '',
         ].join('|')
 
         const recentLoad = recentLoadRef.current
@@ -260,6 +269,7 @@ export function useKlineChart({
         }
 
         const finishLoad = (result: LoadResult) => {
+          setCandles(previous => mergeAndSortBars(previous, result.bars))
           recentLoadRef.current = {
             key: requestKey,
             result,
@@ -282,9 +292,11 @@ export function useKlineChart({
           if (current.chartMode === 'line' && current.sessionType === 0) {
             const limit = batchSize
             const endTime =
-              type === 'backward' && (oldestTimestampRef.current || timestamp)
+              type === 'forward' && (oldestTimestampRef.current || timestamp)
                 ? Math.max(0, Math.floor((oldestTimestampRef.current || timestamp || 0) / 1000) - 1)
-                : Math.floor(Date.now() / 1000)
+                : type === 'backward' && (newestTimestampRef.current || timestamp)
+                  ? Math.floor((newestTimestampRef.current || timestamp || 0) / 1000)
+                  : Math.floor(Date.now() / 1000)
 
             const res = await klineApi.getCandles(
               {
@@ -304,13 +316,15 @@ export function useKlineChart({
               return
             }
 
-            const rawData = res.data || []
+          const rawData = res.data || []
             const data = mapCandlesToLineKLineData(rawData).slice(-limit)
             oldestTimestampRef.current = data[0]?.timestamp ?? oldestTimestampRef.current
+            newestTimestampRef.current = data[data.length - 1]?.timestamp ?? newestTimestampRef.current
             isFirstLoadRef.current = false
-            const hasMoreBackward = type !== 'init' && type === 'backward' && rawData.length >= limit
-            setCandles(data)
-            finishLoad({ bars: data, meta: { backward: hasMoreBackward, forward: false } })
+            const hasMore = rawData.length >= limit
+            const hasMoreBackward = type === 'backward' ? hasMore : false
+            const hasMoreForward = type === 'init' || type === 'forward' ? hasMore : false
+            finishLoad({ bars: data, meta: { backward: hasMoreBackward, forward: hasMoreForward } })
             return
           }
 
@@ -329,16 +343,18 @@ export function useKlineChart({
 
             const data = mapMinuteToKLineData(res.data.items || []).slice(-batchSize)
             oldestTimestampRef.current = data[0]?.timestamp ?? null
+            newestTimestampRef.current = data[data.length - 1]?.timestamp ?? newestTimestampRef.current
             isFirstLoadRef.current = false
-            setCandles(data)
             finishLoad({ bars: data, meta: { backward: false, forward: false } })
             return
           }
 
           const limit = batchSize
           const endTime =
-            type === 'backward' && (oldestTimestampRef.current || timestamp)
+            type === 'forward' && (oldestTimestampRef.current || timestamp)
               ? Math.max(0, Math.floor((oldestTimestampRef.current || timestamp || 0) / 1000) - 1)
+              : type === 'backward' && (newestTimestampRef.current || timestamp)
+                ? Math.floor((newestTimestampRef.current || timestamp || 0) / 1000)
               : Math.floor(Date.now() / 1000)
 
           const res = await klineApi.getCandles(
@@ -362,10 +378,12 @@ export function useKlineChart({
           const rawData = res.data || []
           const data = mapCandlesToKLineData(rawData).slice(-limit)
           oldestTimestampRef.current = data[0]?.timestamp ?? oldestTimestampRef.current
+          newestTimestampRef.current = data[data.length - 1]?.timestamp ?? newestTimestampRef.current
           isFirstLoadRef.current = false
-          const hasMoreBackward = type !== 'init' && type === 'backward' && rawData.length >= limit
-          setCandles(data)
-          finishLoad({ bars: data, meta: { backward: hasMoreBackward, forward: false } })
+          const hasMore = rawData.length >= limit
+          const hasMoreBackward = type === 'backward' ? hasMore : false
+          const hasMoreForward = type === 'init' || type === 'forward' ? hasMore : false
+          finishLoad({ bars: data, meta: { backward: hasMoreBackward, forward: hasMoreForward } })
         } catch (error) {
           if (requestSeq !== requestSeqRef.current) return
           if (!controller.signal.aborted) {
@@ -406,6 +424,7 @@ export function useKlineChart({
 
     isFirstLoadRef.current = true
     oldestTimestampRef.current = null
+    newestTimestampRef.current = null
     pendingLoadRef.current?.controller.abort()
     pendingLoadRef.current = null
     recentLoadRef.current = null
