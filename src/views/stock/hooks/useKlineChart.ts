@@ -4,8 +4,8 @@ import {
   getPeriod,
   type ChartMode,
   type KLineData,
-  type MainOverlay,
-  type SubOverlay,
+  type MainOverlayValue,
+  type SubOverlayValue,
   type Timeframe,
 } from '../utils/klineCharts'
 
@@ -13,9 +13,11 @@ type UseKlineChartOptions = {
   candles: KLineData[]
   timeframe: Timeframe
   chartMode: ChartMode
-  mainOverlay: MainOverlay
-  subOverlay: SubOverlay
+  mainOverlay: MainOverlayValue
+  subOverlay: SubOverlayValue
 }
+
+const RIGHT_OFFSET_DISTANCE = 4
 
 export function useKlineChart({ candles, timeframe, chartMode, mainOverlay, subOverlay }: UseKlineChartOptions) {
   const chartElRef = useRef<HTMLDivElement | null>(null)
@@ -85,6 +87,7 @@ export function useKlineChart({ candles, timeframe, chartMode, mainOverlay, subO
         vertical: { line: { color: 'rgba(255,255,255,0.3)' } },
       },
     } as any)
+    chart.setOffsetRightDistance(RIGHT_OFFSET_DISTANCE)
 
     return () => {
       dispose(chart as Chart)
@@ -124,8 +127,14 @@ export function useKlineChart({ candles, timeframe, chartMode, mainOverlay, subO
           value: 'close',
           smooth: true,
           backgroundColor: [
-            { offset: 0, color: 'rgba(156, 255, 58, 0.22)' },
-            { offset: 1, color: 'rgba(156, 255, 58, 0.02)' },
+            {
+              offset: 0,
+              color: chartMode === 'line' ? 'rgba(156, 255, 58, 0)' : 'rgba(156, 255, 58, 0.22)',
+            },
+            {
+              offset: 1,
+              color: chartMode === 'line' ? 'rgba(156, 255, 58, 0)' : 'rgba(156, 255, 58, 0.02)',
+            },
           ],
           point: {
             show: false,
@@ -139,6 +148,7 @@ export function useKlineChart({ candles, timeframe, chartMode, mainOverlay, subO
         },
       },
     } as any)
+    chart.setOffsetRightDistance(RIGHT_OFFSET_DISTANCE)
     chart.resetData()
   }, [candles, timeframe, chartMode])
 
@@ -157,14 +167,9 @@ export function useKlineChart({ candles, timeframe, chartMode, mainOverlay, subO
 
     removeIndicators()
 
-    if (mainOverlay === 'MA') chart.createIndicator({ name: 'MA', paneId: 'candle_pane' }, true)
-    if (mainOverlay === 'EMA') chart.createIndicator({ name: 'EMA', paneId: 'candle_pane' }, true)
-    if (mainOverlay === 'BOLL') chart.createIndicator({ name: 'BOLL', paneId: 'candle_pane' }, true)
-    if (mainOverlay === 'SAR') chart.createIndicator({ name: 'SAR', paneId: 'candle_pane' }, true)
+    if (mainOverlay) chart.createIndicator({ name: mainOverlay, paneId: 'candle_pane' }, true)
 
-    if (subOverlay === 'MACD') chart.createIndicator('MACD')
-    if (subOverlay === 'KDJ') chart.createIndicator('KDJ')
-    if (subOverlay === 'SKDJ') chart.createIndicator('SKDJ')
+    if (subOverlay) chart.createIndicator(subOverlay)
   }, [mainOverlay, subOverlay])
 
   return chartElRef

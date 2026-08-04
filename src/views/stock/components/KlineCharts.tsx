@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/tw'
@@ -13,7 +13,9 @@ import {
   generateMockData,
   type ChartMode,
   type MainOverlay,
+  type MainOverlayValue,
   type SubOverlay,
+  type SubOverlayValue,
   type Timeframe,
 } from '../utils/klineCharts'
 import { SessionLineSelectt, type IItemCode } from '@/components/session-line-select'
@@ -21,8 +23,8 @@ import { SessionLineSelectt, type IItemCode } from '@/components/session-line-se
 function KlineCharts() {
   const [timeframe, setTimeframe] = useState<Timeframe>('1m')
   const [chartMode, setChartMode] = useState<ChartMode>('line')
-  const [mainOverlay, setMainOverlay] = useState<MainOverlay>('EMA')
-  const [subOverlay, setSubOverlay] = useState<SubOverlay>('MACD')
+  const [mainOverlay, setMainOverlay] = useState<MainOverlayValue>(null)
+  const [subOverlay, setSubOverlay] = useState<SubOverlayValue>('MACD')
 
   const candles = useMemo(() => {
     return chartMode === 'line' ? generateLineData(timeframe) : generateMockData(timeframe)
@@ -50,6 +52,18 @@ function KlineCharts() {
     setTimeframe(item)
     setChartMode('candle')
   }, [])
+
+  const handleMainOverlayToggle = useCallback((item: MainOverlay) => {
+    setMainOverlay(current => (current === item ? null : item))
+  }, [])
+
+  const handleSubOverlayToggle = useCallback((item: SubOverlay) => {
+    setSubOverlay(current => (current === item ? null : item))
+  }, [])
+
+  useEffect(() => {
+    setSubOverlay(current => current ?? 'MACD')
+  }, [chartMode])
 
   return (
     <div>
@@ -110,7 +124,7 @@ function KlineCharts() {
                   <button
                     key={item}
                     className={cn('transition-colors', mainOverlay === item ? 'text-white' : 'text-white/55')}
-                    onClick={() => setMainOverlay(item)}
+                    onClick={() => handleMainOverlayToggle(item)}
                   >
                     {item}
                   </button>
@@ -121,7 +135,7 @@ function KlineCharts() {
                   <button
                     key={item}
                     className={cn('transition-colors', subOverlay === item ? 'text-white' : 'text-white/55')}
-                    onClick={() => setSubOverlay(item)}
+                    onClick={() => handleSubOverlayToggle(item)}
                   >
                     {item}
                   </button>

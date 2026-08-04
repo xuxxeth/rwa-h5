@@ -2,6 +2,8 @@ export type Timeframe = '1m' | '15m' | '1h' | '4h' | '1d'
 export type ChartMode = 'line' | 'candle'
 export type MainOverlay = 'MA' | 'EMA' | 'BOLL' | 'SAR'
 export type SubOverlay = 'MACD' | 'KDJ' | 'SKDJ'
+export type MainOverlayValue = MainOverlay | null
+export type SubOverlayValue = SubOverlay | null
 
 export type KLineData = {
   timestamp: number
