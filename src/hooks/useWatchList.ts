@@ -27,6 +27,8 @@ export function useWatchList() {
       const storageKey = account + currentChainId
       const localeList = storage.getItem(storageKey) || []
       setCustomOptions(localeList)
+    } else {
+      setCustomOptions([])
     }
   }, [account, currentChainId])
 

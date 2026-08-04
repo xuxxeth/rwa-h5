@@ -54,13 +54,14 @@ function StockChartPage() {
         <StockInfo inputToken={inputToken} activeTab={activeTab} />
         <StockTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
-      <div className='mx-auto flex h-[100%] max-w-[430px] flex-col w-full'>
-        
+      <div className='mx-auto flex h-[100%] max-w-[430px] flex-col w-full pb-[120px]'>
         <div hidden={activeTab === 'info' || activeTab === 'fi'}>
           <RwaItemPrice />
           <div className='mt-3'>
             {/* <KlineCharts /> */}
             <TradingChart from={'market'} mode="tv" />
+            <div className='h-[120px]'></div>
+
           </div>
         </div>
         <div hidden={activeTab === 'chart' || activeTab === 'fi'}

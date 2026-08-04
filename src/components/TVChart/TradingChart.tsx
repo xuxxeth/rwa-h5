@@ -26,10 +26,11 @@ export const TradingChart = memo(
     }, [statusLibrary]);
 
     return ready && inputToken?.address ? (
-      <div className="h-[320px]">
+      <div className="h-[460px]">
         <Suspense fallback={null}>
           <TVChartContainer token={inputToken} from={from} />
         </Suspense>
+
       </div>
       
     ) : (
