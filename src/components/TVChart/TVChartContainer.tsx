@@ -35,6 +35,7 @@ const addOrRemoveMA = async (chart: IChartWidgetApi, chartType: SeriesType) => {
 
 export const TVChartContainer = memo(
   ({ token, from }: { token: IRwa, from?: string}) => {
+    const { t } = useTranslation()
     const chartContainerRef = useRef<HTMLDivElement>(null) as React.MutableRefObject<HTMLInputElement>;
     const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null);
     const dataFeedRef = useRef<IExtaIBasicDataFeed | null>(null)

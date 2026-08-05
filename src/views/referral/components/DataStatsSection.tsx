@@ -7,7 +7,6 @@ import { Suspense } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { IInviteCodeInfo } from '@/service/referral/types'
 import { RebateStats } from './RebateStats'
-import { useTranslation } from '@/hooks/useTranslation'
 
 // 待领取返佣卡片
 function PendingRewardsCard() {

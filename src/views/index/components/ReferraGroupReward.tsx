@@ -75,6 +75,7 @@ function ReferralGroup({ onClick }: { onClick?: () => void }) {
 }
 
 function Reward() {
+  const { t } = useTranslation()
   return (
     <div className="bg-[#1a1b1e] h-[80px] relative rounded-[8px] shrink-0 w-full" data-name="BANNER">
       <div className="flex flex-row items-center size-full">
