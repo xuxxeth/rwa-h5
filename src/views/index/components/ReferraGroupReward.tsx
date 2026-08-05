@@ -1,4 +1,6 @@
-import { LazyImage } from "@/components/image/LazyImage";
+import { useState } from "react"
+import { LazyImage } from "@/components/image/LazyImage"
+import { CommunityDrawer } from "./CommunityDrawer"
 
 function Frame23() {
   return (
@@ -29,9 +31,13 @@ function Frame4() {
   );
 }
 
-function ReferralGroup() {
+function ReferralGroup({ onClick }: { onClick?: () => void }) {
   return (
-    <div className="content-stretch flex gap-[10px] items-start relative rounded-[10px] shrink-0 w-full" data-name="豆腐块">
+    <div
+      className="content-stretch flex gap-[10px] items-start relative rounded-[10px] shrink-0 w-full cursor-pointer"
+      data-name="豆腐块"
+      onClick={onClick}
+    >
       <div className="bg-[#1a1b1e] flex-[1_0_0] min-w-px relative rounded-[8px]">
         <div className="flex flex-row items-center size-full">
           <div className="content-stretch flex gap-[12px] items-center px-[12px] py-[16px] relative size-full">
@@ -88,14 +94,17 @@ function Reward() {
 }
 
 export function ReferraGroupReward() {
+  const [communityDrawerOpen, setCommunityDrawerOpen] = useState(false)
+
   return (
     <div className="relative shrink-0 w-full">
       <div className="content-stretch w-full flex flex-col gap-[24px] items-start px-[16px] relative size-full">
         <div className={"content-stretch  flex flex-col gap-[10px] items-start relative shrink-0 w-full"}>
-          <ReferralGroup />
+          <ReferralGroup onClick={() => setCommunityDrawerOpen(true)} />
           <Reward />
         </div>
       </div>
+      <CommunityDrawer open={communityDrawerOpen} onOpenChange={setCommunityDrawerOpen} />
     </div>
   );
 }
