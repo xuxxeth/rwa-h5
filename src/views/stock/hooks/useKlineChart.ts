@@ -235,8 +235,13 @@ export function useKlineChart({
   const syncFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null)
   const syncBarRef = useRef<KLineData | null>(null)
   const syncRippleRef = useRef(false)
+  const interactionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const candlesRef = useRef<KLineData[]>([])
+  const isInteractingRef = useRef(false)
+  const suppressChartActionRef = useRef(false)
   const [rippleState, setRippleState] = useState<PulseState | null>(null)
   const [markerState, setMarkerState] = useState<MarkerState | null>(null)
+  const [isInteracting, setIsInteracting] = useState(false)
   const optionsRef = useRef({
     stockId,
     symbol,
@@ -257,15 +262,22 @@ export function useKlineChart({
       if (pulseTimerRef.current) {
         clearTimeout(pulseTimerRef.current)
       }
+      if (interactionTimerRef.current) {
+        clearTimeout(interactionTimerRef.current)
+      }
       if (syncFrameRef.current != null) {
         cancelAnimationFrame(syncFrameRef.current)
       }
     }
   }, [])
 
+  useEffect(() => {
+    candlesRef.current = candles
+  }, [candles])
+
   const syncPointState = (bar: KLineData, animateRipple = false) => {
     syncBarRef.current = bar
-    syncRippleRef.current = syncRippleRef.current || animateRipple
+    syncRippleRef.current = animateRipple
 
     if (syncFrameRef.current != null) {
       cancelAnimationFrame(syncFrameRef.current)
@@ -402,6 +414,39 @@ export function useKlineChart({
     } as any)
     chart.setOffsetRightDistance(RIGHT_OFFSET_DISTANCE)
 
+    const schedulePointRefresh = (hideRipple = false) => {
+      isInteractingRef.current = true
+      setIsInteracting(true)
+      if (interactionTimerRef.current) {
+        clearTimeout(interactionTimerRef.current)
+      }
+      if (hideRipple) {
+        setRippleState(null)
+        syncRippleRef.current = false
+      }
+
+      interactionTimerRef.current = setTimeout(() => {
+        interactionTimerRef.current = null
+        isInteractingRef.current = false
+        setIsInteracting(false)
+
+        const lastBar = candlesRef.current[candlesRef.current.length - 1]
+        if (lastBar) {
+          syncPointState(lastBar, false)
+        }
+      }, 120)
+    }
+
+    const handleChartAction = () => {
+      if (suppressChartActionRef.current) return
+      schedulePointRefresh(true)
+    }
+
+    chart.subscribeAction('onScroll', handleChartAction)
+    chart.subscribeAction('onZoom', handleChartAction)
+    chart.subscribeAction('onVisibleRangeChange', handleChartAction)
+    chart.subscribeAction('onPaneDrag', handleChartAction)
+
     const resolveRealtimeKey = (symbolValue: string, period: { type: string; span: number }) => {
       const resolution = optionsRef.current.chartMode === 'line' ? '1m' : periodToResolution(period)
       return `candle.${symbolValue}_${resolution}`
@@ -447,9 +492,15 @@ export function useKlineChart({
         }
 
         const nextBar = getRealtimeBar(data)
+        suppressChartActionRef.current = true
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            suppressChartActionRef.current = false
+          })
+        })
         onRealtimeCallback(nextBar)
         setCandles(previousCandles => mergeAndSortBars(previousCandles, [nextBar]))
-        syncPointState(nextBar, true)
+        syncPointState(nextBar, !isInteractingRef.current)
 
         if (oldestTimestampRef.current == null || nextBar.timestamp < oldestTimestampRef.current) {
           oldestTimestampRef.current = nextBar.timestamp
@@ -665,6 +716,10 @@ export function useKlineChart({
     })
 
     return () => {
+      chart.unsubscribeAction('onScroll', handleChartAction)
+      chart.unsubscribeAction('onZoom', handleChartAction)
+      chart.unsubscribeAction('onVisibleRangeChange', handleChartAction)
+      chart.unsubscribeAction('onPaneDrag', handleChartAction)
       wsListenersRef.current.forEach(subscription => {
         wsService.off(subscription.key as any, subscription.listener as any)
       })
@@ -733,5 +788,6 @@ export function useKlineChart({
     loading,
     markerState,
     rippleState,
+    isInteracting,
   }
 }
