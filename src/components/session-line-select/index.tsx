@@ -64,18 +64,18 @@ const SessionLineSelectt = memo(
         <button
           type='button'
           className={cn(
-            'flex h-[32px] items-center gap-1 rounded-[8px] border border-[#232427] bg-[#1A1B1E] px-3 text-white shadow-none',
+            'flex h-[14px] items-center gap-1 pl-4 text-white shadow-none',
             className
           )}
           onClick={() => setOpen(true)}
         >
-          <div className='flex min-w-0 items-center gap-2 text-[13px]'>
+          <div className='flex min-w-0 items-center gap-2 text-[12px]'>
             <span className={cn('truncate font-normal', selected ? 'text-white' : 'text-[#9DA3AF]')}>
-              {triggerText || currentLabel}
+              {currentLabel}
             </span>
-            <span className='text-white/75'>
-              <svg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M2.25 4.5L6 8.25L9.75 4.5' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round' />
+            <span className='text-[#737A87]'>
+              <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.77811 7.56619C4.65802 7.72219 4.42275 7.72219 4.30266 7.56619L1.01508 3.2955C0.863224 3.09823 1.00385 2.8125 1.25281 2.8125L7.82797 2.8125C8.07692 2.8125 8.21755 3.09823 8.06569 3.2955L4.77811 7.56619Z" fill="#737A87"/>
               </svg>
             </span>
           </div>

@@ -110,6 +110,51 @@ function createCandleStyle(chartMode: 'line' | 'candle') {
         animationDuration: 0,
       },
     },
+    tooltip: {
+      showRule: 'none',
+      showType: 'standard',
+      features: [],
+      title: {
+        show: false,
+        template: '',
+        color: 'transparent',
+        size: 0,
+        family: 'inherit',
+        weight: 'normal',
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 0,
+      },
+      legend: {
+        defaultValue: '',
+        color: 'transparent',
+        size: 0,
+        family: 'inherit',
+        weight: 'normal',
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 0,
+      },
+      rect: {
+        position: 'fixed',
+        offsetLeft: 0,
+        offsetTop: 0,
+        offsetRight: 0,
+        offsetBottom: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingTop: 0,
+        paddingBottom: 0,
+        borderRadius: 0,
+        borderSize: 0,
+        borderColor: 'transparent',
+        color: 'transparent',
+        style: 'solid',
+        borderDashedValue: [],
+      },
+    },
   }
 }
 
@@ -179,6 +224,36 @@ export function useKlineChart({
 
     chartRef.current = chart
 
+    const hiddenIndicatorTooltip = {
+      showRule: 'none',
+      showType: 'standard',
+      features: [],
+      title: {
+        show: false,
+        showName: false,
+        showParams: false,
+        color: 'transparent',
+        size: 0,
+        family: 'inherit',
+        weight: 'normal',
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 0,
+      },
+      legend: {
+        defaultValue: '',
+        color: 'transparent',
+        size: 0,
+        family: 'inherit',
+        weight: 'normal',
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 0,
+      },
+    }
+
     chart.setStyles({
       grid: {
         horizontal: { show: true, color: 'rgba(255,255,255,0.06)' },
@@ -193,6 +268,7 @@ export function useKlineChart({
         },
       },
       indicator: {
+        tooltip: hiddenIndicatorTooltip as any,
         lastValueMark: {
           line: { color: 'rgba(255,255,255,0.45)' },
           text: { color: '#111214', backgroundColor: '#FFFFFF' },
@@ -210,8 +286,8 @@ export function useKlineChart({
       },
       separator: { color: 'rgba(255,255,255,0.08)' },
       crosshair: {
-        horizontal: { line: { color: 'rgba(255,255,255,0.3)' } },
-        vertical: { line: { color: 'rgba(255,255,255,0.3)' } },
+        horizontal: { line: { color: 'rgba(255,255,255,0.5)' } },
+        vertical: { line: { color: 'rgba(255,255,255,0.5)' } },
       },
     } as any)
     chart.setOffsetRightDistance(RIGHT_OFFSET_DISTANCE)

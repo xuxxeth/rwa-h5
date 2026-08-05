@@ -78,48 +78,46 @@ function KlineCharts() {
             onChange={handleSessionChange}
             selected={chartMode === 'line'}
             triggerText={CHART_MODES.find(item => item.code === chartMode)?.label}
-            className='w-[120px] justify-between'
+            className='justify-between'
           />
-          {TIMEFRAMES.slice(0, 4).map(item => (
-            <button
-              key={item}
-              className={cn(
-                'px-1.5 py-1 transition-colors',
-                timeframe === item ? 'font-medium text-white' : 'text-[#9DA3AF]'
-              )}
-              onClick={() => handleTimeframeChange(item)}
-            >
-              {item}
+          <div className='flex items-center'>
+            {TIMEFRAMES.slice(0, 4).map(item => (
+              <button
+                key={item}
+                className={cn(
+                  'px-1.5 py-1 transition-colors text-[12px]',
+                  timeframe === item ? (timeframe === '1m' && chartMode === 'candle' ? 'font-medium text-white' : 'text-[#9DA3AF]') : 'text-[#9DA3AF]'
+                )}
+                onClick={() => handleTimeframeChange(item)}
+              >
+                {item}
+              </button>
+            ))}
+            <button className='flex items-center gap-1 text-[#9DA3AF] px-1.5'>
+              More 
+              <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.77811 7.56619C4.65802 7.72219 4.42275 7.72219 4.30266 7.56619L1.01508 3.2955C0.863224 3.09823 1.00385 2.8125 1.25281 2.8125L7.82797 2.8125C8.07692 2.8125 8.21755 3.09823 8.06569 3.2955L4.77811 7.56619Z" fill="#737A87"/>
+              </svg>
             </button>
-          ))}
-          <button className='flex items-center gap-1 text-[#9DA3AF]'>
-            More <ChevronDown className='h-4 w-4' />
-          </button>
+          </div>
         </div>
-        <button className='flex items-center gap-1 text-[#9DA3AF]'>
-          UTC-4 美东 <ChevronDown className='h-4 w-4' />
+        <button className='flex items-center gap-1 text-[#9DA3AF] pr-4'>
+          UTC-4 美东 
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.77811 7.56619C4.65802 7.72219 4.42275 7.72219 4.30266 7.56619L1.01508 3.2955C0.863224 3.09823 1.00385 2.8125 1.25281 2.8125L7.82797 2.8125C8.07692 2.8125 8.21755 3.09823 8.06569 3.2955L4.77811 7.56619Z" fill="#737A87"/>
+          </svg>
         </button>
       </div>
 
-      <div className='mt-3 flex flex-wrap items-center gap-4 text-[13px] font-medium'>
-        {chartMode === 'candle' ? (
-          <>
-            <span className='text-[#FFB43B]'>EMA5: {summary.ema5?.toFixed(1) ?? '--'}</span>
-            <span className='text-[#FF4D95]'>EMA10: {summary.ema10?.toFixed(1) ?? '--'}</span>
-            <span className='text-[#38D8FF]'>EMA20: {summary.ema20?.toFixed(1) ?? '--'}</span>
-          </>
-        ) : (
-          <>
-            <span className='text-[#9CFF3A]'>最新价: {summary.last.close.toFixed(2)}</span>
-            <span className={cn(summary.change >= 0 ? 'text-[#2BBE63]' : 'text-[#D14C75]')}>
-              涨跌: {summary.change >= 0 ? '+' : ''}{summary.change.toFixed(2)} ({summary.changePct.toFixed(2)}%)
-            </span>
-          </>
-        )}
-        <span className='text-white/40'>更新时间：{latestTimestampLabel}</span>
-      </div>
+      {chartMode === 'candle' ? (
+        <div className='mt-3 flex flex-wrap items-center gap-4 text-[13px] font-medium'>
+          <span className='text-[#FFB43B]'>EMA5: {summary.ema5?.toFixed(1) ?? '--'}</span>
+          <span className='text-[#FF4D95]'>EMA10: {summary.ema10?.toFixed(1) ?? '--'}</span>
+          <span className='text-[#38D8FF]'>EMA20: {summary.ema20?.toFixed(1) ?? '--'}</span>
+        </div>
+      ) : null}
 
-      <div className='rounded-[18px] border border-white/5 bg-[#111214] px-1 pb-2 pt-1 shadow-[0_24px_80px_rgba(0,0,0,0.35)]'>
+      <div className=' bg-[#131416] px-1 pb-2'>
         <div className='relative h-[430px] w-full overflow-hidden rounded-[14px] bg-[#111214]'>
           <div ref={chartElRef} className='h-full w-full' />
           {loading ? (
@@ -135,7 +133,7 @@ function KlineCharts() {
                 {MAIN_OVERLAYS.map(item => (
                   <button
                     key={item}
-                    className={cn('transition-colors', mainOverlay === item ? 'text-white' : 'text-white/55')}
+                    className={cn('transition-colors', mainOverlay === item ?  'text-white' : 'text-white/55')}
                     onClick={() => handleMainOverlayToggle(item)}
                   >
                     {item}
@@ -154,9 +152,7 @@ function KlineCharts() {
                 ))}
               </div>
             </>
-          ) : (
-            <div className='text-white/55'>{loading ? '加载中...' : '分时模式'}</div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
