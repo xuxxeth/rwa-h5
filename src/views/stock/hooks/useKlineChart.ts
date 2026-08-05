@@ -24,6 +24,7 @@ type UseKlineChartOptions = {
   sessionType: number
   mainOverlay: MainOverlayValue
   subOverlay: SubOverlayValue
+  timezone: string
 }
 
 const RIGHT_OFFSET_DISTANCE = 4
@@ -218,6 +219,7 @@ export function useKlineChart({
   sessionType,
   mainOverlay,
   subOverlay,
+  timezone,
 }: UseKlineChartOptions) {
   const chartElRef = useRef<HTMLDivElement | null>(null)
   const chartRef = useRef<Chart | null>(null)
@@ -249,6 +251,7 @@ export function useKlineChart({
     timeframe,
     chartMode,
     sessionType,
+    timezone,
   })
   const [candles, setCandles] = useState<KLineData[]>([])
   const [loading, setLoading] = useState(false)
@@ -335,8 +338,9 @@ export function useKlineChart({
       timeframe,
       chartMode,
       sessionType,
+      timezone,
     }
-  }, [stockId, symbol, pricePrecision, timeframe, chartMode, sessionType])
+  }, [stockId, symbol, pricePrecision, timeframe, chartMode, sessionType, timezone])
 
   useEffect(() => {
     if (!chartElRef.current) return
@@ -345,6 +349,7 @@ export function useKlineChart({
     if (!chart) return
 
     chartRef.current = chart
+    chart.setTimezone(timezone)
 
     const hiddenIndicatorTooltip = {
       showRule: 'none',
@@ -753,7 +758,14 @@ export function useKlineChart({
     chart.setSymbol({ ticker: symbol || `__EMPTY__${timeframe}`, pricePrecision, volumePrecision: 0 })
     chart.setPeriod(chartMode === 'line' ? { span: 1, type: 'minute' } : getPeriod(timeframe))
     chart.resetData()
-  }, [symbol, pricePrecision, timeframe, chartMode, sessionType])
+  }, [symbol, pricePrecision, timeframe, chartMode, sessionType, timezone])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    if (!chart) return
+
+    chart.setTimezone(timezone)
+  }, [timezone])
 
   useEffect(() => {
     const chart = chartRef.current

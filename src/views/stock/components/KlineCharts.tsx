@@ -18,8 +18,22 @@ import {
   type SubOverlayValue,
   type Timeframe,
 } from '../utils/klineCharts'
-import { SessionLineSelectt, TimeframeSelectDrawer, type IItemCode } from '@/components/session-line-select/index'
+import { SessionLineSelectt, TimeframeSelectDrawer, TimezoneSelectDrawer, type IItemCode } from '@/components/session-line-select/index'
 import type { SessionType } from 'ca-common-web'
+
+const TIMEZONE_LABELS: Record<string, string> = {
+  'Etc/UTC': 'UTC+0 世界统一时',
+  'America/New_York': 'UTC-4 美东',
+  'Pacific/Auckland': 'UTC+12 惠灵顿',
+  'Australia/Sydney': 'UTC+10 悉尼，墨尔本',
+  'Asia/Tokyo': 'UTC+9 东京，首尔',
+  'Asia/Shanghai': 'UTC+8 北京，香港，新加坡',
+  'Europe/Paris': 'UTC+1 巴黎，柏林，罗马',
+  'America/Sao_Paulo': 'UTC-3 圣保罗',
+  'America/Chicago': 'UTC-5 芝加哥，休斯顿（美中）',
+  'America/Los_Angeles': 'UTC-7 洛杉矶，旧金山（美西）',
+  'Pacific/Honolulu': 'UTC-10 檀香山（夏威夷）',
+}
 
 function KlineCharts() {
   const inputToken = useTradeStore(state => state.inputToken)
@@ -30,6 +44,8 @@ function KlineCharts() {
   const [mainOverlay, setMainOverlay] = useState<MainOverlayValue>(null)
   const [subOverlay, setSubOverlay] = useState<SubOverlayValue>('MACD')
   const [timeframeDrawerOpen, setTimeframeDrawerOpen] = useState(false)
+  const [timezoneDrawerOpen, setTimezoneDrawerOpen] = useState(false)
+  const [timezone, setTimezone] = useState('America/New_York')
 
   const { chartElRef, candles, loading, markerState, rippleState, isInteracting } = useKlineChart({
     stockId: inputToken?.stockId,
@@ -40,9 +56,11 @@ function KlineCharts() {
     sessionType,
     mainOverlay,
     subOverlay,
+    timezone,
   })
 
   const summary = useMemo(() => buildSummary(candles), [candles])
+  const timezoneLabel = useMemo(() => TIMEZONE_LABELS[timezone] ?? timezone, [timezone])
   const latestTimestampLabel = useMemo(
     () => format(new Date(summary.last.timestamp), timeframe === '1d' ? 'MM/dd' : 'MM/dd HH:mm'),
     [summary.last.timestamp, timeframe]
@@ -66,6 +84,11 @@ function KlineCharts() {
 
   const handleSubOverlayToggle = useCallback((item: SubOverlay) => {
     setSubOverlay(current => (current === item ? null : item))
+  }, [])
+
+  const handleTimezoneChange = useCallback((nextTimezone: string) => {
+    setTimezone(nextTimezone)
+    setTimezoneDrawerOpen(false)
   }, [])
 
   useEffect(() => {
@@ -107,8 +130,12 @@ function KlineCharts() {
             </button>
           </div>
         </div>
-        <button className='flex items-center gap-1 text-[#9DA3AF] px-4'>
-          UTC-4 美东 
+        <button
+          type='button'
+          className='flex items-center gap-1 text-[#9DA3AF] px-4'
+          onClick={() => setTimezoneDrawerOpen(true)}
+        >
+          {timezoneLabel} 
           <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M4.77811 7.56619C4.65802 7.72219 4.42275 7.72219 4.30266 7.56619L1.01508 3.2955C0.863224 3.09823 1.00385 2.8125 1.25281 2.8125L7.82797 2.8125C8.07692 2.8125 8.21755 3.09823 8.06569 3.2955L4.77811 7.56619Z" fill="#737A87"/>
           </svg>
@@ -121,6 +148,13 @@ function KlineCharts() {
         value={timeframe}
         onChange={handleTimeframeChange}
         items={TIMEFRAMES}
+      />
+
+      <TimezoneSelectDrawer
+        open={timezoneDrawerOpen}
+        onOpenChange={setTimezoneDrawerOpen}
+        value={timezone}
+        onChange={handleTimezoneChange}
       />
 
       {chartMode === 'candle' ? (
