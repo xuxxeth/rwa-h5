@@ -22,6 +22,7 @@ import { SessionLineSelectt, TimeframeSelectDrawer, TimezoneSelectDrawer, type I
 import type { SessionType } from 'ca-common-web'
 
 const TIMEZONE_LABELS: Record<string, string> = {
+  exchange: 'UTC-4 交易所时间',
   'Etc/UTC': 'UTC+0 世界统一时',
   'America/New_York': 'UTC-4 美东',
   'Pacific/Auckland': 'UTC+12 惠灵顿',
@@ -45,7 +46,8 @@ function KlineCharts() {
   const [subOverlay, setSubOverlay] = useState<SubOverlayValue>('MACD')
   const [timeframeDrawerOpen, setTimeframeDrawerOpen] = useState(false)
   const [timezoneDrawerOpen, setTimezoneDrawerOpen] = useState(false)
-  const [timezone, setTimezone] = useState('America/New_York')
+  const [timezoneValue, setTimezoneValue] = useState('exchange')
+  const chartTimezone = timezoneValue === 'exchange' ? 'America/New_York' : timezoneValue
 
   const { chartElRef, candles, loading, markerState, rippleState, isInteracting } = useKlineChart({
     stockId: inputToken?.stockId,
@@ -56,11 +58,11 @@ function KlineCharts() {
     sessionType,
     mainOverlay,
     subOverlay,
-    timezone,
+    timezone: chartTimezone,
   })
 
   const summary = useMemo(() => buildSummary(candles), [candles])
-  const timezoneLabel = useMemo(() => TIMEZONE_LABELS[timezone] ?? timezone, [timezone])
+  const timezoneLabel = useMemo(() => TIMEZONE_LABELS[timezoneValue] ?? timezoneValue, [timezoneValue])
   const latestTimestampLabel = useMemo(
     () => format(new Date(summary.last.timestamp), timeframe === '1d' ? 'MM/dd' : 'MM/dd HH:mm'),
     [summary.last.timestamp, timeframe]
@@ -87,7 +89,7 @@ function KlineCharts() {
   }, [])
 
   const handleTimezoneChange = useCallback((nextTimezone: string) => {
-    setTimezone(nextTimezone)
+    setTimezoneValue(nextTimezone)
     setTimezoneDrawerOpen(false)
   }, [])
 
@@ -153,7 +155,7 @@ function KlineCharts() {
       <TimezoneSelectDrawer
         open={timezoneDrawerOpen}
         onOpenChange={setTimezoneDrawerOpen}
-        value={timezone}
+        value={timezoneValue}
         onChange={handleTimezoneChange}
       />
 
