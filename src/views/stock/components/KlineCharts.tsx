@@ -18,7 +18,7 @@ import {
   type SubOverlayValue,
   type Timeframe,
 } from '../utils/klineCharts'
-import { SessionLineSelectt, type IItemCode } from '@/components/session-line-select'
+import { SessionLineSelectt, TimeframeSelectDrawer, type IItemCode } from '@/components/session-line-select/index'
 import type { SessionType } from 'ca-common-web'
 
 function KlineCharts() {
@@ -29,6 +29,7 @@ function KlineCharts() {
   const [chartMode, setChartMode] = useState<ChartMode>('line')
   const [mainOverlay, setMainOverlay] = useState<MainOverlayValue>(null)
   const [subOverlay, setSubOverlay] = useState<SubOverlayValue>('MACD')
+  const [timeframeDrawerOpen, setTimeframeDrawerOpen] = useState(false)
 
   const { chartElRef, candles, loading, markerState, rippleState, isInteracting } = useKlineChart({
     stockId: inputToken?.stockId,
@@ -56,6 +57,7 @@ function KlineCharts() {
   const handleTimeframeChange = useCallback((item: Timeframe) => {
     setTimeframe(item)
     setChartMode('candle')
+    setTimeframeDrawerOpen(false)
   }, [])
 
   const handleMainOverlayToggle = useCallback((item: MainOverlay) => {
@@ -72,7 +74,7 @@ function KlineCharts() {
 
   return (
     <div>
-      <div className='mt-5 flex items-center justify-between pb-1 text-[12px]'>
+      <div className='mt-5 flex flex-wrap items-center justify-between pb-1 text-[12px]'>
         <div className='flex flex-wrap items-center gap-2 text-[#9DA3AF]'>
           <SessionLineSelectt
             onChange={handleSessionChange}
@@ -81,19 +83,23 @@ function KlineCharts() {
             className='justify-between'
           />
           <div className='flex items-center'>
-            {TIMEFRAMES.slice(0, 4).map(item => (
+            {(['15m', '1h', '4h'] as Timeframe[]).map(item => (
               <button
                 key={item}
                 className={cn(
                   'px-1.5 py-1 transition-colors text-[12px]',
-                  timeframe === item ? (timeframe === '1m' && chartMode === 'candle' ? 'font-medium text-white' : 'text-[#9DA3AF]') : 'text-[#9DA3AF]'
+                  timeframe === item ? 'font-medium text-white' : 'text-[#9DA3AF]'
                 )}
                 onClick={() => handleTimeframeChange(item)}
               >
                 {item}
               </button>
             ))}
-            <button className='flex items-center gap-1 text-[#9DA3AF] px-1.5'>
+            <button
+              type='button'
+              className='flex items-center gap-1 text-[#9DA3AF] px-1.5'
+              onClick={() => setTimeframeDrawerOpen(true)}
+            >
               More 
               <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4.77811 7.56619C4.65802 7.72219 4.42275 7.72219 4.30266 7.56619L1.01508 3.2955C0.863224 3.09823 1.00385 2.8125 1.25281 2.8125L7.82797 2.8125C8.07692 2.8125 8.21755 3.09823 8.06569 3.2955L4.77811 7.56619Z" fill="#737A87"/>
@@ -101,13 +107,21 @@ function KlineCharts() {
             </button>
           </div>
         </div>
-        <button className='flex items-center gap-1 text-[#9DA3AF] pr-4'>
+        <button className='flex items-center gap-1 text-[#9DA3AF] px-4'>
           UTC-4 美东 
           <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M4.77811 7.56619C4.65802 7.72219 4.42275 7.72219 4.30266 7.56619L1.01508 3.2955C0.863224 3.09823 1.00385 2.8125 1.25281 2.8125L7.82797 2.8125C8.07692 2.8125 8.21755 3.09823 8.06569 3.2955L4.77811 7.56619Z" fill="#737A87"/>
           </svg>
         </button>
       </div>
+
+      <TimeframeSelectDrawer
+        open={timeframeDrawerOpen}
+        onOpenChange={setTimeframeDrawerOpen}
+        value={timeframe}
+        onChange={handleTimeframeChange}
+        items={TIMEFRAMES}
+      />
 
       {chartMode === 'candle' ? (
         <div className='mt-3 flex flex-wrap items-center gap-4 text-[13px] font-medium'>

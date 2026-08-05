@@ -1,4 +1,4 @@
-export type Timeframe = '1m' | '15m' | '1h' | '4h' | '1d'
+export type Timeframe = '1m' | '5m' | '15m' | '30m' | '1h' | '4h' | '1d' | '1w' | '1M'
 export type ChartMode = 'line' | 'candle'
 export type MainOverlay = 'MA' | 'EMA' | 'BOLL' | 'SAR'
 export type SubOverlay = 'MACD' | 'KDJ' | 'SKDJ'
@@ -17,7 +17,7 @@ export type KLineData = {
 
 export type KLinePeriod = {
   span: number
-  type: 'minute' | 'hour' | 'day'
+  type: 'minute' | 'hour' | 'day' | 'week' | 'month'
 }
 
 export type KLineSummary = {
@@ -36,7 +36,7 @@ export type KLineSummary = {
   bollLower?: number
 }
 
-export const TIMEFRAMES: Timeframe[] = ['1m', '15m', '1h', '4h', '1d']
+export const TIMEFRAMES: Timeframe[] = ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w', '1M']
 export const CHART_MODES: Array<{ code: ChartMode; label: string }> = [
   { code: 'line', label: '分时线' },
   { code: 'candle', label: 'K线' },
@@ -48,14 +48,22 @@ export function timeframeToResolution(timeframe: Timeframe) {
   switch (timeframe) {
     case '1m':
       return 1
+    case '5m':
+      return 5
     case '15m':
       return 15
+    case '30m':
+      return 30
     case '1h':
       return 60
     case '4h':
       return 240
     case '1d':
       return 1440
+    case '1w':
+      return 10080
+    case '1M':
+      return 43200
   }
 }
 
@@ -113,14 +121,22 @@ export function getPeriod(timeframe: Timeframe): KLinePeriod {
   switch (timeframe) {
     case '1m':
       return { span: 1, type: 'minute' }
+    case '5m':
+      return { span: 5, type: 'minute' }
     case '15m':
       return { span: 15, type: 'minute' }
+    case '30m':
+      return { span: 30, type: 'minute' }
     case '1h':
       return { span: 1, type: 'hour' }
     case '4h':
       return { span: 4, type: 'hour' }
     case '1d':
       return { span: 1, type: 'day' }
+    case '1w':
+      return { span: 1, type: 'week' }
+    case '1M':
+      return { span: 1, type: 'month' }
   }
 }
 
