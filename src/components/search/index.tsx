@@ -65,9 +65,7 @@ function SearchInput(props: {
             onBlur={onBlur}
           />
         </div>
-        {
-          focus && <button className="text-[14px] font-medium text-[#9CFF3A]" onClick={onCancel} >取消</button>
-        }
+        {focus && <button className="text-[14px] font-medium text-[#9CFF3A]" onClick={onCancel}>{t('v4.t115')}</button>}
       </div>
       
       <SearchContent

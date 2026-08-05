@@ -202,7 +202,7 @@ const SearchContent = memo(
         searchTerm.length <= 0 && (
           <div className=" px-4">
             <div className="flex items-center justify-between">
-              <span className="text-[#FFFFFF] text-[16px] font-semibold">搜索历史</span>
+              <span className="text-[#FFFFFF] text-[16px] font-semibold">{t('v4.t33')}</span>
               <button onClick={e => {
                 e.stopPropagation()
                 setHistoryList([])

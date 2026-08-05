@@ -72,7 +72,7 @@ const Risk3Info = memo(
           setSubmiting(false)
         }
       } else {
-        toastError({ title: res?.message || '提交失败' })
+        toastError({ title: res?.message || t('v4.t96') })
         setSubmiting(false)
      }
       

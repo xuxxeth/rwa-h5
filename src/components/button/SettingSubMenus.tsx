@@ -1,6 +1,5 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "@/hooks/useTranslation";
-import { languages } from "@/i18n";
 import { cn } from "@/utils";
 import storage from "@/utils/storage";
 import { lazy, useState } from "react";

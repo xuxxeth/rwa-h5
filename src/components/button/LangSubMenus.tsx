@@ -76,7 +76,7 @@ export function LngSubMenus({
                 onClick={() => setCurrentSub(1)}
               >
                 <span className="text-[14px] font-semibold">{t('Language')}</span>
-                <span className="text-[14px] text-[#6C86AD]">{languages[i18n.language]} &gt;</span>
+                <span className="text-[14px] text-[#6C86AD]">{t(languages[i18n.language])} &gt;</span>
               </div>
             </div>
           }
@@ -92,14 +92,14 @@ export function LngSubMenus({
                   <span className="text-sm font-medium ml-2">{t('Back')}</span>
                 </div> */}
                 <div className=" px-5 py-2">
-                  <LanguageItem title="English"  
+                  <LanguageItem title={t('v4.t69')}  
                     onClick={() => {
                       changeLanguage('en')
                       setOpen(false)
                     }}
                     selected={i18n.language === 'en'}
                   />
-                  <LanguageItem title="繁体中文" 
+                  <LanguageItem title={t('v4.t70')} 
                     onClick={() => {
                       changeLanguage('zh')
                       setOpen(false)

@@ -3,6 +3,7 @@ import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Drawer } from '@/components/drawer'
 import type { Timeframe } from '@/views/stock/utils/klineCharts'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const TIMEFRAME_LABELS: Record<Timeframe, string> = {
   '1m': '1m',
@@ -25,6 +26,7 @@ type TimeframeSelectDrawerProps = {
 }
 
 const TimeframeSelectDrawer = memo(({ open, onOpenChange, value, onChange, items }: TimeframeSelectDrawerProps) => {
+  const { t } = useTranslation()
   const [currentValue, setCurrentValue] = useState<Timeframe>(value)
 
   const dataList = useMemo(
@@ -50,7 +52,7 @@ const TimeframeSelectDrawer = memo(({ open, onOpenChange, value, onChange, items
     <Drawer
       open={open}
       onOpenChange={onOpenChange}
-      title='全部周期'
+      title={t('v4.t42')}
       className='h-auto max-h-[70vh] rounded-t-[24px] border-none bg-[#1A1B1E]'
       overlayClassName='bg-[rgba(19,20,22,0.72)]'
     >

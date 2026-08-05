@@ -1,22 +1,24 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const tabs = [
   {
-    label: "当前委托",
+    label: "v4.t27",
     value: "current",
   },
   {
-    label: "历史委托",
+    label: "v4.t28",
     value: "history",
   },
   {
-    label: "成交记录",
+    label: "v4.t29",
     value: "trade",
   },
 ];
 
 export default function OrderTabs({ onChange }: { onChange?: (tab: string) => void }) {
+  const { t } = useTranslation();
   const [active, setActive] = useState("current");
 
   const activeIndex = tabs.findIndex((item) => item.value === active);
@@ -38,7 +40,7 @@ export default function OrderTabs({ onChange }: { onChange?: (tab: string) => vo
                 : "text-[#737A87] hover:text-white"
             )}
           >
-            {tab.label}
+            {t(tab.label)}
           </button>
         ))}
 

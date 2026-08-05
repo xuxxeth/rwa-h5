@@ -1,6 +1,5 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "@/hooks/useTranslation";
-import { languages } from "@/i18n";
 import { cn } from "@/utils";
 import storage from "@/utils/storage";
 import { lazy, useMemo, useState } from "react";
@@ -42,7 +41,7 @@ export function SubMenus({
   active,
   children
 }: SubMenusProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false)
 
   const router = useRouter();

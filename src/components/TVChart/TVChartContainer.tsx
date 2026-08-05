@@ -467,7 +467,7 @@ export const TVChartContainer = memo(
               <SessionLineSelectt
                 onChange={handleSessionChange}
                 selected={chartType}
-                triggerText='盘中分时'
+                triggerText={t('v4.t106')}
                 className='w-[120px]'
               />
               {

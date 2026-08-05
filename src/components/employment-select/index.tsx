@@ -81,7 +81,7 @@ const EmploymentSelect = memo(
               }}
             >
               <LazyImage src="/images/kyc/edit.png" className="w-[18px] h-[18px]" />
-              <span className="text-[#2962FF]">编辑</span>
+              <span className="text-[#2962FF]">{t('v4.t113')}</span>
             </div>
           </div>
         }
@@ -140,6 +140,5 @@ const EmploymentSelect = memo(
 )
 
 export { EmploymentSelect }
-
 
 

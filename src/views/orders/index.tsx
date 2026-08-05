@@ -83,7 +83,7 @@ function OrdersWrapper(props: { children: React.ReactNode }) {
           router.back()
         }}
         className='sticky top-navbar z-[5]'
-        title={'交易记录'}
+        title={t('v4.t50')}
       />
       {props.children}
     </div>

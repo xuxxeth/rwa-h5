@@ -82,7 +82,7 @@ export function BottomMenus() {
         },
         {
           key: "kline",
-          label: "行情",
+          label: t("v4.t116"),
           icon: <KlineIcon />,
         },
         {

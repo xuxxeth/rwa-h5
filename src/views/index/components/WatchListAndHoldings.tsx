@@ -6,6 +6,7 @@ import { PAGE_FROM } from "@/config/constants";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
 import { useRouter } from "@/hooks/useRouter";
 import { useRwaRecommendList, useWatchList } from "@/hooks/useWatchList";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { IRwa } from "@/service/base/types";
 import storage from "@/utils/storage";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -18,6 +19,7 @@ export interface MarketTabsProps {
 }
 
 export function MarketTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
+  const { t } = useTranslation()
   return (
     <div className="flex gap-[8px] items-center px-[16px]">
       <button
@@ -33,7 +35,7 @@ export function MarketTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
             fontWeight: activeTab === "watchlist" ? 500 : 400,
           }}
         >
-          自选
+          {t('v4.t39')}
         </span>
       </button>
       <button
@@ -49,7 +51,7 @@ export function MarketTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
             fontWeight: activeTab === "holdings" ? 500 : 400,
           }}
         >
-          {type === 'all' ? '全部' : '持有'}
+          {type === 'all' ? t('v4.t64') : t('v4.t63')}
         </span>
       </button>
     </div>
@@ -94,6 +96,7 @@ function WatchlistCard({ item, onChecked }: { item: IRwa, onChecked: (rwa: IRwa 
 }
 
 export function WatchlistTab() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { account, chainId } = useActiveWeb3()
   const { recommendList, customOptions, handleRefresh } = useWatchList()
@@ -146,7 +149,7 @@ export function WatchlistTab() {
                   disabled={!hasChecked}
                   onClick={handleAddCustom}
                 >
-                  添加自选
+                  {t('v4.t40')}
                 </Button>
               )
             }

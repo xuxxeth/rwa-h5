@@ -431,7 +431,7 @@ const BaseInfo = memo(
                           const last = normalize(lastName)
 
                           if (!full.includes(first) || !full.includes(last)) {
-                            return t('kyc.t62') || '全名需包含名和姓'
+                            return t('kyc.t62') || t('v4.t97')
                           }
 
                           return true

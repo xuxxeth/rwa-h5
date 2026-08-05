@@ -130,7 +130,7 @@ const ReviewInfo = memo(
       <>
         <div className="bg-[#361604] min-h-[48px] rounded-[4px] flex  text-white font-normal text-[16px] px-5 py-3 leading-[20px]">
           <LazyImage src="/images/kyc/warning.png" className="w-6 h-6 mr-[2px]" />
-          {'為確保交易功能正常使用，請您確認並更新個人資料。若您未進行確認，我們將依現有資料提交複審；如複審未通過，您的交易權限可能會受到影響。'}
+          {t('v4.t104')}
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-2">
           <SectionBox>
@@ -145,14 +145,14 @@ const ReviewInfo = memo(
                     error={errors.email?.message}
                     {
                       ...register("email", {
-                        required: '邮箱格式不正确，请重新输入',
+                        required: t('v4.t107'),
                         maxLength: {
                           value: 50,
-                          message: "最大支持输入50位字符"
+                          message: t('v4.t109')
                         },
                         pattern: {
                           value: /^(?=[^@]{1,64}@[^@]{1,255}$)(?=.{1,50}$)[a-zA-Z0-9]+(?:[._-][a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:[.-][a-zA-Z0-9]+)*(?:\.[a-zA-Z]{2,})+$/,
-                          message: "邮箱格式不正确，请重新输入"
+                          message: t('v4.t107')
                         },
                         onChange: (e) => {
                           // 实时限制输入长度
@@ -178,14 +178,14 @@ const ReviewInfo = memo(
                     error={errors.residentAddress?.message}
                     {
                       ...register("residentAddress", {
-                        required: '请输入内容',
+                        required: t('v4.t108'),
                         maxLength: {
                           value: 30,
-                          message: "最大支持输入40位字符"
+                          message: t('v4.t110')
                         },
                         pattern: {
                           value: /^[\u4e00-\u9fa5a-zA-Z0-9]{1,40}$/,
-                          message: "只支持中文和英文字母"
+                          message: t('v4.t111')
                         },
                         onChange: (e) => {
                           // 实时限制输入长度
@@ -224,14 +224,14 @@ const ReviewInfo = memo(
                     error={errors.description?.message}
                     {
                       ...register("description", {
-                        required: '请输入内容',
+                        required: t('v4.t108'),
                         maxLength: {
                           value: 30,
-                          message: "最大支持输入40位字符"
+                          message: t('v4.t110')
                         },
                         pattern: {
                           value: /^[\u4e00-\u9fa5a-zA-Z0-9]{1,40}$/,
-                          message: "只支持中文和英文字母"
+                          message: t('v4.t111')
                         },
                         onChange: (e) => {
                           // 实时限制输入长度

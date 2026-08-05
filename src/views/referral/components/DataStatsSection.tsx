@@ -7,16 +7,16 @@ import { Suspense } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { IInviteCodeInfo } from '@/service/referral/types'
 import { RebateStats } from './RebateStats'
+import { useTranslation } from '@/hooks/useTranslation'
 
 // 待领取返佣卡片
 function PendingRewardsCard() {
+  const { t } = useTranslation()
   return (
     <div className='flex-1 flex flex-col h-[217px] justify-between rounded-[16px]'>
       {/* 上部分 - 待领取返佣金额 */}
       <div className='flex flex-col gap-[8px] pt-[8px] w-full'>
-        <p className='font-normal text-[16px] text-[#9da3af] leading-normal whitespace-nowrap'>
-          待领取返佣
-        </p>
+        <p className='font-normal text-[16px] text-[#9da3af] leading-normal whitespace-nowrap'>{t('v4.t86')}</p>
         <div className='flex gap-[8px] items-baseline w-[146px]'>
           <p className='font-bold text-[32px] text-[#9cff3a] leading-none'>--</p>
           <p className='font-medium text-[18px] text-[#9da3af] leading-normal'>USD</p>
@@ -25,7 +25,7 @@ function PendingRewardsCard() {
 
       {/* 下部分 - 领取按钮 */}
       <button className='bg-[#1a1b1e] h-[48px] rounded-[8px] w-full flex items-center justify-center disabled:cursor-not-allowed'>
-        <p className='font-semibold text-[16px] text-[#737a87] whitespace-nowrap'>领取</p>
+        <p className='font-semibold text-[16px] text-[#737a87] whitespace-nowrap'>{t('v4.t87')}</p>
       </button>
     </div>
   )
@@ -54,11 +54,12 @@ function DataItem({ label, value, unit }: DataItemProps) {
 
 // 右侧数据列表
 function DataList() {
+  const { t } = useTranslation()
   return (
     <div className='flex flex-col h-[217px] justify-between w-[338px]'>
-      <DataItem label='累计返佣' value='--' unit='USD' />
-      <DataItem label='已领取返佣' value='--' unit='USD' />
-      <DataItem label='邀请好友' value='--' unit='人' />
+      <DataItem label={t('v4.t88')} value='--' unit='USD' />
+      <DataItem label={t('v4.t89')} value='--' unit='USD' />
+      <DataItem label={t('v4.t90')} value='--' unit={t('v4.t112')} />
     </div>
   )
 }
@@ -86,7 +87,7 @@ function AuthorizationCard({ refreshIsSignatureValid }: { refreshIsSignatureVali
         {/* 授权按钮 */}
         {/* <button className="bg-[#9cff3a] h-[48px] w-[305px] rounded-[8px] flex items-center justify-center px-[24px] py-[8px] hover:bg-[#8ee62a] transition-colors">
           <p className="font-semibold text-[16px] text-black whitespace-nowrap">
-            授权签名
+            {t('v4.t119')}
           </p>
         </button> */}
       </div>

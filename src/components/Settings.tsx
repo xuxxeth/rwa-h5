@@ -9,11 +9,6 @@ import { CA_LANGUAGE } from '@/config/constants'
 import { useSettingStore } from '@/stores/settingStore'
 import { useCurrentChain } from '@/hooks/useChain'
 
-const languageOptions = [
-  { code: 'zh', label: '繁体中文' },
-  { code: 'en', label: 'EN' },
-]
-
 export const Settings = () => {
   const { t, i18n } = useTranslation()
   const open = useSettingStore(s => s.open)
@@ -21,6 +16,10 @@ export const Settings = () => {
   const showConfirm = useSettingStore(s => s.showConfirm)
   const setShowConfirm = useSettingStore(s => s.setShowConfirm)
   const currentChain = useCurrentChain()
+  const languageOptions = [
+    { code: 'zh', label: t('v4.t117') },
+    { code: 'en', label: t('v4.t118') },
+  ]
   const handleLanguageChange = (code: string) => {
     storage.setItem(CA_LANGUAGE, code)
     i18n.changeLanguage(code)

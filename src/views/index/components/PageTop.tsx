@@ -3,6 +3,7 @@ import SignButton from "@/components/button/SignButton";
 import { LazyImage } from "@/components/image/LazyImage";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
 import { useSignatureValidStatus } from "@/hooks/useSignature";
+import { useTranslation } from "@/hooks/useTranslation";
 
 function Banner() {
   return (
@@ -18,6 +19,7 @@ function Banner() {
 }
 
 function AssetsBanner() {
+  const { t } = useTranslation()
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-center overflow-clip relative shrink-0 w-full pt-2">
       <div className="h-[187px] mix-blend-lighten relative shrink-0 w-[375px]" data-name="image 139">
@@ -26,11 +28,11 @@ function AssetsBanner() {
         </div>
       </div>
       <div className="flex items-center gap-2 text-white font-bold text-[20px]">
-        <span>全球股票资产</span>
-        <span>链上交易平台</span>
+        <span>{t('v4.t72')}</span>
+        <span>{t('v4.t73')}</span>
       </div>
       <div className=" text-center font-normal text-[12px] text-[#848E9C] px-4 mb-4">
-        支持热门美股 RWA 资产交易，用户可通过自托管钱包与 USDT 参与全球股票市场。
+        {t('v4.t74')}
       </div>
     </div>
   );

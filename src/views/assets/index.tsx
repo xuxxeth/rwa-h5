@@ -7,6 +7,7 @@ import { SecurityWrap } from '../index/components/SecurityWrap';
 import KycState from '@/components/kyc-state';
 import { CTokenListV2 } from '@/components/ctoken-list/CtokenList';
 import { AssetsRatio } from '../index/components/AssetsRatio';
+import { useTranslation } from '@/hooks/useTranslation'
 
 
 function NoAccountOrSign({ from }: {from?: string}) {
@@ -19,6 +20,7 @@ function NoAccountOrSign({ from }: {from?: string}) {
 }
 
 function AccountAndSign() {
+  const { t } = useTranslation()
   
   return (
     <div className="content-stretch flex flex-col gap-[16px] items-start relative rounded-bl-[8px] rounded-br-[8px] max-w-[680px] w-full">
@@ -28,7 +30,7 @@ function AccountAndSign() {
           <KycState />
         </Suspense>
       </div>
-      <div className='text-[18px] font-bold text-white px-4 mt-2'>持有资产</div>
+      <div className='text-[18px] font-bold text-white px-4 mt-2'>{t('v4.t41')}</div>
       <div className=' w-full'>
         <CTokenListV2 from='assets' />
       </div>

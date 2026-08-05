@@ -8,8 +8,8 @@ import homeEn from './locales/home/en.json'
 import homeZh from './locales/home/zh.json'
 
 export const languages: Record<string, string> = {
-  en: 'English',
-  zh: '繁体中文',
+  en: 'v4.t118',
+  zh: 'v4.t117',
 }
 
 if (!i18n.isInitialized) {

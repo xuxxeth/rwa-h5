@@ -1,3 +1,5 @@
+import { useTranslation } from '@/hooks/useTranslation'
+
 export type TabType = "chart" | "info" | "fi";
 export interface MarketTabsProps {
   activeTab: TabType;
@@ -6,6 +8,7 @@ export interface MarketTabsProps {
 }
 
 export function StockTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
+  const { t } = useTranslation()
   return (
     <div className="flex gap-[20px] items-center px-[16px] h-[34px] border-b border-[#232427] mt-4">
       <button
@@ -19,7 +22,7 @@ export function StockTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
             fontWeight: activeTab === "chart" ? 500 : 400,
           }}
         >
-          图表
+          {t('v4.t99')}
         </span>
       </button>
       <button
@@ -33,7 +36,7 @@ export function StockTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
             fontWeight: activeTab === "info" ? 500 : 400,
           }}
         >
-          信息
+          {t('v4.t100')}
         </span>
       </button>
       <button
@@ -47,7 +50,7 @@ export function StockTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
             fontWeight: activeTab === "fi" ? 500 : 400,
           }}
         >
-          财务数据
+          {t('v4.t101')}
         </span>
       </button>
     </div>

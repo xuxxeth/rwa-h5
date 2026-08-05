@@ -87,10 +87,10 @@ function Reward() {
           <div className="content-stretch flex flex-[1_0_0] flex-col gap-[20px] h-[54px] items-start min-w-px overflow-clip relative">
             <div className="[word-break:break-word] content-stretch flex flex-[1_0_0] flex-col gap-[8px] items-start justify-center leading-none min-h-px not-italic relative text-center w-full whitespace-nowrap">
               <p className="font-['Google_Sans_Flex:Medium','Noto_Sans_JP:Medium','Noto_Sans_SC:Medium',sans-serif] font-medium relative shrink-0 text-[14px] text-white" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
-                ETH理财宝7天定期达50%APR
+                {t('v4.t102')}
               </p>
               <p className="font-['Google_Sans_Flex:Regular','Noto_Sans_JP:Regular','Noto_Sans_SC:Regular',sans-serif] font-normal relative shrink-0 text-[#848e9c] text-[12px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
-                ETH理财宝7天定期达50%APR
+                {t('v4.t103')}
               </p>
             </div>
           </div>

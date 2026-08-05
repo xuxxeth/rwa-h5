@@ -1,5 +1,6 @@
 // src/components/ErrorBoundary.tsx
 import { Component, type ReactNode, type ErrorInfo } from "react";
+import i18n from '@/i18n'
 
 interface Props {
   children: ReactNode;
@@ -23,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback ?? <h2>出错了，请刷新页面</h2>;
+      return this.props.fallback ?? <h2>{i18n.t('v4.t83')}</h2>;
     }
     return this.props.children;
   }

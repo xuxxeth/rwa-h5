@@ -1,4 +1,5 @@
 import { LazyImage } from "@/components/image/LazyImage";
+import { useTranslation } from "@/hooks/useTranslation";
 
 function HistoryItem() {
   return (
@@ -12,11 +13,12 @@ function HistoryItem() {
 }
 
 function SearchHistory() {
+  const { t } = useTranslation()
 
   return (
     <div className="px-4">
       <div className="flex items-center justify-between">
-        <span className="text-[#FFFFFF] text-[16px] font-semibold">搜索历史</span>
+        <span className="text-[#FFFFFF] text-[16px] font-semibold">{t('v4.t33')}</span>
         <button>
           <LazyImage src="/images/h5/icons/delete2.png" className="w-[14px]" />
         </button>

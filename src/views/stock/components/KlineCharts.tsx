@@ -4,6 +4,7 @@ import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/tw'
 import { useTradeStore } from '@/stores/tradeStore'
 import { CircleLoading } from '@/components/loading'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useKlineChart } from '../hooks/useKlineChart'
 import {
   CHART_MODES,
@@ -21,19 +22,19 @@ import {
 import { SessionLineSelectt, TimeframeSelectDrawer, TimezoneSelectDrawer, type IItemCode } from '@/components/session-line-select/index'
 import type { SessionType } from 'ca-common-web'
 
-const TIMEZONE_LABELS: Record<string, string> = {
-  exchange: 'UTC-4 交易所时间',
-  'Etc/UTC': 'UTC+0 世界统一时',
-  'America/New_York': 'UTC-4 美东',
-  'Pacific/Auckland': 'UTC+12 惠灵顿',
-  'Australia/Sydney': 'UTC+10 悉尼，墨尔本',
-  'Asia/Tokyo': 'UTC+9 东京，首尔',
-  'Asia/Shanghai': 'UTC+8 北京，香港，新加坡',
-  'Europe/Paris': 'UTC+1 巴黎，柏林，罗马',
-  'America/Sao_Paulo': 'UTC-3 圣保罗',
-  'America/Chicago': 'UTC-5 芝加哥，休斯顿（美中）',
-  'America/Los_Angeles': 'UTC-7 洛杉矶，旧金山（美西）',
-  'Pacific/Honolulu': 'UTC-10 檀香山（夏威夷）',
+const TIMEZONE_LABEL_KEYS: Record<string, string> = {
+  exchange: 'v4.t14',
+  'Etc/UTC': 'v4.t13',
+  'America/New_York': 'v4.t15',
+  'Pacific/Auckland': 'v4.t16',
+  'Australia/Sydney': 'v4.t17',
+  'Asia/Tokyo': 'v4.t18',
+  'Asia/Shanghai': 'v4.t19',
+  'Europe/Paris': 'v4.t20',
+  'America/Sao_Paulo': 'v4.t21',
+  'America/Chicago': 'v4.t22',
+  'America/Los_Angeles': 'v4.t23',
+  'Pacific/Honolulu': 'v4.t24',
 }
 
 function KlineCharts() {
@@ -61,8 +62,13 @@ function KlineCharts() {
     timezone: chartTimezone,
   })
 
+  const { t } = useTranslation()
   const summary = useMemo(() => buildSummary(candles), [candles])
-  const timezoneLabel = useMemo(() => TIMEZONE_LABELS[timezoneValue] ?? timezoneValue, [timezoneValue])
+  const chartModeLabel = useMemo(
+    () => t(CHART_MODES.find(item => item.code === chartMode)?.labelKey ?? 'v4.t120'),
+    [chartMode, t]
+  )
+  const timezoneLabel = useMemo(() => t(TIMEZONE_LABEL_KEYS[timezoneValue] ?? timezoneValue), [t, timezoneValue])
   const latestTimestampLabel = useMemo(
     () => format(new Date(summary.last.timestamp), timeframe === '1d' ? 'MM/dd' : 'MM/dd HH:mm'),
     [summary.last.timestamp, timeframe]
@@ -104,7 +110,7 @@ function KlineCharts() {
           <SessionLineSelectt
             onChange={handleSessionChange}
             selected={chartMode === 'line'}
-            triggerText={CHART_MODES.find(item => item.code === chartMode)?.label}
+            triggerText={chartModeLabel}
             className='justify-between'
           />
           <div className='flex items-center'>
@@ -125,7 +131,7 @@ function KlineCharts() {
               className='flex items-center gap-1 text-[#9DA3AF] px-1.5'
               onClick={() => setTimeframeDrawerOpen(true)}
             >
-              More 
+              {t('v4.t121')} 
               <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4.77811 7.56619C4.65802 7.72219 4.42275 7.72219 4.30266 7.56619L1.01508 3.2955C0.863224 3.09823 1.00385 2.8125 1.25281 2.8125L7.82797 2.8125C8.07692 2.8125 8.21755 3.09823 8.06569 3.2955L4.77811 7.56619Z" fill="#737A87"/>
               </svg>

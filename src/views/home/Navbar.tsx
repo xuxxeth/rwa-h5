@@ -71,8 +71,8 @@ export const Navbar: React.FC = () => {
               <div className={`dropdown-menu absolute right-0 top-full pt-4 md:group-hover:opacity-100 md:group-hover:visible transition-all duration-300 transform origin-top-right z-[100] ${isLangOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                 <div className='bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-2xl p-2 min-w-[140px] flex flex-col gap-1 overflow-hidden'>
                   {[
-                    { code: 'en', label: 'English' },
-                    { code: 'zh', label: '繁體中文' },
+                    { code: 'en', label: t('v4.t118') },
+                    { code: 'zh', label: t('v4.t117') },
                   ].map(({ code, label }) => (
                     <button
                       key={code}

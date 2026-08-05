@@ -18,7 +18,7 @@ export function SeeMoreOnWeb(props: { className?: string }) {
         props.className
       )}
     >
-      {'成交记录仅保留三个月内的成交记录，更多记录请访问WEB端查看，'}
+      {t('v4.t85')}
       {TIKO_ORDER_URL}
       <Copy className={'inline-block ml-[2px] !text-gray-500'} content={TIKO_ORDER_URL} />
     </div>

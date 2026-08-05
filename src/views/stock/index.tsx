@@ -11,11 +11,13 @@ import TVChartContainer from '@/components/TVChart/TVChartContainer'
 import { TradingChart } from '@/components/TVChart/TradingChart'
 import { SwitchButton } from '@/components/button/SwitchChainButton'
 import { RwaItemPrice } from './components/RwaItemPrice'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const StockCompany = lazy(() => import("./components/StockCompany").then(m => ({ default: m.StockCompany })))
 const Financials = lazy(() => import("./components/FiInfo").then(m => ({ default: m.Financials })))
 
 function StockChartPage() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<TabType>("chart");
   const router = useRouter()
   const currentChainId = useAppStore(state => state.currentChainId)
@@ -81,13 +83,13 @@ function StockChartPage() {
             e.stopPropagation()
             handeAction('buy')
           }}
-        >买入</button>
+        >{t('v4.t91')}</button>
         <button className='h-11 rounded-full bg-[#D24C73] text-[14px] font-semibold text-white active:scale-95'
           onClick={e => {
             e.stopPropagation()
             handeAction('sell')
           }}
-        >卖出</button>
+        >{t('v4.t92')}</button>
       </div>
     </div>
   )

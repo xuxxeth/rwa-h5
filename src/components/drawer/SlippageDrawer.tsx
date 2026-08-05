@@ -57,7 +57,7 @@ export const SlippageDrawer = memo(() => {
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen} title={t('调整滑点')}>
+    <Drawer open={open} onOpenChange={setOpen} title={t('v4.t105')}>
       <div className='flex flex-col border-t border-gray-700'>
         <div className='flex flex-col gap-3 px-5 py-3'>
           {/* 推荐选项 */}

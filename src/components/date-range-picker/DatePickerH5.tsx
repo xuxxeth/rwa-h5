@@ -236,7 +236,7 @@ export function DatePickerH5({
                       )}
                     >
                       {item}
-                      {isZh ? '年' : ''}
+                      {isZh ? t('v4.t122') : ''}
                     </div>
                   )}
                 </Picker.Item>
@@ -269,7 +269,7 @@ export function DatePickerH5({
                       )}
                     >
                       {item}
-                      {isZh ? '日' : ''}
+                      {isZh ? t('v4.t123') : ''}
                     </div>
                   )}
                 </Picker.Item>
