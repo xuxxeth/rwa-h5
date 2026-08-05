@@ -30,7 +30,7 @@ function KlineCharts() {
   const [mainOverlay, setMainOverlay] = useState<MainOverlayValue>(null)
   const [subOverlay, setSubOverlay] = useState<SubOverlayValue>('MACD')
 
-  const { chartElRef, candles, loading } = useKlineChart({
+  const { chartElRef, candles, loading, markerState, rippleState } = useKlineChart({
     stockId: inputToken?.stockId,
     symbol: inputToken?.symbol || '',
     pricePrecision: inputToken?.precision || 2,
@@ -120,6 +120,31 @@ function KlineCharts() {
       <div className=' bg-[#131416] px-1 pb-2'>
         <div className='relative h-[430px] w-full overflow-hidden rounded-[14px] bg-[#111214]'>
           <div ref={chartElRef} className='h-full w-full' />
+          {markerState ? (
+            <div
+              className='pointer-events-none absolute z-20'
+              style={{
+                left: markerState.x,
+                top: markerState.y,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <div className='absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#25A750] shadow-[0_0_16px_rgba(37,167,80,0.9)]' />
+            </div>
+          ) : null}
+          {rippleState ? (
+            <div
+              key={rippleState.key}
+              className='pointer-events-none absolute z-20'
+              style={{
+                left: markerState?.x ?? rippleState.x,
+                top: markerState?.y ?? rippleState.y,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <div className='absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#25A750]/70 animate-ping' />
+            </div>
+          ) : null}
           {loading ? (
             <div className='absolute inset-0 z-10 flex items-center justify-center bg-black/30'>
               <CircleLoading size={28} className='text-white' />

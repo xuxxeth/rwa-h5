@@ -30,10 +30,23 @@ const RIGHT_OFFSET_DISTANCE = 4
 const INITIAL_BATCH_SIZE = 100
 const getFollowUpBatchSize = () => Math.floor(Math.random() * 51) + 50
 const REQUEST_CACHE_WINDOW = 1000
+const PULSE_DURATION = 900
+const PULSE_RADIUS = 6
 
 type RealtimeSubscription = {
   key: string
   listener: (data: any) => void
+}
+
+type PulseState = {
+  x: number
+  y: number
+  key: number
+}
+
+type MarkerState = {
+  x: number
+  y: number
 }
 
 function periodToResolution(period: { type: string; span: number }) {
@@ -218,6 +231,12 @@ export function useKlineChart({
   const marketTradeStateRef = useRef(marketTradeState)
   const wsListenersRef = useRef(new Map<string, RealtimeSubscription>())
   const wsSubscriptionVersionRef = useRef(new Map<string, number>())
+  const pulseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const syncFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null)
+  const syncBarRef = useRef<KLineData | null>(null)
+  const syncRippleRef = useRef(false)
+  const [rippleState, setRippleState] = useState<PulseState | null>(null)
+  const [markerState, setMarkerState] = useState<MarkerState | null>(null)
   const optionsRef = useRef({
     stockId,
     symbol,
@@ -232,6 +251,62 @@ export function useKlineChart({
   useEffect(() => {
     marketTradeStateRef.current = marketTradeState
   }, [marketTradeState])
+
+  useEffect(() => {
+    return () => {
+      if (pulseTimerRef.current) {
+        clearTimeout(pulseTimerRef.current)
+      }
+      if (syncFrameRef.current != null) {
+        cancelAnimationFrame(syncFrameRef.current)
+      }
+    }
+  }, [])
+
+  const syncPointState = (bar: KLineData, animateRipple = false) => {
+    syncBarRef.current = bar
+    syncRippleRef.current = syncRippleRef.current || animateRipple
+
+    if (syncFrameRef.current != null) {
+      cancelAnimationFrame(syncFrameRef.current)
+    }
+
+    syncFrameRef.current = requestAnimationFrame(() => {
+      syncFrameRef.current = null
+
+      const chart = chartRef.current
+      const currentBar = syncBarRef.current
+      if (!chart || !currentBar) return
+
+      const coordinate = chart.convertToPixel(
+        { timestamp: currentBar.timestamp, value: currentBar.close },
+        { paneId: 'candle_pane', absolute: true }
+      ) as { x?: number; y?: number }
+
+      if (!Number.isFinite(coordinate?.x ?? NaN) || !Number.isFinite(coordinate?.y ?? NaN)) return
+
+      const nextPoint = { x: coordinate.x!, y: coordinate.y! }
+      setMarkerState(nextPoint)
+
+      if (!syncRippleRef.current) return
+
+      const pulseKey = Date.now()
+      setRippleState({ ...nextPoint, key: pulseKey })
+      if (pulseTimerRef.current) {
+        clearTimeout(pulseTimerRef.current)
+      }
+      pulseTimerRef.current = setTimeout(() => {
+        setRippleState(current => (current?.key === pulseKey ? null : current))
+      }, PULSE_DURATION)
+      syncRippleRef.current = false
+    })
+  }
+
+  useEffect(() => {
+    const lastBar = candles[candles.length - 1]
+    if (!lastBar) return
+    syncPointState(lastBar, false)
+  }, [candles, chartMode, timeframe])
 
   const mergeAndSortBars = (prevBars: KLineData[], nextBars: KLineData[]) => {
     const barMap = new Map<number, KLineData>()
@@ -374,6 +449,7 @@ export function useKlineChart({
         const nextBar = getRealtimeBar(data)
         onRealtimeCallback(nextBar)
         setCandles(previousCandles => mergeAndSortBars(previousCandles, [nextBar]))
+        syncPointState(nextBar, true)
 
         if (oldestTimestampRef.current == null || nextBar.timestamp < oldestTimestampRef.current) {
           oldestTimestampRef.current = nextBar.timestamp
@@ -655,5 +731,7 @@ export function useKlineChart({
     chartElRef,
     candles,
     loading,
+    markerState,
+    rippleState,
   }
 }
