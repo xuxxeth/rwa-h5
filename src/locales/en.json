@@ -897,9 +897,30 @@
     "t3": "or"
   },
   "v4": {
-    "t1": "Contract Address",
-    "t2": "24h High",
-    "t3": "24h Low"
+    "t1": "Community Center",
+    "t2": "Join the official community center for the latest updates",
+    "t3": "Referral Program",
+    "t4": "Invite friends to enjoy ",
+    "t5": "20% rebate",
+    "t6": "X",
+    "t7": "Telegram",
+    "t8": "Discord",
+    "t9": "Contact@tiko.cc",
+    "t10": "Select Timezone",
+    "t11": "Common Options",
+    "t12": "Major Global Timezones",
+    "t13": "UTC",
+    "t14": "Exchange Time",
+    "t15": "New York, Washington (US East)",
+    "t16": "Wellington",
+    "t17": "Sydney, Melbourne",
+    "t18": "Tokyo, Seoul",
+    "t19": "Beijing, Hong Kong, Singapore",
+    "t20": "Paris, Berlin, Rome",
+    "t21": "São Paulo",
+    "t22": "Chicago, Houston (US Central)",
+    "t23": "Los Angeles, San Francisco (US West)",
+    "t24": "Honolulu (Hawaii)"
   },
   "events": {
     "t42": "This token has an unprocessed stock split. Go to [Stock Split] on the website to convert."
