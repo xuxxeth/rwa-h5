@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { dispose, init, type Chart, type DataLoaderGetBarsParams, type KLineData } from 'klinecharts'
 import { RESPONSE_CODE } from '@/config/constants'
+import { MARKET_STATUS } from '@/config/constants'
 import { klineApi } from '@/service/kline/api'
+import wsService from '@/service/webSocket/service'
+import { useBaseStore } from '@/stores/baseStore'
+import { truncate } from '@/utils/format'
 import type { MainOverlayValue, SubOverlayValue, Timeframe } from '../utils/klineCharts'
 import {
   getPeriod,
@@ -26,6 +30,29 @@ const RIGHT_OFFSET_DISTANCE = 4
 const INITIAL_BATCH_SIZE = 100
 const getFollowUpBatchSize = () => Math.floor(Math.random() * 51) + 50
 const REQUEST_CACHE_WINDOW = 1000
+
+type RealtimeSubscription = {
+  key: string
+  listener: (data: any) => void
+}
+
+function periodToResolution(period: { type: string; span: number }) {
+  if (period.type === 'minute') return `${period.span}m`
+  if (period.type === 'hour') return period.span === 1 ? '1h' : `${period.span}h`
+  if (period.type === 'day') return '1d'
+  if (period.type === 'week') return '1w'
+  if (period.type === 'month') return '1M'
+  return `${period.span}${period.type}`
+}
+
+function isRealtimeAllowed(chartMode: 'line' | 'candle', marketTradeState: number, sessionType: number) {
+  if (chartMode === 'candle') return true
+  if (marketTradeState === MARKET_STATUS.BEFORE && (sessionType === 0 || sessionType === 1)) return true
+  if (marketTradeState === MARKET_STATUS.OPEN && (sessionType === 0 || sessionType === 2)) return true
+  if (marketTradeState === MARKET_STATUS.AFTER && (sessionType === 0 || sessionType === 3)) return true
+  if (marketTradeState === MARKET_STATUS.OVERNIGHT && (sessionType === 0 || sessionType === 5)) return true
+  return false
+}
 
 function createCandleStyle(chartMode: 'line' | 'candle') {
   return {
@@ -181,12 +208,16 @@ export function useKlineChart({
 }: UseKlineChartOptions) {
   const chartElRef = useRef<HTMLDivElement | null>(null)
   const chartRef = useRef<Chart | null>(null)
+  const marketTradeState = useBaseStore(state => state.marketTradeState)
   const requestSeqRef = useRef(0)
   const isFirstLoadRef = useRef(true)
   const oldestTimestampRef = useRef<number | null>(null)
   const newestTimestampRef = useRef<number | null>(null)
   const pendingLoadRef = useRef<PendingLoad | null>(null)
   const recentLoadRef = useRef<{ key: string; result: LoadResult; ts: number } | null>(null)
+  const marketTradeStateRef = useRef(marketTradeState)
+  const wsListenersRef = useRef(new Map<string, RealtimeSubscription>())
+  const wsSubscriptionVersionRef = useRef(new Map<string, number>())
   const optionsRef = useRef({
     stockId,
     symbol,
@@ -197,6 +228,10 @@ export function useKlineChart({
   })
   const [candles, setCandles] = useState<KLineData[]>([])
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    marketTradeStateRef.current = marketTradeState
+  }, [marketTradeState])
 
   const mergeAndSortBars = (prevBars: KLineData[], nextBars: KLineData[]) => {
     const barMap = new Map<number, KLineData>()
@@ -291,6 +326,76 @@ export function useKlineChart({
       },
     } as any)
     chart.setOffsetRightDistance(RIGHT_OFFSET_DISTANCE)
+
+    const resolveRealtimeKey = (symbolValue: string, period: { type: string; span: number }) => {
+      const resolution = optionsRef.current.chartMode === 'line' ? '1m' : periodToResolution(period)
+      return `candle.${symbolValue}_${resolution}`
+    }
+
+    const getRealtimeBar = (data: any) => ({
+      timestamp: data.t * 1000,
+      open: Number(truncate(data.o ?? data.c ?? 0, optionsRef.current.pricePrecision ?? 2)),
+      high: Number(truncate(data.h ?? data.c ?? 0, optionsRef.current.pricePrecision ?? 2)),
+      low: Number(truncate(data.l ?? data.c ?? 0, optionsRef.current.pricePrecision ?? 2)),
+      close: Number(truncate(data.c ?? 0, optionsRef.current.pricePrecision ?? 2)),
+      volume: 0,
+      turnover: 0,
+    })
+
+    const subscribeRealtime = (
+      symbolInfo: { ticker: string },
+      period: { type: string; span: number },
+      onRealtimeCallback: (data: KLineData) => void
+    ) => {
+      wsService.init({})
+
+      const symbolValue = symbolInfo.ticker
+      if (!symbolValue || symbolValue.startsWith('__EMPTY__')) {
+        return
+      }
+
+      const key = resolveRealtimeKey(symbolValue, period)
+      const previous = wsListenersRef.current.get(key)
+      if (previous) {
+        wsService.off(previous.key as any, previous.listener as any)
+        wsListenersRef.current.delete(key)
+      }
+
+      const currentVersion = (wsSubscriptionVersionRef.current.get(key) || 0) + 1
+      wsSubscriptionVersionRef.current.set(key, currentVersion)
+
+      const listener = (data: any) => {
+        if (wsSubscriptionVersionRef.current.get(key) !== currentVersion) return
+        if (data?.c == null) return
+        if (!isRealtimeAllowed(optionsRef.current.chartMode, marketTradeStateRef.current, optionsRef.current.sessionType)) {
+          return
+        }
+
+        const nextBar = getRealtimeBar(data)
+        onRealtimeCallback(nextBar)
+        setCandles(previousCandles => mergeAndSortBars(previousCandles, [nextBar]))
+
+        if (oldestTimestampRef.current == null || nextBar.timestamp < oldestTimestampRef.current) {
+          oldestTimestampRef.current = nextBar.timestamp
+        }
+        if (newestTimestampRef.current == null || nextBar.timestamp >= newestTimestampRef.current) {
+          newestTimestampRef.current = nextBar.timestamp
+        }
+      }
+
+      wsListenersRef.current.set(key, { key, listener })
+      wsService.on(key as any, listener)
+    }
+
+    const unsubscribeRealtime = (symbolInfo: { ticker: string }, period: { type: string; span: number }) => {
+      const key = resolveRealtimeKey(symbolInfo.ticker, period)
+      wsSubscriptionVersionRef.current.set(key, (wsSubscriptionVersionRef.current.get(key) || 0) + 1)
+      const previous = wsListenersRef.current.get(key)
+      if (previous) {
+        wsService.off(previous.key as any, previous.listener as any)
+        wsListenersRef.current.delete(key)
+      }
+    }
 
     chart.setDataLoader({
       getBars: async ({ type, timestamp, callback }: DataLoaderGetBarsParams) => {
@@ -474,10 +579,20 @@ export function useKlineChart({
             }
           }
         }
-      },
+        },
+        subscribeBar: ({ symbol, period, callback }) => {
+          subscribeRealtime(symbol, period, callback)
+        },
+        unsubscribeBar: ({ symbol, period }) => {
+          unsubscribeRealtime(symbol, period)
+        },
     })
 
     return () => {
+      wsListenersRef.current.forEach(subscription => {
+        wsService.off(subscription.key as any, subscription.listener as any)
+      })
+      wsListenersRef.current.clear()
       pendingLoadRef.current?.controller.abort()
       pendingLoadRef.current = null
       dispose(chart as Chart)
