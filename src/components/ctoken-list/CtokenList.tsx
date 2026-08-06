@@ -21,6 +21,7 @@ import { useWssStore } from "@/stores/wssStore";
 import { useWssOn } from "@/hooks/useWssOn";
 import { SessionType, TradeState } from "@/views/markets/MarketQuotes";
 import { CircleLoading } from "../loading";
+import { useViewHistory } from "@/hooks/useViewHistory";
 
 export type CTokenProps = {
   stock: string,
@@ -88,10 +89,11 @@ export const CTokenBalance = memo(({address, symbol, pricePrecision }: {address:
 export const CTokenItem = memo(
 
   ({ token, onClick, account, from }: {token: IRwa, onClick?: (token: IRwa) => void, account?: string, from?: string}) => {  
-    
+    const { updateHistory } = useViewHistory()
     return (
       <div className="h-[48px] flex items-center justify-between mt-2 cursor-pointer hover:bg-[#232427] px-4 pr-2 relative group"
         onClick={() => {
+          updateHistory(token)
           onClick && onClick(token)
         }}
       >

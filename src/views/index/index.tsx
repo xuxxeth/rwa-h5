@@ -27,7 +27,7 @@ export function NoAccountOrSign({ from }: {from?: string}) {
 export function AccountAndSign() {
   
   return (
-    <div className="content-stretch flex flex-col gap-[16px] items-start justify-center relative rounded-bl-[8px] rounded-br-[8px] max-w-[680px] w-full">
+    <div className="content-stretch flex flex-col gap-[16px] items-start relative rounded-bl-[8px] rounded-br-[8px] max-w-[680px] w-full">
       <AssetSection />
       <div className=" w-full px-4">
         <Suspense fallback={null} >

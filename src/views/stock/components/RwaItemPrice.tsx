@@ -178,7 +178,7 @@ const RwaItemPrice = memo(
           <ItemPrice />
           <div className='mt-3 flex flex-wrap items-center gap-2 text-[12px]'>
             <RwaSessionStatus from="lite-trade" />
-            <MarketStatus from="trade" />
+            <MarketStatus />
           </div>
         </div>
 

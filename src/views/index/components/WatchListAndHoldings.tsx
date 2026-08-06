@@ -30,7 +30,6 @@ export function MarketTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
         <span
           className="text-[14px] leading-normal whitespace-nowrap"
           style={{
-            fontFamily: "'DM Sans', 'Noto Sans SC', sans-serif",
             color: activeTab === "watchlist" ? "#ffffff" : "#9da3af",
             fontWeight: activeTab === "watchlist" ? 500 : 400,
           }}
@@ -46,7 +45,6 @@ export function MarketTabs({ activeTab, type, onTabChange }: MarketTabsProps) {
         <span
           className="text-[14px] leading-normal whitespace-nowrap"
           style={{
-            fontFamily: "'DM Sans', 'Noto Sans SC', sans-serif",
             color: activeTab === "holdings" ? "#ffffff" : "#9da3af",
             fontWeight: activeTab === "holdings" ? 500 : 400,
           }}

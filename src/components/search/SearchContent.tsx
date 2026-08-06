@@ -13,6 +13,10 @@ import { cn, divide, multiply, symbolToLower } from "@/utils"
 import { SortButton } from "../sort-button"
 import type { IRwa } from "@/service/base/types"
 import storage from "@/utils/storage"
+import { CONNECT_STATE_KEY } from "@/hooks/useCaCommon"
+import { useRouter } from "@/hooks/useRouter"
+import { useViewHistory } from "@/hooks/useViewHistory"
+import { useToast } from "@/hooks/useToast"
 
 export type SearchContentRef = {
   handleSearchChange: (value: string) => void
@@ -20,9 +24,9 @@ export type SearchContentRef = {
   handleGetHistory: () => void
 }
 
-export function HistoryItem({ rwa }: {rwa: IRwa}) {
+export function HistoryItem({ rwa, onClick }: {rwa: IRwa, onClick?: (rwa: IRwa) => void}) {
   return (
-    <div className="flex gap-x-1 items-center px-3 h-[32px] bg-[#1A1B1E] rounded-[6px]">
+    <div className="flex gap-x-1 items-center px-3 h-[32px] bg-[#1A1B1E] rounded-[6px]" onClick={() => onClick?.(rwa)}>
       <div className="w-[16px] h-[16px]">
         <LazyImage src={rwa?.icon} className="w-[16px] h-[16px] rounded-full" />
       </div>
@@ -39,10 +43,13 @@ const SearchContent = memo(
     listHeight: number
   }>((props, ref) => {
   const { t } = useTranslation()
+  const router = useRouter()
+  const { toastError } = useToast()
   const { account } = useActiveWeb3()
   const { sort, onSortChange } = useTableSort<SortableField>()
   
   const tokenWithPrice = useBaseStore(state => state.tokenWithPrice)
+  const { updateHistory, removeHistoryAll, getHistoryList } = useViewHistory()
 
   const [selectTab, setSelectTab] = useState('all')
 
@@ -85,9 +92,7 @@ const SearchContent = memo(
   }
   const [historyList, setHistoryList] = useState<IRwa[] | null>(null)
   const handleGetHistory = () => {
-    // 获取当前存在的历史记录
-    const localeList: IRwa[] = storage.getItem('search_history') || []
-    console.log(localeList)
+    const localeList: IRwa[] = getHistoryList() || []
     setHistoryList(localeList)
   }
   useImperativeHandle(
@@ -169,24 +174,20 @@ const SearchContent = memo(
     updateOriginSummary(_data)
   })
 
+
   // 搜索结果点击处理
   const handleClick = (rwa: IRwa) => {
-    // 获取当前存在的历史记录
-    const localeList: IRwa[] = storage.getItem('search_history') || []
-    // 判断在没有已经存储
-    const _index = localeList.findIndex(_rwa => symbolToLower(_rwa.address) === symbolToLower(rwa.address))
-    if (_index > -1) {
-      localeList.splice(_index, 1)
+    console.log(rwaList)
+    // 这里要判断当前保存的rwa有没有在rwaList中，如果没有则toast提示“该资产已下架”，并且不跳转
+    const isRwaExist = rwaList.some(item => item.address.toLowerCase() === rwa.address.toLowerCase())
+    if (!isRwaExist) {
+      toastError({title: t('v4.t124')})
+      return
     }
-    localeList.push(rwa)
-    storage.setItem('search_history', localeList)
+    updateHistory(rwa)
+    router.push('/stock/' + rwa.symbol)
   }
 
-  // useEffect(() => {
-  //   return () => {
-
-  //   }
-  // })
   if (!props.show) return null
 
 
@@ -206,7 +207,7 @@ const SearchContent = memo(
               <button onClick={e => {
                 e.stopPropagation()
                 setHistoryList([])
-                storage.removeItem('search_history')
+                removeHistoryAll()
               }}>
                 <LazyImage src="/images/h5/icons/delete2.png" className="w-[14px]" />
               </button>
@@ -216,7 +217,7 @@ const SearchContent = memo(
               {
                 historyList?.map(rwa => {
                   return (
-                    <HistoryItem key={rwa.address} rwa={rwa} />
+                    <HistoryItem key={rwa.address} rwa={rwa} onClick={handleClick} />
                   )
                 })
               }

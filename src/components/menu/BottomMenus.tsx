@@ -92,7 +92,7 @@ export function BottomMenus() {
         },
         {
           key: "assets",
-          label: t("portfolio.assets"),
+          label: t("Profile"),
           icon: (
             <AssetsIcon />
           ),

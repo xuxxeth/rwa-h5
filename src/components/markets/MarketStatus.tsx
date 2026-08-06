@@ -1,4 +1,4 @@
-import { CA_LANGUAGE, MARKET_STATUS, RWA_STATUS } from "@/config/constants"
+import { CA_LANGUAGE, MARKET_STATUS, PAGE_FROM, RWA_STATUS } from "@/config/constants"
 import { useTradingStartTime } from "@/hooks/useMarketState"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useTradeStore } from "@/stores/tradeStore"
@@ -6,6 +6,39 @@ import storage from "@/utils/storage"
 import { cn } from "@/utils/tw"
 import { memo, useMemo } from "react"
 import IconWithTooltip from "../icon-tooltip"
+import { useSignatureValidStatus } from "@/hooks/useSignature"
+import { useActiveWeb3 } from "@/hooks/useActiveWe3"
+import { useRouter } from "@/hooks/useRouter"
+import { LazyImage } from "../image/LazyImage"
+
+
+const KlineAndOrderList = () => {
+  const router = useRouter()
+  const { account } = useActiveWeb3()
+  const [isSignatureValid] = useSignatureValidStatus()
+  const inputToken = useTradeStore((state) => state.inputToken)
+  return (
+    <div className="flex items-center gap-x-4">
+      <button
+        className="relative flex items-center justify-center "
+        onClick={() => {
+          storage.setItem(PAGE_FROM, '/trade')
+          router.push('/stock/' + inputToken?.symbol)
+        }}
+      >
+        <LazyImage src="/images/v0.4/kline.png" className="w-[15px] h-[16px]" />
+      </button>      
+      {!!account && isSignatureValid && (
+        <button
+          className="relative flex items-center justify-center "
+          onClick={() => router.push('/orders')}
+        >
+          <LazyImage src="/images/v0.4/order.png" className="w-[15px] h-[16px]" />
+        </button>
+      )}
+    </div>
+  )
+}
 
 const MarketStatus = memo(
   ({
@@ -126,50 +159,57 @@ const MarketStatus = memo(
     }
 
     return (
-      <div className=" flex items-center gap-x-2">
-        <IconWithTooltip tooltip={stateLabel.t2}>
-          <div className={cn(
-            "px-2 flex items-center gap-x-1 bg-[#232427] h-[24px] rounded-[24px]",
-            from === "lite-trade" ? "h-[50px] bg-[rgba(0,0,0,0)]" : "",
-            tokenLabel && from === 'trade' ? "px-0 w-[24px] justify-center" : ""
-          )}>
-            <div className="p-[2px] rounded-full bg-[#232427] shrink-0">
-              <img src={stateLabel.i} className="w-[14px]" alt="" />
-            </div>
-            
-            {
-              (!tokenLabel || from !== 'trade') && (
-                <div className="text-[12px] leading-[14px] shrink-0"
-                  style={{ color: stateLabel.c, }}
-                >
-                  {stateLabel.t1 + t('v3.t39')}
-                </div>
-              )
-            }
-            
-            
-          </div>
-        </IconWithTooltip>
-        {
-          tokenLabel && from === 'trade' && (
-            <IconWithTooltip tooltip={tokenLabel.t2}>
-              <div className={cn(
-                "px-2 flex items-center gap-x-1 bg-[#232427] h-[24px] rounded-[24px]",
-                
-              )}>
-                <img src={tokenLabel.i} className="w-[17px]" alt="" />
-                <div className="text-[12px] leading-[14px] shrink-0"
-                  style={{ color: tokenLabel.c, }}
-                >
-                  {tokenLabel.t1}
-                </div>
-                
+      <div className="flex items-center justify-between">
+        <div className=" flex items-center gap-x-2">
+          <IconWithTooltip tooltip={stateLabel.t2}>
+            <div className={cn(
+              "px-2 flex items-center gap-x-1 bg-[#232427] h-[24px] rounded-[24px]",
+              from === "lite-trade" ? "h-[50px] bg-[rgba(0,0,0,0)]" : "",
+              tokenLabel && from === 'trade' ? "px-0 w-[24px] justify-center" : ""
+            )}>
+              <div className="p-[2px] rounded-full bg-[#232427] shrink-0">
+                <img src={stateLabel.i} className="w-[14px]" alt="" />
               </div>
-            </IconWithTooltip>
-          )
+              
+              {
+                (!tokenLabel || from !== 'trade') && (
+                  <div className="text-[12px] leading-[14px] shrink-0"
+                    style={{ color: stateLabel.c, }}
+                  >
+                    {stateLabel.t1 + t('v3.t39')}
+                  </div>
+                )
+              }
+              
+              
+            </div>
+          </IconWithTooltip>
+          {
+            tokenLabel && from === 'trade' && (
+              <IconWithTooltip tooltip={tokenLabel.t2}>
+                <div className={cn(
+                  "px-2 flex items-center gap-x-1 bg-[#232427] h-[24px] rounded-[24px]",
+                  
+                )}>
+                  <img src={tokenLabel.i} className="w-[17px]" alt="" />
+                  <div className="text-[12px] leading-[14px] shrink-0"
+                    style={{ color: tokenLabel.c, }}
+                  >
+                    {tokenLabel.t1}
+                  </div>
+                  
+                </div>
+              </IconWithTooltip>
+            )
+          }
+          
+        </div>
+        {
+          from === 'trade' && <KlineAndOrderList />
         }
         
       </div>
+      
       
       
     )

@@ -1,9 +1,10 @@
 import { PAGE_FROM } from "@/config/constants"
 import { useRouter } from "@/hooks/useRouter"
+import type { IRwa } from "@/service/base/types"
 import storage from "@/utils/storage"
 
 
-export function BackButton() {
+export function BackButton({ rwa }: { rwa?: IRwa | null }) {
   const router = useRouter()
 
   return (
@@ -13,7 +14,11 @@ export function BackButton() {
         const pageFrom = storage.getItem(PAGE_FROM)
         if (pageFrom) {
           storage.removeItem(PAGE_FROM)
-          router.push(pageFrom)
+          if (pageFrom === '/trade' && rwa) {
+            router.push('/trade/' + rwa.symbol)
+          } else {
+            router.push(pageFrom)
+          }
         } else {
           router.back()
         }

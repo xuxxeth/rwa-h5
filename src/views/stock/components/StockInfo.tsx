@@ -19,7 +19,7 @@ export const StockInfo = memo(
 
     return (
       <div className='flex items-center gap-2 px-4 '>
-        <BackButton />
+        <BackButton rwa={inputToken} />
         <div className='w-6 h-6'>
           {inputToken?.icon && <LazyImage src={inputToken?.icon} className="w-6 h-6 rounded-full" />}
         </div>

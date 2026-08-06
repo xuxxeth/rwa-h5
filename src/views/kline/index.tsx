@@ -1,9 +1,6 @@
 import { useRef, useState } from "react";
 import { MarketTabs, WatchlistTab, type TabType } from "../index/components/WatchListAndHoldings";
 import { CTokenListV2, type CTokenListRef } from "@/components/ctoken-list/CtokenList";
-import { LazyImage } from "@/components/image/LazyImage";
-import { Input } from "@/components/ui/input";
-import { useTranslation } from "@/hooks/useTranslation";
 import { MarketStatus } from "@/components/markets/MarketStatus";
 import { useRouter } from "@/hooks/useRouter";
 import { SearchInput } from "@/components/search";
