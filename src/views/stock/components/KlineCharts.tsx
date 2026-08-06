@@ -207,7 +207,7 @@ function KlineCharts() {
             </div>
           ) : null}
         </div>
-        <div className='mb-2 flex items-center justify-between px-2 text-[12px] font-medium text-white/70'>
+        <div className='my-2 flex items-center gap-x-3 px-2 text-[12px] font-medium text-white/70'>
           {chartMode === 'candle' ? (
             <>
               <div className='flex flex-wrap items-center gap-3'>
@@ -221,6 +221,7 @@ function KlineCharts() {
                   </button>
                 ))}
               </div>
+              <div className='w-[1px] h-[12px] bg-[#4D515C]'></div>
               <div className='flex flex-wrap items-center gap-3'>
                 {SUB_OVERLAYS.map(item => (
                   <button

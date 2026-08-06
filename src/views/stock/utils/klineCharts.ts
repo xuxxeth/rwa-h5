@@ -1,6 +1,6 @@
 export type Timeframe = '1m' | '5m' | '15m' | '30m' | '1h' | '4h' | '1d' | '1w' | '1M'
 export type ChartMode = 'line' | 'candle'
-export type MainOverlay = 'MA' | 'EMA' | 'BOLL' | 'SAR'
+export type MainOverlay = 'MA' | 'EMA' | 'BOLL' | 'SAR' | 'RSI'
 export type SubOverlay = 'MACD' | 'KDJ' | 'SKDJ'
 export type MainOverlayValue = MainOverlay | null
 export type SubOverlayValue = SubOverlay | null
@@ -41,8 +41,8 @@ export const CHART_MODES: Array<{ code: ChartMode; labelKey: string }> = [
   { code: 'line', labelKey: 'v4.t106' },
   { code: 'candle', labelKey: 'v4.t120' },
 ]
-export const MAIN_OVERLAYS: MainOverlay[] = ['MA', 'EMA', 'BOLL', 'SAR']
-export const SUB_OVERLAYS: SubOverlay[] = ['MACD', 'KDJ', 'SKDJ']
+export const MAIN_OVERLAYS: MainOverlay[] = ['BOLL', 'EMA', 'SAR']
+export const SUB_OVERLAYS: SubOverlay[] = ['MACD', 'KDJ']
 
 export function timeframeToResolution(timeframe: Timeframe) {
   switch (timeframe) {
