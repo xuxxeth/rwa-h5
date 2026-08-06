@@ -20,7 +20,7 @@ function KLine() {
       </div>
       <div className=" flex items-center justify-between pr-4">
         <MarketTabs type="all" activeTab={activeTab} onTabChange={setActiveTab} />
-        <MarketStatus from="trade" />
+        <MarketStatus />
       </div>
       {
         activeTab === "watchlist" ? <WatchlistTab /> : 

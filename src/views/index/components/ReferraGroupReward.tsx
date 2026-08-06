@@ -39,14 +39,16 @@ function Frame4() {
   )
 }
 
-function ReferralGroup({ onClick }: { onClick?: () => void }) {
+function ReferralGroup({ onClick }: { onClick?: (id: number) => void }) {
   return (
     <div
       className="content-stretch flex gap-[10px] items-start relative rounded-[10px] shrink-0 w-full cursor-pointer"
       data-name=""
-      onClick={onClick}
+      
     >
-      <div className="bg-[#1a1b1e] flex-[1_0_0] min-w-px relative rounded-[8px]">
+      <div className="bg-[#1a1b1e] flex-[1_0_0] min-w-px relative rounded-[8px]"
+        onClick={e => onClick?.(1)}
+      >
         <div className="flex flex-row items-center size-full">
           <div className="content-stretch flex gap-[12px] items-center px-[12px] py-[16px] relative size-full">
             <div className="h-[32px] mix-blend-lighten relative shrink-0 w-[34px]" data-name="image 93">
@@ -58,7 +60,9 @@ function ReferralGroup({ onClick }: { onClick?: () => void }) {
           </div>
         </div>
       </div>
-      <div className="bg-[#1a1b1e] flex-[1_0_0] min-w-px relative rounded-[8px] self-stretch">
+      <div className="bg-[#1a1b1e] flex-[1_0_0] min-w-px relative rounded-[8px] self-stretch"
+        onClick={e => onClick?.(2)}
+      >
         <div className="flex flex-row items-center size-full">
           <div className="content-stretch flex gap-[12px] items-center px-[12px] py-[16px] relative size-full">
             <div className="h-[36px] mix-blend-lighten relative shrink-0 w-[34px]" data-name="image 92">
@@ -108,8 +112,13 @@ export function ReferraGroupReward() {
     <div className="relative shrink-0 w-full">
       <div className="content-stretch w-full flex flex-col gap-[24px] items-start px-[16px] relative size-full">
         <div className={'content-stretch  flex flex-col gap-[10px] items-start relative shrink-0 w-full'}>
-          <ReferralGroup onClick={() => {
-            router.push('/referral')
+          <ReferralGroup onClick={(id) => {
+            if (id === 1) {
+              router.push('/referral')
+              return
+            }
+            setCommunityDrawerOpen(true)
+            
           }} />
           {/* <Reward /> */}
         </div>

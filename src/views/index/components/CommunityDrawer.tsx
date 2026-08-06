@@ -17,10 +17,10 @@ type CommunityItem = {
 }
 
 const COMMUNITY_ITEMS: CommunityItem[] = [
-  { labelKey: 'v4.t6', icon: '/images/icons/x.png', href: X_URL },
-  { labelKey: 'v4.t7', icon: '/images/icons/tg.png', href: TG_URL },
-  { labelKey: 'v4.t8', icon: '/images/icons/discord.png', href: DISCORD_URL },
-  { labelKey: 'v4.t9', icon: '/images/icons/e_mail.png', href: 'mailto:contact@tiko.cc' },
+  { labelKey: 'v4.t6', icon: '/images/v0.4/x.png', href: X_URL },
+  { labelKey: 'v4.t7', icon: '/images/v0.4/tg.png', href: TG_URL },
+  { labelKey: 'v4.t8', icon: '/images/v0.4/discord.png', href: DISCORD_URL },
+  { labelKey: 'v4.t9', icon: '/images/v0.4/e_mail.png', href: 'mailto:contact@tiko.cc' },
 ]
 
 const CommunityDrawer = memo(({ open, onOpenChange }: CommunityDrawerProps) => {
