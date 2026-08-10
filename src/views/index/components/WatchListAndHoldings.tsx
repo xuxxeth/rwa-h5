@@ -10,6 +10,8 @@ import type { IRwa } from "@/service/base/types";
 import storage from "@/utils/storage";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CircleLoading } from "@/components/loading";
+import { useSignatureValidStatus } from "@/hooks/useSignature";
+import SignatureVerify from "@/components/signature-verify";
 
 export type TabType = "watchlist" | "holdings" | "all";
 export interface MarketTabsProps {
@@ -97,7 +99,7 @@ export function WatchlistTab() {
   const { t } = useTranslation()
   const router = useRouter()
   const { account, chainId } = useActiveWeb3()
-  const { recommendList, customOptions, handleRefresh } = useWatchList()
+  const { isSignatureValid, refreshIsSignatureValid, recommendList, customOptions, handleRefresh } = useWatchList()
   const [hasChecked, setHasChecked] = useState(true)
   const checkedList = useRef<IRwa[]>([])
 
@@ -129,6 +131,17 @@ export function WatchlistTab() {
   if (!customOptions) return (
     <div className=" w-full min-h-[50vh] flex justify-center pt-10 text-white relative"><CircleLoading className='absolute top-[50px] left-1/2 -translate-x-1/2 -translate-y-1/2' /></div>
   )
+
+  if (!isSignatureValid && customOptions.length <= 0) {
+    return (
+      <SignatureVerify
+        desc='signatureVerifyDescTop'
+        subDesc='signatureVerifyDescBottom'
+        className='mt-9 px-5'
+        refreshIsSignatureValid={refreshIsSignatureValid}
+      />
+    )
+  }
 
   return (
     <>

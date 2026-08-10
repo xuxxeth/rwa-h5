@@ -3,9 +3,9 @@ import { useAppStore } from "@/stores/appStore"
 import { useBaseStore } from "@/stores/baseStore"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useActiveWeb3 } from "./useActiveWe3"
-import storage from "@/utils/storage"
 import useFavorites from "./useFavorites"
 import { useRwas } from "./useRwaBalances"
+import { useSignatureValidStatus } from "./useSignature"
 
 // 获取推荐自迁
 export function useRwaRecommendList() {
@@ -18,6 +18,7 @@ export function useRwaRecommendList() {
 }
 
 export function useWatchList() {
+  const [isSignatureValid, refreshIsSignatureValid] = useSignatureValidStatus()
   const recommendList = useRwaRecommendList()
   const currentChainId = useAppStore(state => state.currentChainId)
   const { account } = useActiveWeb3()
@@ -40,16 +41,18 @@ export function useWatchList() {
     if (currentChainId && account) { 
       loadingRef.current = false
     }
-    if (currentChainId && account && favorites.length === 0 && !isLoading && recommendList.length > 0) { 
+    if ((currentChainId && account && favorites.length === 0 && !isLoading && recommendList.length > 0) || !isSignatureValid) { 
       setCustomOptions([])
     }
-    if (currentChainId && account && rwaList.length > 0 && favorites.length > 0 && !loadingRef.current && !isLoading && recommendList.length > 0) {
+    if (currentChainId && account && rwaList.length > 0 && favorites.length > 0 && !loadingRef.current && !isLoading && recommendList.length > 0 && isSignatureValid) {
       loadingRef.current = true
       handleRefresh()
     }
-  }, [favorites.length, currentChainId, account, rwaList.length, isLoading, recommendList])
+  }, [favorites.length, currentChainId, account, rwaList.length, isLoading, recommendList, isSignatureValid])
 
   return {
+    isSignatureValid,
+    refreshIsSignatureValid,
     customOptions,
     recommendList,
     handleRefresh
