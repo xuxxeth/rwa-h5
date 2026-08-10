@@ -36,7 +36,7 @@ export const AccountPage = () => {
   )
 
   return (
-    <div className='bg-[#131416] min-h-screen '>
+    <div className='bg-[#131416] '>
       <div className='mx-auto px-[16px]'>
         <div className='flex flex-col gap-6 w-full pb-[40px]'>
           {/* 1. 标题区域 */}

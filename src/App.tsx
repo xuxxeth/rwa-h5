@@ -33,7 +33,7 @@ export function RoutesWrapper() {
   return useRoutes(routes)
 }
 
-const HOME_MENUS_PATH = ['/home', '/stock']
+const HOME_MENUS_PATH = ['/home', '/stock', '/referral']
 const NO_MENUS_PATH = ['/kyc/liveness-complete']
 
 function App() {
