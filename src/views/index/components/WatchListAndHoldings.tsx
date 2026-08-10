@@ -1,15 +1,15 @@
 import { CheckBoxBySVG } from "@/components/check-box";
-import { CTokenList } from "@/components/ctoken-list";
 import { CTokenListV2 } from "@/components/ctoken-list/CtokenList";
 import { Button } from "@/components/ui/button";
 import { PAGE_FROM } from "@/config/constants";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
 import { useRouter } from "@/hooks/useRouter";
-import { useRwaRecommendList, useWatchList } from "@/hooks/useWatchList";
+import { useWatchList } from "@/hooks/useWatchList";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { IRwa } from "@/service/base/types";
 import storage from "@/utils/storage";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CircleLoading } from "@/components/loading";
 
 export type TabType = "watchlist" | "holdings" | "all";
 export interface MarketTabsProps {
@@ -101,7 +101,6 @@ export function WatchlistTab() {
   const [hasChecked, setHasChecked] = useState(true)
   const checkedList = useRef<IRwa[]>([])
 
-
   useEffect(() => {
     checkedList.current = [...recommendList]
   }, [recommendList])
@@ -127,7 +126,9 @@ export function WatchlistTab() {
     
   }, [account, chainId, handleRefresh])
 
-  if (!customOptions) return null
+  if (!customOptions) return (
+    <div className=" w-full min-h-[50vh] flex justify-center pt-10 text-white relative"><CircleLoading className='absolute top-[50px] left-1/2 -translate-x-1/2 -translate-y-1/2' /></div>
+  )
 
   return (
     <>

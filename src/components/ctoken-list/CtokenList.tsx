@@ -88,7 +88,15 @@ export const CTokenBalance = memo(({address, symbol, pricePrecision }: {address:
 
 export const CTokenItem = memo(
 
-  ({ token, onClick, account, from }: {token: IRwa, onClick?: (token: IRwa) => void, account?: string, from?: string}) => {  
+  ({ token, onClick, account, from, toggleEnable, toggleFavorite, isFavorite }: {
+    token: IRwa,
+    onClick?: (token: IRwa) => void,
+    account?: string, 
+    from?: string,
+    toggleEnable: boolean, 
+    toggleFavorite: (stockId: number) => void, 
+    isFavorite: boolean, 
+  }) => {  
     const { updateHistory } = useViewHistory()
     return (
       <div className="h-[48px] flex items-center justify-between mt-2 cursor-pointer hover:bg-[#232427] px-4 pr-2 relative group"
@@ -101,6 +109,17 @@ export const CTokenItem = memo(
           "flex items-center gap-x-2 w-5/8 shrink-0",
           account ? "w-4/8" : ""
         )}>
+          {
+            from === 'search' && (
+              <div className=" shrink-0">
+                <LazyImage onClick={(ev) => {
+                  ev.stopPropagation()
+                  if(!toggleEnable) return
+                  toggleFavorite(token.stockId)
+                }} src={isFavorite ? "/images/v2/icons/collected.png" : "/images/v2/icons/collect.png"} className={cn("w-4 h-4 rounded-full shrink-0", !toggleEnable ? 'cursor-not-allowed' : 'cursor-pointer')} />
+              </div>
+            )
+          }
           <div className="w-[28px] h-[28px] shrink-0">
             <LazyImage src={token.icon} className="w-[28px] h-[28px] rounded-full" />
           </div>
@@ -411,7 +430,7 @@ const CTokenListV2 = memo(
             from === "StockSelect" ? "h-[50vh]" : ""
           )}>
             {
-              sortTokens.map((token, index) => <CTokenItem from={from}  account={account} key={`${_id}-${index}`} token={token} onClick={onClick} />)
+              sortTokens.map((token, index) => <CTokenItem from={from}  account={account} key={`${_id}-${index}`} token={token} onClick={onClick} toggleEnable={toggleEnable} toggleFavorite={toggleFavorite} isFavorite={isFavorite(token.stockId)} />)
             }
            
             {!allTokensLoading && sortTokens.length <= 0 && <NoDataReason

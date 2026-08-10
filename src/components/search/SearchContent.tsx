@@ -274,9 +274,11 @@ const SearchContent = memo(
               }}
             >
               {
-                sortTokens.map((token, index) => <CTokenItem from={'search'}  account={account} key={`${_id}-${index}`} token={token} onClick={(rwa) => {
-                  handleClick(rwa)
-                }} />)
+                sortTokens.map((token, index) => <CTokenItem from={'search'}  account={account} key={`${_id}-${index}`} token={token} 
+                  toggleEnable={toggleEnable} toggleFavorite={toggleFavorite} isFavorite={isFavorite(token.stockId)}
+                  onClick={(rwa) => {
+                    handleClick(rwa)
+                  }} />)
               }
               
               {sortTokens.length <= 0 && (

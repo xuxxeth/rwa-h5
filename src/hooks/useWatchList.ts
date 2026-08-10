@@ -1,9 +1,11 @@
 import type { IRwa } from "@/service/base/types"
 import { useAppStore } from "@/stores/appStore"
 import { useBaseStore } from "@/stores/baseStore"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useActiveWeb3 } from "./useActiveWe3"
 import storage from "@/utils/storage"
+import useFavorites from "./useFavorites"
+import { useRwas } from "./useRwaBalances"
 
 // 获取推荐自迁
 export function useRwaRecommendList() {
@@ -20,21 +22,32 @@ export function useWatchList() {
   const currentChainId = useAppStore(state => state.currentChainId)
   const { account } = useActiveWeb3()
   const [customOptions, setCustomOptions] = useState<IRwa[] | null>(null)
-
+  const { favorites, isLoading } = useFavorites()
+  const rwaList = useRwas()
 
   const handleRefresh = useCallback(async () => {
-    if (currentChainId && account) {
-      const storageKey = account + currentChainId
-      const localeList = storage.getItem(storageKey) || []
-      setCustomOptions(localeList)
+    if (currentChainId && account && rwaList.length > 0) {
+      const newList = rwaList.filter(rwa => favorites.includes(rwa.stockId))
+      setCustomOptions(newList)
     } else {
       setCustomOptions([])
     }
-  }, [account, currentChainId])
+  }, [account, currentChainId, rwaList])
+
+  const loadingRef = useRef(false)
 
   useEffect(() => {
-    handleRefresh()
-  }, [handleRefresh])
+    if (currentChainId && account) { 
+      loadingRef.current = false
+    }
+    if (currentChainId && account && favorites.length === 0 && !isLoading && recommendList.length > 0) { 
+      setCustomOptions([])
+    }
+    if (currentChainId && account && rwaList.length > 0 && favorites.length > 0 && !loadingRef.current && !isLoading && recommendList.length > 0) {
+      loadingRef.current = true
+      handleRefresh()
+    }
+  }, [favorites.length, currentChainId, account, rwaList.length, isLoading, recommendList])
 
   return {
     customOptions,

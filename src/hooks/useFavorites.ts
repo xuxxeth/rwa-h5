@@ -109,6 +109,17 @@ function useFavorites() {
     [isFavorite]
   )
 
+  // console.log('useFavorites', {
+  //   isWalletConnecting,
+  //   chainId,
+  //   account,
+  //   favorites,
+  //   isLoading,
+  //   isFavorite: isFavorite(1),
+  //   fetchFavorites,
+  //   isSignatureValid,
+  // }, !!(account && chainId && isSignatureValid))
+
   return {
     isWalletConnecting,
     chainId,
