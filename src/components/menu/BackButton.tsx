@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react"
 
 export function BackButton({ rwa }: { rwa?: IRwa | null }) {
   const router = useRouter()
-  const backTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null)
+  const backTimerRef = useRef<any>(null)
 
   useEffect(() => {
     return () => {

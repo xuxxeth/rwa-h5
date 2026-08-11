@@ -17,7 +17,7 @@ interface TittleBarProps {
 
 export const TittleBar = ({ title, onBack, right, className }: TittleBarProps) => {
   const router = useRouter()
-  const backTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null)
+  const backTimerRef = useRef<any>(null)
 
   useEffect(() => {
     return () => {
