@@ -22,6 +22,8 @@ import { useWssOn } from "@/hooks/useWssOn";
 import { SessionType, TradeState } from "@/views/markets/MarketQuotes";
 import { CircleLoading } from "../loading";
 import { useViewHistory } from "@/hooks/useViewHistory";
+import { useRwaTokens } from "@/hooks/useTokens";
+import type { IAssetItem } from "@/views/assets/assetsList";
 
 export type CTokenProps = {
   stock: string,
@@ -37,6 +39,17 @@ export type CTokenProps = {
 export type CTokenListRef = {
   handleSearchChange: (value: string) => void
   resetSearch: () => void
+}
+
+export function SplitsStockState({ }: { }) {
+  const { t } = useTranslation()
+  return (
+    <IconWithTooltip tooltip={t('events.t41')}>
+      <div className='min-h-[23px] py-1 rounded-[4px] flex items-center text-center px-1 bg-[rgba(156,255,58,0.1)] text-[#9CFF3A] text-[12px] ml-2'>
+        {t('events.t4')}
+      </div>
+    </IconWithTooltip>
+  )
 }
 
 export const CTokenPrice = memo(({ symbol }: { symbol: string;}) => {
@@ -68,7 +81,7 @@ export const CTokenPrice = memo(({ symbol }: { symbol: string;}) => {
     </div>
   );
 });
-export const CTokenBalance = memo(({address, symbol, pricePrecision }: {address: string, symbol: string; pricePrecision: number }) => {
+export const CTokenBalance = memo(({address, symbol, pricePrecision, isSplit }: {address: string, symbol: string; pricePrecision: number; isSplit: boolean }) => {
   const tokenBalance = useTokenBalance(symbolToLower(address))?.balance ?? "0";
   const tokenPrice = useRwaPrice(symbol)?.price ?? "0";
 
@@ -79,9 +92,12 @@ export const CTokenBalance = memo(({address, symbol, pricePrecision }: {address:
       <div className=" font-medium leading-[24px] text-white">
         {formatTokenAmountWithCommas(tokenBalance)}
       </div>
-      <div className=" font-normal text-[#9DA3AF]">
-        ≈ ${formatTokenAmountWithCommas(total, pricePrecision)}
-      </div>
+      {
+        isSplit ? <div className=" font-normal text-[#9DA3AF]">-- </div> : <div className=" font-normal text-[#9DA3AF]">
+          ≈ ${formatTokenAmountWithCommas(total, pricePrecision)}
+        </div>
+      }
+      
     </div>
   );
 });
@@ -107,7 +123,8 @@ export const CTokenItem = memo(
       >
         <div className={cn(
           "flex items-center gap-x-2 w-5/8 shrink-0",
-          account ? "w-4/8" : ""
+          account ? "w-4/8" : "",
+          from === 'assets' ? "w-5/8" : ""
         )}>
           {
             from === 'search' && (
@@ -137,6 +154,7 @@ export const CTokenItem = memo(
               e.preventDefault()
             }}
           >
+            {!token.isStableToken && token.splitStatus !== 0 && <SplitsStockState />}
             <TradeState state={token.state} />
             <SessionType sessionMask={token.sessionMask} />
           </div>
@@ -154,7 +172,7 @@ export const CTokenItem = memo(
         
         {
           account && from !== 'search' && <div className="w-2/8 text-right">
-            <CTokenBalance address={token.address} symbol={token.symbol} pricePrecision={token.precision} />
+            <CTokenBalance isSplit={!token.isStableToken && token.splitStatus !== 0} address={token.address} symbol={token.symbol} pricePrecision={token.precision} />
           </div>
         }
         
@@ -228,7 +246,12 @@ const CTokenListV2 = memo(
     const { isFavorite, favorites, toggleFavorite, toggleEnable, ...favoritesRest } = useFavorites()
 
     const _id = useId()
-    const rwaList = useRwas()
+    const rwaTokens = useRwaTokens()
+    // 如果资产页，则显示全部持有的资产
+    const rwaList = useMemo(() => {
+      if(from === 'assets') return rwaTokens
+      return rwaTokens.filter(rwa => rwa.showState)
+    }, [rwaTokens, from])
 
     const rwaMap = useMemo(() => {
       return new Map(rwaList.map(rwa => [rwa.stockId, rwa]))
@@ -456,6 +479,7 @@ export function NoDataReason(props: {
   isWalletConnecting: boolean
   refreshIsSignatureValid: () => void
 }) {
+  console.log(props, 11111)
   if (!props.isFavorites) {
     return <NoData />
   }

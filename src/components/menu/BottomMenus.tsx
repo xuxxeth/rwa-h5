@@ -8,7 +8,7 @@ import HomeIcon from "./HomeIcon"
 import AssetsIcon from "./AssetsIcon"
 import KlineIcon from "./KlineIcon"
 
-const BOTTOM_MENUS_PATH = ['/kline', '/trade', '/portfolio']
+const BOTTOM_MENUS_PATH = ['/kline', '/trade', '/assets']
 
 export function BottomMenus() {
   const { t } = useTranslation()
@@ -29,8 +29,8 @@ export function BottomMenus() {
       setActive('trade')
     } else if (pathname.startsWith('/kline')) {
       setActive('kline')
-    } else if (pathname.startsWith('/portfolio')) {
-      setActive('portfolio')
+    } else if (pathname.startsWith('/assets')) {
+      setActive('assets')
     }
   }, [router.location.pathname])
 
@@ -69,8 +69,8 @@ export function BottomMenus() {
           router.push('/kline')
         } else if (key === 'trade') {
           router.push('/trade')
-        } else if (key === 'portfolio') {
-          router.push('/portfolio')
+        } else if (key === 'assets') {
+          router.push('/assets')
         }
       }}
       tabs={[
@@ -90,8 +90,8 @@ export function BottomMenus() {
           icon: <CandleIcon />,
         },
         {
-          key: "portfolio",
-          label: t("portfolio.my"),
+          key: "assets",
+          label: t("portfolio.assets"),
           icon: (
             <AssetsIcon />
           ),

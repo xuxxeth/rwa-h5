@@ -57,7 +57,7 @@ export function useRiskControlAssets(chainId: number, account?: string): IRiskCo
 
 export function useAssetsList(chainId: number) {
   const tokenList = useTokens()
-  const rwaList = useRwaTokens(false)
+  const rwaList = useRwaTokens()
 
   const tokenWithBalance = useBaseStore(state => state.tokenWithBalance)
   const [tokenWithPrice, setTokenWithPrice] = useState<Record<string, { price: number }>>({})
@@ -81,7 +81,7 @@ export function useAssetsList(chainId: number) {
         token.value = undefined
       }
       return token
-    })
+    }).filter(token => Number(token.value) > 0)
   }, [tokenWithBalance, allTokenList, tokenWithPrice])
 
   const estimatedRwaTotalValue =
@@ -147,6 +147,7 @@ function getAssetItemFromRwa(rwa: IRwa): IAssetItem {
     sessionMask: rwa.sessionMask,
     weight: rwa.weight,
     precision: rwa.precision,
+    splitStatus: rwa.splitStatus,
   }
 }
 
@@ -166,4 +167,5 @@ export interface IAssetItem {
   address: string
   weight?: number
   precision: number
-}
+  splitStatus?: number
+} 

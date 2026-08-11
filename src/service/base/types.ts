@@ -75,6 +75,8 @@ export interface IToken {
   "state": number,    // 状态：0-下架，1-上架
   "balance"?: string,
   "origin"?: string
+  "balanceValue"?: string,
+  "weight"?: number,
 }
 // RWA基础信息
 export interface IRwa {
@@ -110,6 +112,7 @@ export interface IRwa {
   "price"?: string | number,
   "showState": boolean
   "splitStatus": number
+  "isStableToken": boolean
 }
 
 export type IRwaWithBalancePrice = IRwa & ITokenWithBalance & ITokenWithPrice

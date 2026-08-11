@@ -70,8 +70,8 @@ export function AssetSection({
               {
                 isRiskControlled && <RiskControlAssets riskControlledAssets={riskControlledAssets} />
               }
-              
               <button className="w-[18px] h-[18px]"
+                disabled={Number(estimatedBalance) <= 0}
                 onClick={e => {
                   setShowChart(!showChart)
                 }}

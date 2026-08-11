@@ -1022,6 +1022,8 @@
     "t124": "Token Delisted"
   },
   "events": {
+    "t4": "Split",
+    "t41": "Pending conversion: this token has an unprocessed stock split. Go to [Stock Split] to convert.",
     "t42": "This token has an unprocessed stock split. Go to [Stock Split] on the website to convert."
   }
 }

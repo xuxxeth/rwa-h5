@@ -6,8 +6,8 @@ import { AssetsPageTop } from '../index/components/PageTop';
 import { SecurityWrap } from '../index/components/SecurityWrap';
 import KycState from '@/components/kyc-state';
 import { CTokenListV2 } from '@/components/ctoken-list/CtokenList';
-import { AssetsRatio } from '../index/components/AssetsRatio';
 import { useTranslation } from '@/hooks/useTranslation'
+import { CTokenListInAssets } from '@/components/ctoken-list/CtokenListInAssets';
 
 
 function NoAccountOrSign({ from }: {from?: string}) {
@@ -32,7 +32,7 @@ function AccountAndSign() {
       </div>
       <div className='text-[18px] font-bold text-white px-4 mt-2'>{t('v4.t41')}</div>
       <div className=' w-full'>
-        <CTokenListV2 from='assets' />
+        <CTokenListInAssets from='assets' />
       </div>
     </div>
   )

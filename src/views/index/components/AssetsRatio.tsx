@@ -93,7 +93,7 @@ function AssetsRatio({
                   const isActive = activeIndex === index
                   return (
                     <div
-                      key={item.name}
+                      key={item.name + idx}
                       onMouseEnter={() => setActiveIndex(index)}
                       onMouseLeave={() => setActiveIndex(-1)}
                       className={cn(
