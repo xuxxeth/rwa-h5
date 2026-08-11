@@ -19,8 +19,10 @@ export function BackButton({ rwa }: { rwa?: IRwa | null }) {
           } else {
             router.push(pageFrom)
           }
-        } else {
+        } else if (window.history.length > 1) {
           router.back()
+        } else {
+          router.replace('/')
         }
         
       }}

@@ -2,14 +2,13 @@
 import { BottomTabBar } from "@/components/menu/BottomTabBar"
 import { useEffect, useMemo, useState } from "react"
 import CandleIcon from "./CandleIcon"
-import RefIcon from "./RefIcon"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useRouter } from "@/hooks/useRouter"
 import HomeIcon from "./HomeIcon"
 import AssetsIcon from "./AssetsIcon"
 import KlineIcon from "./KlineIcon"
 
-const BOTTOM_MENUS_PATH = ['/kline', '/trade', '/assets']
+const BOTTOM_MENUS_PATH = ['/kline', '/trade', '/portfolio']
 
 export function BottomMenus() {
   const { t } = useTranslation()
@@ -70,8 +69,8 @@ export function BottomMenus() {
           router.push('/kline')
         } else if (key === 'trade') {
           router.push('/trade')
-        } else if (key === 'assets') {
-          router.push('/assets')
+        } else if (key === 'portfolio') {
+          router.push('/portfolio')
         }
       }}
       tabs={[
@@ -91,7 +90,7 @@ export function BottomMenus() {
           icon: <CandleIcon />,
         },
         {
-          key: "assets",
+          key: "portfolio",
           label: t("portfolio.my"),
           icon: (
             <AssetsIcon />

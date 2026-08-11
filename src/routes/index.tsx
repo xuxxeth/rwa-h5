@@ -30,7 +30,7 @@ const routes: RouteObject[] = [
     element: <Kline />
   },
   {
-    path: '/assets',
+    path: '/portfolio',
     element: <Assets />
   },
   {
