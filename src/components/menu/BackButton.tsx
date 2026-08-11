@@ -2,16 +2,27 @@ import { PAGE_FROM } from "@/config/constants"
 import { useRouter } from "@/hooks/useRouter"
 import type { IRwa } from "@/service/base/types"
 import storage from "@/utils/storage"
+import { useEffect, useRef } from "react"
 
 
 export function BackButton({ rwa }: { rwa?: IRwa | null }) {
   const router = useRouter()
+  const backTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (backTimerRef.current) {
+        window.clearTimeout(backTimerRef.current)
+      }
+    }
+  }, [])
 
   return (
     <button className='flex h-[34px] w-[30] items-center active:scale-95'
       onClick={e => {
         e.stopPropagation()
         const pageFrom = storage.getItem(PAGE_FROM)
+        console.log(window.history.length)
         if (pageFrom) {
           storage.removeItem(PAGE_FROM)
           if (pageFrom === '/trade' && rwa) {
@@ -19,10 +30,16 @@ export function BackButton({ rwa }: { rwa?: IRwa | null }) {
           } else {
             router.push(pageFrom)
           }
-        } else if (window.history.length > 1) {
+        } {
+          if (backTimerRef.current) {
+            window.clearTimeout(backTimerRef.current)
+          }
+
+          backTimerRef.current = window.setTimeout(() => {
+            router.replace('/')
+          }, 500)
+
           router.back()
-        } else {
-          router.replace('/')
         }
         
       }}

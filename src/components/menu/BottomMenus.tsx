@@ -29,8 +29,8 @@ export function BottomMenus() {
       setActive('trade')
     } else if (pathname.startsWith('/kline')) {
       setActive('kline')
-    } else if (pathname.startsWith('/assets')) {
-      setActive('assets')
+    } else if (pathname.startsWith('/portfolio')) {
+      setActive('portfolio')
     }
   }, [router.location.pathname])
 

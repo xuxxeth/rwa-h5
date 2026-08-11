@@ -1,6 +1,9 @@
+import { useEffect, useRef } from 'react'
 import ArrowLeft from '@/components/icons/set/ArrowLeft'
+import { PAGE_FROM } from '@/config/constants'
 import { useRouter } from '@/hooks/useRouter'
 import { cn } from '@/utils'
+import storage from '@/utils/storage'
 
 interface TittleBarProps {
   /** 页面标题 */
@@ -14,11 +17,35 @@ interface TittleBarProps {
 
 export const TittleBar = ({ title, onBack, right, className }: TittleBarProps) => {
   const router = useRouter()
+  const backTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (backTimerRef.current) {
+        window.clearTimeout(backTimerRef.current)
+      }
+    }
+  }, [])
 
   const handleBack = () => {
     if (onBack) {
       onBack()
+      return
+    }
+
+    const pageFrom = storage.getItem(PAGE_FROM)
+    if (pageFrom) {
+      storage.removeItem(PAGE_FROM)
+      router.push(pageFrom)
     } else {
+      if (backTimerRef.current) {
+        window.clearTimeout(backTimerRef.current)
+      }
+
+      backTimerRef.current = window.setTimeout(() => {
+        router.replace('/')
+      }, 500)
+
       router.back()
     }
   }
