@@ -479,7 +479,7 @@ export function NoDataReason(props: {
   isWalletConnecting: boolean
   refreshIsSignatureValid: () => void
 }) {
-  console.log(props, 11111)
+  
   if (!props.isFavorites) {
     return <NoData />
   }

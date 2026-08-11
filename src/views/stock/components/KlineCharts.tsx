@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { format } from 'date-fns'
-import { ChevronDown } from 'lucide-react'
 import { cn } from '@/utils/tw'
 import { useTradeStore } from '@/stores/tradeStore'
 import { CircleLoading } from '@/components/loading'
@@ -69,10 +67,6 @@ function KlineCharts() {
     [chartMode, t]
   )
   const timezoneLabel = useMemo(() => t(TIMEZONE_LABEL_KEYS[timezoneValue] ?? timezoneValue), [t, timezoneValue])
-  const latestTimestampLabel = useMemo(
-    () => format(new Date(summary.last.timestamp), timeframe === '1d' ? 'MM/dd' : 'MM/dd HH:mm'),
-    [summary.last.timestamp, timeframe]
-  )
 
   const handleSessionChange = useCallback((data: IItemCode) => {
     updateSessionType(Number(data.code) as SessionType)
@@ -101,6 +95,7 @@ function KlineCharts() {
 
   useEffect(() => {
     setSubOverlay(current => current ?? 'MACD')
+    
   }, [chartMode])
 
   return (

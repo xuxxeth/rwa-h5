@@ -10,6 +10,7 @@ import { useSignatureValidStatus } from "@/hooks/useSignature"
 import { useActiveWeb3 } from "@/hooks/useActiveWe3"
 import { useRouter } from "@/hooks/useRouter"
 import { LazyImage } from "../image/LazyImage"
+import { useBaseStore } from "@/stores/baseStore"
 
 
 const KlineAndOrderList = () => {
@@ -17,12 +18,14 @@ const KlineAndOrderList = () => {
   const { account } = useActiveWeb3()
   const [isSignatureValid] = useSignatureValidStatus()
   const inputToken = useTradeStore((state) => state.inputToken)
+  const updateSessionType = useTradeStore(state => state.updateSessionType)
   return (
     <div className="flex items-center gap-x-4">
       <button
         className="relative flex items-center justify-center "
         onClick={() => {
           storage.setItem(PAGE_FROM, '/trade')
+          updateSessionType(0)
           router.push('/stock/' + inputToken?.symbol)
         }}
       >

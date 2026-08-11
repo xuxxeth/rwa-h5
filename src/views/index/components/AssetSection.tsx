@@ -43,6 +43,7 @@ export function AssetSection({
   const { chainId, account } = useActiveWeb3()
   const { assetsList, estimatedBalance, estimatedRwaTotalValue, estimatedStableTokenTotalValue } =
     useAssetsList(chainId ?? 97)
+
   const riskControlledAssets = useRiskControlAssets(chainId ?? 97, account)
 
   const isRiskControlled = riskControlledAssets.length > 0
@@ -73,7 +74,9 @@ export function AssetSection({
               <button className="w-[18px] h-[18px]"
                 disabled={Number(estimatedBalance) <= 0}
                 onClick={e => {
-                  setShowChart(!showChart)
+                  if (Number(estimatedBalance) > 0) {
+                    setShowChart(!showChart)
+                  }
                 }}
               >
                 <LazyImage src={showChart ? "/images/v0.4/chart_show.png" : "/images/v0.4/chart_hide.png"} className="w-[18px] h-[18px]" />

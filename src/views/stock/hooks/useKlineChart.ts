@@ -597,7 +597,7 @@ export function useKlineChart({
         const finishEmpty = () => {
           finishLoad({ bars: [], meta: { backward: false, forward: false } })
         }
-
+        
         try {
           const isFirstLoad = isFirstLoadRef.current
           const batchSize = isFirstLoad ? INITIAL_BATCH_SIZE : getFollowUpBatchSize()

@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react"
 
 export function BackButton({ rwa }: { rwa?: IRwa | null }) {
   const router = useRouter()
-  const backTimerRef = useRef<any>(null)
+  const backTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null)
 
   useEffect(() => {
     return () => {
@@ -22,7 +22,9 @@ export function BackButton({ rwa }: { rwa?: IRwa | null }) {
       onClick={e => {
         e.stopPropagation()
         const pageFrom = storage.getItem(PAGE_FROM)
-        console.log(window.history.length)
+        if (backTimerRef.current) {
+          window.clearTimeout(backTimerRef.current)
+        }
         if (pageFrom) {
           storage.removeItem(PAGE_FROM)
           if (pageFrom === '/trade' && rwa) {
@@ -30,14 +32,14 @@ export function BackButton({ rwa }: { rwa?: IRwa | null }) {
           } else {
             router.push(pageFrom)
           }
-        } {
+        } else {
           if (backTimerRef.current) {
             window.clearTimeout(backTimerRef.current)
           }
 
           backTimerRef.current = window.setTimeout(() => {
             router.replace('/')
-          }, 500)
+          }, 300)
 
           router.back()
         }

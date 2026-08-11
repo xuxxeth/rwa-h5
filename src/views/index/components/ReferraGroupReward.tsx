@@ -46,7 +46,7 @@ function ReferralGroup({ onClick }: { onClick?: (id: number) => void }) {
       data-name=""
       
     >
-      <div className="bg-[#1a1b1e] flex-[1_0_0] min-w-px relative rounded-[8px]"
+      <div className="bg-[#1a1b1e] flex-[1_0_0] min-w-px relative rounded-[8px] h-full"
         onClick={e => onClick?.(1)}
       >
         <div className="flex flex-row items-center size-full">

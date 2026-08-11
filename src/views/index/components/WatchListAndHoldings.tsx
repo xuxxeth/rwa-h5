@@ -1,5 +1,5 @@
 import { CheckBoxBySVG } from "@/components/check-box";
-import { CTokenListV2 } from "@/components/ctoken-list/CtokenList";
+import { CTokenListV2, NoDataReason } from "@/components/ctoken-list/CtokenList";
 import { Button } from "@/components/ui/button";
 import { PAGE_FROM } from "@/config/constants";
 import { useActiveWeb3 } from "@/hooks/useActiveWe3";
@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CircleLoading } from "@/components/loading";
 import { useSignatureValidStatus } from "@/hooks/useSignature";
 import SignatureVerify from "@/components/signature-verify";
+import useFavorites from "@/hooks/useFavorites";
 
 export type TabType = "watchlist" | "holdings" | "all";
 export interface MarketTabsProps {
@@ -102,6 +103,7 @@ export function WatchlistTab() {
   const { isSignatureValid, refreshIsSignatureValid, recommendList, customOptions, handleRefresh } = useWatchList()
   const [hasChecked, setHasChecked] = useState(true)
   const checkedList = useRef<IRwa[]>([])
+  const { isFavorite, favorites, toggleFavorite, toggleEnable, ...favoritesRest } = useFavorites()
 
   useEffect(() => {
     checkedList.current = [...recommendList]
@@ -133,13 +135,12 @@ export function WatchlistTab() {
   )
 
   if (!isSignatureValid && customOptions.length <= 0) {
-    return (
-      <SignatureVerify
-        desc='signatureVerifyDescTop'
-        subDesc='signatureVerifyDescBottom'
-        className='mt-9 px-5'
-        refreshIsSignatureValid={refreshIsSignatureValid}
-      />
+    return (<div className="px-8">
+        <NoDataReason 
+          isFavorites={true}
+          {...favoritesRest}
+        />
+      </div>
     )
   }
 
