@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { ucApi } from '@/service/uc/api'
 import { useSignatureValidStatus } from '@/hooks/useSignature'
 
+const sleep = (ms: number) => new Promise(resolve => window.setTimeout(resolve, ms))
+
 function useFavorites() {
   const isWalletConnecting = useAppStore(state => state.isWalletConnecting)
   const chainId = useChainId()
@@ -42,7 +44,7 @@ function useFavorites() {
         }
         return false
       } catch (err) {
-        console.error(err)
+        console.log(err)
         return false
       }
     },
@@ -53,9 +55,21 @@ function useFavorites() {
     async (stockIds: number[]) => {
       setAddLoading(true)
       try {
-        await Promise.allSettled(stockIds.map(stockId => ucApi.addFavorite(stockId)))
+        for (let index = 0; index < stockIds.length; index += 1) {
+          const stockId = stockIds[index]
+
+          try {
+            await ucApi.addFavorite(stockId)
+          } catch (err) {
+            console.log(err)
+          }
+
+          if (index < stockIds.length - 1) {
+            await sleep(300)
+          }
+        }
       } catch (err) {
-        console.error(err)
+        console.log(err)
       } finally {
         await fetchFavorites()
         setAddLoading(false)
