@@ -103,7 +103,7 @@ export function WatchlistTab() {
   const { isSignatureValid, refreshIsSignatureValid, recommendList, customOptions, handleRefresh } = useWatchList()
   const [hasChecked, setHasChecked] = useState(true)
   const checkedList = useRef<IRwa[]>([])
-  const { isFavorite, favorites, toggleFavorite, toggleEnable, ...favoritesRest } = useFavorites()
+  const { isFavorite, favorites, toggleFavorite, toggleEnable, addLoading, addFavorites, ...favoritesRest } = useFavorites()
 
   useEffect(() => {
     checkedList.current = [...recommendList]
@@ -159,8 +159,11 @@ export function WatchlistTab() {
               recommendList.length > 0 && (
                 <Button
                   className="w-full h-[44px]"
-                  disabled={!hasChecked}
-                  onClick={handleAddCustom}
+                  disabled={!hasChecked || addLoading}
+                  loading={addLoading}
+                  onClick={e => {
+                    addFavorites(checkedList.current.map(rwa => rwa.stockId))
+                  }}
                 >
                   {t('v4.t40')}
                 </Button>

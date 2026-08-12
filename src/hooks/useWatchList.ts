@@ -13,7 +13,7 @@ export function useRwaRecommendList() {
   const currentChainId = useAppStore(state => state.currentChainId)
 
   return useMemo(() => {
-    return rwaList.filter(rwa => rwa.state !== 2 && rwa.chainId === currentChainId).slice(0, 4)
+    return rwaList.filter(rwa => rwa.state !== 2 && rwa.chainId === currentChainId && rwa.showState).slice(0, 4)
   }, [rwaList, currentChainId])
 }
 

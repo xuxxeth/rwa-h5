@@ -13,6 +13,7 @@ function useFavorites() {
   const setFavorites = useAppStore(state => state.setFavorites)
 
   const [isLoading, setIsLoading] = useState(false)
+  const [addLoading, setAddLoading] = useState(false)
 
   const [isSignatureValid, refreshIsSignatureValid] = useSignatureValidStatus()
 
@@ -46,6 +47,21 @@ function useFavorites() {
       }
     },
     [favorites]
+  )
+
+  const addFavorites = useCallback(
+    async (stockIds: number[]) => {
+      setAddLoading(true)
+      try {
+        await Promise.allSettled(stockIds.map(stockId => ucApi.addFavorite(stockId)))
+      } catch (err) {
+        console.error(err)
+      } finally {
+        await fetchFavorites()
+        setAddLoading(false)
+      }
+    },
+    [fetchFavorites]
   )
 
   const removeFavorite = useCallback(
@@ -130,6 +146,8 @@ function useFavorites() {
     fetchFavorites,
     isSignatureValid,
     refreshIsSignatureValid,
+    addLoading,
+    addFavorites,
     toggleFavorite,
     toggleEnable: !!(account && chainId && isSignatureValid),
   }
