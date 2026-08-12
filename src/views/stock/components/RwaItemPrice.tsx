@@ -176,13 +176,13 @@ const RwaItemPrice = memo(
       <div className='mt-4 flex gap-2 justify-between px-4 '>
         <div className=''>
           <ItemPrice />
-          <div className='mt-3 flex flex-wrap items-center gap-2 text-[12px]'>
-            <RwaSessionStatus from="lite-trade" />
-            <MarketStatus />
+          <div className='mt-3 flex flex-wrap items-center gap-1 text-[12px]'>
+            <RwaSessionStatus from="lite" />
+            <MarketStatus from="lite" />
           </div>
         </div>
 
-        <div className='w-[60%] space-y-2 text-[10px] text-[#9DA3AF] flex justify-end'>
+        <div className='w-[45%] space-y-2 text-[10px] text-[#9DA3AF] flex justify-end shrink-0'>
           <div className=' grid grid-cols-2 gap-x-1'>
             <span className="flex items-center">{t('v2.tx.t16')}</span>
             <span className='flex items-center gap-1 text-[#CED1D9] justify-end'>{stockData?.marketCap || '--'}</span>

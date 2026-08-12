@@ -98,6 +98,10 @@ function KlineCharts() {
     
   }, [chartMode])
 
+  useEffect(() => {
+    updateSessionType(0)
+  }, [])
+
   return (
     <div>
       <div className='mt-5 flex flex-wrap items-center justify-between pb-1 text-[12px]'>

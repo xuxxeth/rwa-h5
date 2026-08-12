@@ -10,13 +10,11 @@ import { CTokenItem, NoDataReason, type SortableField } from "../ctoken-list/Cto
 import useFavorites from "@/hooks/useFavorites"
 import { useRwas } from "@/hooks/useRwaBalances"
 import { cn, divide, multiply, symbolToLower } from "@/utils"
-import { SortButton } from "../sort-button"
 import type { IRwa } from "@/service/base/types"
-import storage from "@/utils/storage"
-import { CONNECT_STATE_KEY } from "@/hooks/useCaCommon"
 import { useRouter } from "@/hooks/useRouter"
 import { useViewHistory } from "@/hooks/useViewHistory"
 import { useToast } from "@/hooks/useToast"
+import { SortButton } from "../sort-button-svg"
 
 export type SearchContentRef = {
   handleSearchChange: (value: string) => void

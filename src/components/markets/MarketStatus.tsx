@@ -167,16 +167,19 @@ const MarketStatus = memo(
           <IconWithTooltip tooltip={stateLabel.t2}>
             <div className={cn(
               "px-2 flex items-center gap-x-1 bg-[#232427] h-[24px] rounded-[24px]",
-              from === "lite-trade" ? "h-[50px] bg-[rgba(0,0,0,0)]" : "",
+              from === "lite" ? "h-[16px] px-1" : "",
               tokenLabel && from === 'trade' ? "px-0 w-[24px] justify-center" : ""
             )}>
               <div className="p-[2px] rounded-full bg-[#232427] shrink-0">
-                <img src={stateLabel.i} className="w-[14px]" alt="" />
+                <img src={stateLabel.i} className="w-[12px]" alt="" />
               </div>
               
               {
                 (!tokenLabel || from !== 'trade') && (
-                  <div className="text-[12px] leading-[14px] shrink-0"
+                  <div className={cn(
+                    "text-[12px] leading-[14px] shrink-0",
+                    from === "lite" ? "text-[10px]" : ""
+                  )}
                     style={{ color: stateLabel.c, }}
                   >
                     {stateLabel.t1 + t('v3.t39')}
