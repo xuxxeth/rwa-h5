@@ -177,7 +177,6 @@ const CTokenListInAssets = memo(
     const { assetsList } =
         useAssetsList(chainId ?? 97)
 
-    const [selectTab, setSelectTab] = useState('all')
 
     const _id = useId()
     const defaultSort = useCallback((item1: IAssetItem, item2: IAssetItem) => {
