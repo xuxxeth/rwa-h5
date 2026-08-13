@@ -41,7 +41,7 @@ export function useFetchFeeConfig() {
 
   const trading = useMemo(() => {
     if (!isChainSynced) {
-      return null
+      return undefined
     }
 
     const chain = chainList.find(chain => chain.id === currentChainId)
