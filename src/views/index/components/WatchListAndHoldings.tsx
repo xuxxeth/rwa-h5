@@ -118,7 +118,10 @@ export function WatchlistTab() {
     }
     if (checkedList.current.length <= 0) {
       setHasChecked(false)
+    } else {
+      setHasChecked(true)
     }
+
   }, [])
 
   const handleAddCustom = useCallback(async () => {
