@@ -44,7 +44,7 @@ export function AssetSection({
   const { assetsList, estimatedBalance, estimatedRwaTotalValue, estimatedStableTokenTotalValue } =
     useAssetsList(chainId ?? 97)
 
-  const riskControlledAssets = useRiskControlAssets(chainId ?? 97, account)
+  const riskControlledAssets = useRiskControlAssets(chainId ?? 97, account || '')
 
   const isRiskControlled = riskControlledAssets.length > 0
 

@@ -48,7 +48,7 @@ export function SplitsStockState({ }: { }) {
   )
 }
 
-export const CTokenBalance = memo(({ isSplit, token }: {token: IAssetItem, isSplit: boolean }) => {
+export const CTokenBalance = ({ isSplit, token }: {token: IAssetItem, isSplit: boolean }) => {
 
   return (
     <div className="text-right text-[12px] pr-1">
@@ -64,9 +64,9 @@ export const CTokenBalance = memo(({ isSplit, token }: {token: IAssetItem, isSpl
       
     </div>
   );
-});
+}
 
-export const CTokenItem = memo(
+export const CTokenItem = 
 
   ({ token, onClick, account, from }: {
     token: IAssetItem,
@@ -74,7 +74,6 @@ export const CTokenItem = memo(
     account?: string, 
     from?: string,
   }) => {  
-    const { updateHistory } = useViewHistory()
     return (
       <div className="h-[48px] flex items-center justify-between mt-2 cursor-pointer hover:bg-[#232427] px-4 pr-2 relative group"
         onClick={() => {
@@ -115,7 +114,6 @@ export const CTokenItem = memo(
       </div>
     )
   }
-)
 
 export type SortableField = 'name' | 'token' | 'price' | 'change' | 'marketCap' | 'dailyHigh'
 
@@ -185,7 +183,6 @@ const CTokenListInAssets = memo(
         }
       })
     }, [assetsList, sort, favoritesRest.isSignatureValid])
-
 
     const setTokenWithPriceByWebSocketData = useBaseStore(
       state => state.setTokenWithPriceByWebSocketData
