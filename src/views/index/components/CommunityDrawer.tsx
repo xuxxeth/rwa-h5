@@ -4,6 +4,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { Drawer } from '@/components/drawer'
 import { DISCORD_URL, TG_URL, X_URL } from '@/config/constants'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/hooks/useToast'
 
 type CommunityDrawerProps = {
   open: boolean
@@ -20,14 +21,23 @@ const COMMUNITY_ITEMS: CommunityItem[] = [
   { labelKey: 'v4.t6', icon: '/images/v0.4/x.png', href: X_URL },
   { labelKey: 'v4.t7', icon: '/images/v0.4/tg.png', href: TG_URL },
   { labelKey: 'v4.t8', icon: '/images/v0.4/discord.png', href: DISCORD_URL },
-  { labelKey: 'v4.t9', icon: '/images/v0.4/e_mail.png', href: 'mailto:contact@tiko.cc' },
+  { labelKey: 'v4.t9', icon: '/images/v0.4/e_mail.png', href: 'contact@tiko.cc' },
 ]
 
 const CommunityDrawer = memo(({ open, onOpenChange }: CommunityDrawerProps) => {
   const { t } = useTranslation()
+  const { toastSuccess } = useToast()
 
   const handleOpen = (href: string) => {
-    window.open(href, '_blank', 'noopener,noreferrer')
+    // window.open(href, '_blank', 'noopener,noreferrer')
+    try {
+      navigator.clipboard.writeText(href)
+        .then(res => {
+          toastSuccess({title: t('copied')})
+        })
+    } catch (error) {
+
+    }
   }
 
   return (

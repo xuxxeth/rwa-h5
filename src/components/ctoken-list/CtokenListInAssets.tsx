@@ -3,7 +3,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { LazyImage } from "../image/LazyImage"
 import { useRwas } from "@/hooks/useRwaBalances";
 import type { IRwa } from "@/service/base/types";
-import { formatTokenAmountWithCommas } from "@/utils/format";
+import { formatTokenAmountWithCommas, formatWithCommas, textPrefix, truncate } from "@/utils/format";
 import { advancedSort, divide, multiply, symbolToLower } from "@/utils";
 import { useBaseStore } from "@/stores/baseStore";
 import { useRwaPrice, useTokenBalance } from "@/hooks/useTokenBalances";
@@ -48,49 +48,17 @@ export function SplitsStockState({ }: { }) {
   )
 }
 
-export const CTokenPrice = memo(({ symbol }: { symbol: string;}) => {
-  const tokenPrice = useRwaPrice(symbol);
-  const up = useMemo(() => Number(tokenPrice?.up), [tokenPrice?.up])
-  return (
-    <div className="text-[12px]">
-      <span className=" font-medium">${tokenPrice?.price ?? '--'}</span>
-      <div className=" font-normal flex items-center gap-x-[4px]">
-        {/* {
-          up !== 0 &&
-            <img
-              src={up > 0 ? "/images/convert/price_up.png" : "/images/convert/price_down.png"}
-              className="w-[6px]"
-            />
-        } */}
-        
-        <span
-          className={
-            up === 0 ? 'text-[#A1A1A1]' : up > 0
-              ? "text-[#50E3C2] text-[12px]"
-              : "text-[rgba(227,80,122,1)] text-[12px]"
-          }
-        >
-          {up !== 0 && (up > 0 ? '+' : '-')}
-          {Math.abs(Number(tokenPrice?.up || "0"))}%
-        </span>
-      </div>
-    </div>
-  );
-});
-export const CTokenBalance = memo(({address, symbol, pricePrecision, isSplit }: {address: string, symbol: string; pricePrecision: number; isSplit: boolean }) => {
-  const tokenBalance = useTokenBalance(symbolToLower(address))?.balance ?? "0";
-  const tokenPrice = useRwaPrice(symbol)?.price ?? "0";
-
-  const total = multiply(tokenBalance, tokenPrice);
+export const CTokenBalance = memo(({ isSplit, token }: {token: IAssetItem, isSplit: boolean }) => {
 
   return (
     <div className="text-right text-[12px] pr-1">
       <div className=" font-medium leading-[24px] text-white">
-        {formatTokenAmountWithCommas(tokenBalance)}
+        {token.holdings ? formatWithCommas(truncate(token.holdings, 2), 2) : '--'}
+        
       </div>
       {
         isSplit ? <div className=" font-normal text-[#9DA3AF]">-- </div> : <div className=" font-normal text-[#9DA3AF]">
-          ≈ ${formatTokenAmountWithCommas(total, pricePrecision)}
+          ≈ {token.value ? textPrefix(formatWithCommas(truncate(token.value, 2), 2), '$') : '--'}
         </div>
       }
       
@@ -137,20 +105,10 @@ export const CTokenItem = memo(
           }
           
         </div>
-        {
-          from !== 'assets' && (
-            <div className={cn(
-              "w-3/8 flex items-center ",
-              account ? "w-2/8 justify-start" : ""
-            )}>
-              <CTokenPrice symbol={token.symbol} />
-            </div>
-          )
-        }
         
         {
           account && from !== 'search' && <div className="w-2/8 text-right">
-            <CTokenBalance isSplit={!token.isStableToken && token.splitStatus !== 0} address={token.address} symbol={token.symbol} pricePrecision={token.precision} />
+            <CTokenBalance token={token} isSplit={!token.isStableToken && token.splitStatus !== 0} />
           </div>
         }
         
@@ -176,7 +134,6 @@ const CTokenListInAssets = memo(
     const { isFavorite, favorites, toggleFavorite, toggleEnable, ...favoritesRest } = useFavorites()
     const { assetsList } =
         useAssetsList(chainId ?? 97)
-
 
     const _id = useId()
     const defaultSort = useCallback((item1: IAssetItem, item2: IAssetItem) => {

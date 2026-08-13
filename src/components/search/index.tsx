@@ -1,10 +1,11 @@
-import { useRef, useState, type ChangeEvent, type FocusEvent, type MouseEvent } from "react"
+import { useEffect, useRef, useState, type ChangeEvent, type FocusEvent, type MouseEvent } from "react"
 import { LazyImage } from "../image/LazyImage"
 import { Input } from "../ui/input"
 import { useTranslation } from "@/hooks/useTranslation"
 import { cn } from "@/utils/tw"
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock"
 import { HistoryItem, SearchContent, type SearchContentRef } from "./SearchContent"
+import { useAppStore } from "@/stores/appStore"
 
 function SearchInput(props: {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void 
@@ -19,6 +20,8 @@ function SearchInput(props: {
 
   const searchRef = useRef<HTMLDivElement>(null)
   const searchContentRef = useRef<SearchContentRef>(null)
+
+  const currentChainId = useAppStore(state => state.currentChainId)
 
   const onFocus = (e: FocusEvent<HTMLInputElement>) => {
     setFocus(true)
@@ -45,6 +48,13 @@ function SearchInput(props: {
     setFocus(false)
     unlock()
   }
+
+  useEffect(() => {
+    setSearchTerm('')
+    searchContentRef.current?.resetSearch()
+    setFocus(false)
+    unlock()
+  }, [currentChainId])
 
   return (
     <>

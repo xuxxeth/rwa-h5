@@ -186,11 +186,11 @@ const RwaItemPrice = memo(
           <div className=' grid grid-cols-2 gap-x-1'>
             <span className="flex items-center">{t('v2.tx.t16')}</span>
             <span className='flex items-center gap-1 text-[#CED1D9] justify-end'>{stockData?.marketCap || '--'}</span>
-            <span className="flex items-center">{t('v4.t2')}</span>
+            <span className="flex items-center">{t('marketQuotes.dailyHigh')}</span>
             <span className='flex items-center gap-1 text-[#CED1D9] justify-end'>{realtimeData?.h ? '$' + realtimeData?.h : '--'}</span>
-            <span className="flex items-center">{t('v4.t3')}</span>
+            <span className="flex items-center">{t('marketQuotes.dailyLow')}</span>
             <span className='flex items-center gap-1 text-[#CED1D9] justify-end'>{realtimeData?.l ? '$' + realtimeData?.l : '--'}</span>
-            <span className="flex items-center">{t('v4.t1')}</span>
+            <span className="flex items-center">{t('v4.t93')}</span>
             <span className='flex items-center gap-1 text-[#9DA3AF] justify-end'>
               {shortenAddress(inputToken?.address || '')}
               <CopyButtonV2 svgClassName='text-[#9DA3AF] w-3 h-3' copyText={inputToken?.address || ''} />
