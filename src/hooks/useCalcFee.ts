@@ -35,18 +35,32 @@ export function useFetchFeeConfig() {
   const setFeeConfig = useTradeStore(state => state.setFeeConfig)
   const currentChainId = useAppStore(state => state.currentChainId)
   const chainList = useBaseStore(state => state.chainList)
+  const { chainId } = useActiveWeb3()
+
+  const isChainSynced = !!currentChainId && !!chainId && currentChainId === chainId
 
   const trading = useMemo(() => {
+    if (!isChainSynced) {
+      return null
+    }
+
     const chain = chainList.find(chain => chain.id === currentChainId)
     return chain?.contract as Address
-  }, [currentChainId, chainList])
+  }, [currentChainId, chainList, isChainSynced])
 
   const { getFeeConfig } = useMarket(trading)
   const defaultFeeRate = { value: '0.00', minValue: '0.00', noFee: true }
   useEffect(() => {
+    if (!isChainSynced || !trading) {
+      return
+    }
+
+    let cancelled = false
+
     const fetchFeeConfig = async () => {
       try {
         const feeConfig = await getFeeConfig()
+        if (cancelled) return
         if (feeConfig) {
           const platformFeeRate = formatFeeRate(feeConfig.platformFee, FEE_RATE_SCALE_6)
           const buyRuleId1FeeItem = feeConfig.buyFeeConfigs
@@ -64,14 +78,17 @@ export function useFetchFeeConfig() {
           }
           setFeeConfig({...feeConfig, buyFeeRate: buyFeeRate, sellFeeRate: sellFeeRate})
         }
-        
-        
       } catch (error) {
+        if (cancelled) return
         console.error('Failed to fetch fee config:', error)
       }
     }
     fetchFeeConfig()
-  }, [getFeeConfig, currentChainId])
+
+    return () => {
+      cancelled = true
+    }
+  }, [getFeeConfig, isChainSynced, setFeeConfig, trading])
 }
 
 
