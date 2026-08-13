@@ -11,6 +11,7 @@ import { useStockStore } from "@/stores/stockStore"
 import { useTradeStore } from "@/stores/tradeStore"
 import { divide, multiply, shortenAddress, subtract } from "@/utils"
 import { calculateUp, formatLargeNumber, toFixed, truncate } from "@/utils/format"
+import { TradeState } from "@/views/markets/MarketQuotes"
 import { memo, useEffect, useMemo, useRef, useState, type RefObject } from "react"
 
 export function ItemPrice({ from }: { from?: string}) {
@@ -178,7 +179,10 @@ const RwaItemPrice = memo(
           <ItemPrice />
           <div className='mt-3 flex flex-wrap items-center gap-1 text-[12px]'>
             <RwaSessionStatus from="lite" />
+            <TradeState state={inputToken?.state ?? 0} from="lite" />
             <MarketStatus from="lite" />
+
+
           </div>
         </div>
 

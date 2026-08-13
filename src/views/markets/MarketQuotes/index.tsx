@@ -40,12 +40,14 @@ import { MARKET_STATUS } from '@/config/constants'
 
 type SortableField = 'name' | 'token' | 'price' | 'change' | 'marketCap' | 'dailyHigh'
 
-export function TradeState({ state }: { state: number }) {
+export function TradeState({ state, from }: { state: number, from?: string }) {
+
   switch (state) {
     case 1:
       return (
         <IconWithTooltip
-          triggerClassName='ml-2 shrink-0'
+          triggerClassName={ from === 'lite' ? 'shrink-0' : 'ml-2 shrink-0' }
+          iconOrTextClassName={ from === 'lite' ? 'w-4 h-4' : undefined }
           icon='/images/v2/icons/trade_halt.svg'
           tooltip={'marketQuotes.tH'}
         />
@@ -53,7 +55,8 @@ export function TradeState({ state }: { state: number }) {
     case 3:
       return (
         <IconWithTooltip
-          triggerClassName='ml-2 shrink-0'
+          triggerClassName={ from === 'lite' ? 'shrink-0' : 'ml-2 shrink-0' }
+          iconOrTextClassName={ from === 'lite' ? 'w-4 h-4' : undefined }
           icon='/images/v2/icons/only-sell.svg'
           tooltip={'marketQuotes.buyForbidden'}
         />
