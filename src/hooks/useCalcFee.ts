@@ -60,6 +60,8 @@ export function useFetchFeeConfig() {
     const fetchFeeConfig = async () => {
       try {
         const feeConfig = await getFeeConfig()
+        console.log('feeConfig: ', feeConfig, currentChainId)
+
         if (cancelled) return
         if (feeConfig) {
           const platformFeeRate = formatFeeRate(feeConfig.platformFee, FEE_RATE_SCALE_6)
