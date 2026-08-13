@@ -14,6 +14,8 @@ export interface IRiskControlAsset {
   amount: bigint
   quantity: string
   symbol: string
+  name: string
+  icon: string
 }
 
 export function useRiskControlAssets(chainId: number, account: string): IRiskControlAsset[] {
@@ -49,7 +51,7 @@ export function useRiskControlAssets(chainId: number, account: string): IRiskCon
       const tokenInfo = allTokens.find(t => t.address === token)
       const decimals = tokenInfo?.decimals || 18
       const quantity = formatAmount(amount, decimals)
-      return { token, amount, quantity, symbol: tokenInfo?.symbol || '' }
+      return { token, amount, quantity, symbol: tokenInfo?.symbol || '', name: tokenInfo?.name || '', icon: tokenInfo?.icon || '' }
     })
     .sort((a, b) => advancedSort(a.quantity, b.quantity, 'desc'))
 }
