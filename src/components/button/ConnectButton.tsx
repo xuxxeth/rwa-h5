@@ -148,30 +148,30 @@ export function ConnectButton(props: { connectBtnClassName?: string }) {
     prevStatusRef.current = status
   }, [status, agreementsAccepted])
 
-  // useEffect(() => {
-  //   if (!wallets.length || account || !initialized || !currentChainId) return
+  useEffect(() => {
+    if (!wallets.length || account || !initialized || !currentChainId) return
 
-  //   const walletUUID = storage.getItem(WALLET_UUID)
-  //   const connector = storage.getItem(CONNECTOR_TYPE) as ConnectorType | null
+    const walletUUID = storage.getItem(WALLET_UUID)
+    const connector = storage.getItem(CONNECTOR_TYPE) as ConnectorType | null
 
-  //   // 默认 isWalletConnecting 为 true, 如果发现不需要重连，把 isWalletConnecting 设为 false
-  //   if (!walletUUID || !connector) {
-  //     setIsWalletConnecting(false)
-  //     return
-  //   }
+    // 默认 isWalletConnecting 为 true, 如果发现不需要重连，把 isWalletConnecting 设为 false
+    if (!walletUUID || !connector) {
+      setIsWalletConnecting(false)
+      return
+    }
 
-  //   const wallet = wallets.find(w => w.info.name === walletUUID)
-  //   if (!wallet) return
+    const wallet = wallets.find(w => w.info.name === walletUUID)
+    if (!wallet) return
 
-  //   if (connector === ConnectorType.Injected && !wallet.detected) {
-  //     return
-  //   }
-  //   setCurrentWallet(wallet)
-  //   setStatus(WalletStatus.CONNECTING)
-  //   setIsWalletConnecting(true)
+    if (connector === ConnectorType.Injected && !wallet.detected) {
+      return
+    }
+    setCurrentWallet(wallet)
+    setStatus(WalletStatus.CONNECTING)
+    setIsWalletConnecting(true)
 
-  //   handleConnect(connector, currentChainId, wallet)
-  // }, [wallets, initialized, currentChainId])
+    handleConnect(connector, currentChainId, wallet)
+  }, [wallets, initialized, currentChainId])
 
   const connectWallet = async (wallet: WalletConfig, chainId: number | null) => {
     

@@ -63,7 +63,7 @@ export const useBaseStore = create<BaseStore>()(
       },
       // 使用 websocket 数据更新 token 价格
       setTokenWithPriceByWebSocketData: (data: IRwaPrice[]) => {
-        const rwaList = get().rwaList
+        const rwaList = get().rwaList.filter(rwa => rwa.showState)
         if (rwaList.length === 0) return
         const tokenWithPrices: Record<string, ITokenWithPrice> = data.reduce(
           (acc, cur) => {
@@ -131,7 +131,7 @@ export const useBaseStore = create<BaseStore>()(
       getBaseRwas: async (chainId?: number) => {
         const res = await baseApi.getBaseRwas(chainId)
         if (res.code === RESPONSE_CODE.SUCCESS) {
-          const rwaList = (res.data || []).filter(rwa => rwa.showState).map(rwa => ({
+          const rwaList = (res.data || []).map(rwa => ({
             ...rwa,
             is24H: rwa.sessionMask === 15,
             sessionMaskList: numberToBinaryArray(rwa.sessionMask ?? 0),
@@ -152,7 +152,7 @@ export const useBaseStore = create<BaseStore>()(
         }
         if (rwaTokenRes.code === RESPONSE_CODE.SUCCESS) {
           // @ts-ignore
-          const rwaList = (rwaTokenRes.data || []).filter(rwa => rwa.showState)
+          const rwaList = (rwaTokenRes.data || [])
           if (rwaList[0]?.chainId === chainId) {
             newRwaList = rwaList.map(rwa => ({
               ...rwa,
@@ -282,7 +282,7 @@ export const useBaseStore = create<BaseStore>()(
         await get().getStocks()
       },
       updateRwasPrice: (priceList: IRwaPrice[]) => {
-        const rwaList = get().rwaList.map(rwa => {
+        const rwaList = get().rwaList.filter(rwa => rwa.showState).map(rwa => {
           const price = priceList.find(price => price.S === rwa.symbol)
           return {
             ...rwa,

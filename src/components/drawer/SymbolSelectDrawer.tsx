@@ -66,8 +66,8 @@ TokenPrice.displayName = 'TokenPrice'
 
 /** Holdings column */
 const TokenHoldings = memo(
-  ({ symbol, pricePrecision }: { symbol: string; pricePrecision: number }) => {
-    const tokenBalance = useTokenBalance(symbol)?.balance ?? '0'
+  ({ address, symbol, pricePrecision }: { address: string, symbol: string; pricePrecision: number }) => {
+    const tokenBalance = useTokenBalance(address)?.balance ?? '0'
     const tokenPrice = useRwaPrice(symbol)?.price ?? '0'
     const total = multiply(tokenBalance, tokenPrice)
 
@@ -130,7 +130,7 @@ const TokenRow = memo(
       {/* Holdings – fill */}
       {account && (
         <div className="flex-1">
-          <TokenHoldings symbol={token.symbol} pricePrecision={token.precision} />
+          <TokenHoldings address={token.address} symbol={token.symbol} pricePrecision={token.precision} />
         </div>
       )}
     </div>
@@ -157,7 +157,7 @@ export const SymbolSelectDrawer = memo(
       return rwaList.filter(rwa => rwa.state !== 2).map(rwa => {
         const newRwa = {
           ...rwa,
-          ...tokenWithBalance[symbolToLower(rwa.symbol)],
+          ...tokenWithBalance[symbolToLower(rwa.address)],
           ...tokenWithPrice[symbolToLower(rwa.symbol)],
         }
         newRwa.balanceValue = multiply(newRwa?.balance ?? '0', tokenWithPrice[symbolToLower(rwa.symbol)]?.price ?? '0')

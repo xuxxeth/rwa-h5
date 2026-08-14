@@ -895,5 +895,8 @@
     "t1": "Switch Network",
     "t2": "This app doesn’t support your current network. Switch to an available option to continue.",
     "t3": "or"
+  },
+  "events": {
+    "t42": "This token has an unprocessed stock split. Go to [Stock Split] on the website to convert."
   }
 }

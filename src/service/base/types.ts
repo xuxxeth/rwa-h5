@@ -109,6 +109,7 @@ export interface IRwa {
   "upValue"?: string,
   "price"?: string | number,
   "showState": boolean
+  "splitStatus": number
 }
 
 export type IRwaWithBalancePrice = IRwa & ITokenWithBalance & ITokenWithPrice

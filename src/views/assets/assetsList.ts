@@ -65,7 +65,8 @@ export function useAssetsList(chainId: number, account: string) {
     ...rwaList.map(getAssetItemFromRwa),
   ].map(token => {
     const symbolLowdered = symbolToLower(token.symbol)
-    const balanceFromStore = tokenWithBalance[symbolLowdered]
+    const addressLowdered = symbolToLower(token.address)
+    const balanceFromStore = tokenWithBalance[addressLowdered]
     token.rwaPrice = tokenWithPrice[symbolLowdered]?.price
 
     token.holdings =
